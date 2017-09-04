@@ -15,11 +15,10 @@ from kivy.properties import (
 from math import cos, sin, pi, sqrt, degrees, radians
 from kivy.uix.image import Image
 from ..unit.unit import Unit
-import blinker
+
 __author__ = 'ecialo'
 H_COEF = sqrt(3)/2
 R2 = radians(60)
-summon_event = blinker.signal("summon")
 
 Builder.load_file('./mlp/widgets/grid/gridwidget.kv')
 
@@ -77,9 +76,9 @@ class HexCellWidget(relativelayout.FloatLayout):
         self.circuit = points + points[0:2]
         self.mesh_vertices = vertices
         self.size = (int(max(xs) - min(xs)), int(max(ys) - min(ys)))
-        for child in self.children:
-            if isinstance(child, Unit):
-                child.scale = self.parent.scale * child.default_scale
+        # for child in self.children:
+        #     if isinstance(child, Unit):
+        #         child.scale = self.parent.scale * child.default_scale
 
     @property
     def cell_pos(self):
@@ -123,6 +122,7 @@ class Hexgrid(widget.Widget):
         super(Hexgrid, self).__init__(
             **kwargs
         )
+
         self.make_cells()
         self.bind(rotation=self.change_rotator)
         self.bind(cell_size=self.update_children)
@@ -197,11 +197,6 @@ class Hexgrid(widget.Widget):
     def select_cell(self, cell):
         self.parent.cursor.select(cell)
 
-    def on_summon(self, unit=None, cell=None):
-        o = unit.make_widget(pos_hint={'center_x': 0.5, 'y': 0.3})
-        w = cell.make_widget()
-        w.add_widget(o)
-
 
 class FullImage(Image):
     pass
@@ -217,6 +212,8 @@ class CompositeArena(relativelayout.RelativeLayout):
 
     def rescale(self, _, scale):
         self.gridwidget.scale = scale
+        for child in self.ids.sprite_layer.children:
+            child.scale = scale * child.default_scale
 
     @property
     def cursor(self):

@@ -1,22 +1,4 @@
 #:import fch kivy.uix.filechooser
-#<-HexCellWidget>:
-#    id: hexcell
-#    canvas:
-#        PushMatrix:
-#        Color:
-#            rgba: 0, 0, 0, 1
-#        Translate:
-#            xy: self.pos
-#        Line:
-#            points: self.points_vertices
-#            width: 1.5
-#        Color:
-#            rgba: 0, 0, 0, 0.5*self.is_selected
-#        Mesh:
-#            vertices: self.mesh_vertices
-#            mode: 'triangle_fan'
-#            indices: range(6)
-#        PopMatrix:
 
 <HexCellWidget>:
     id: cell
@@ -42,13 +24,6 @@
 <-Hexgrid>:
     id: grid
     size_hint: (None, None)
-#    size: background.size
-#    FullImage:
-#        id: background
-#        scale: grid.scale
-#        pos: (grid.x - self.width/2, grid.y)
-#        pos: grid.pos
-#        source: "./data/fonchik_pustynka1.png"
 
 <CompositeArena@RelativeLayout>:
     id: arena
@@ -58,12 +33,10 @@
     FullImage:
         id: background
         scale: arena.scale
-#        pos: (grid.x - self.width/2, grid.y)
-#        pos: grid.pos
         source: "./data/fonchik_pustynka1.png"
-#    Hexgrid:
-#        id: grid
-#        scale:
+    RelativeLayout:
+        id: sprite_layer
+        size_hint: (None, None)
 
 
 <FullImage@Image>:
