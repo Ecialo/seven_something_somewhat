@@ -32,7 +32,9 @@ class Place(Command):
         unit = self.unit
         # uw = unit.make_widget(pos_hint={'center_x': 0.5, 'y': 0.3})
         uw = unit.make_widget()
-        uw.pos = self.place.make_widget().pos
+        cw = self.place.make_widget()
+        uw.y = cw.center_y
+        uw.center_x = cw.center_x
 
         # print("\nUNIT {} \n PLACE{} \nOLD PLACE{}\n".format(self.unit, self.place, self.old_place))
         if not self.old_place:
