@@ -17,7 +17,22 @@
         Line:
             points: self.circuit
             width: 1.5
+#        Color:
+#            rgba: (0.0, 1.0, 0.0, 0.75)
+#        Rectangle:
+#            pos: (0, 0)
+#            size: self.size
         PopMatrix
+#    Widget:
+#        id: anchor
+#        size: (0, 0)
+#        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+#        canvas:
+#            Color:
+#                rgba: (0.0, 0.0, 1.0, 1.0)
+#            Rectangle:
+#                pos: self.center
+
 
 
 
@@ -34,9 +49,15 @@
         id: background
         scale: arena.scale
         source: "./data/fonchik_pustynka1.png"
-    RelativeLayout:
-        id: sprite_layer
-        size_hint: (None, None)
+#    spl.SpriteLayer:
+#        id: sprite_layer
+#        size_hint: (None, None)
+#        canvas:
+#            Color:
+#                rgba: (1.0, 0.0, 0.0, 0.5)
+#            Rectangle:
+#                pos: self.pos
+#                size: self.size
 
 
 <FullImage@Image>:

@@ -28,13 +28,18 @@ class Place(Command):
     def execute(self):
         # pass
         grid_w = Grid.locate().make_widget()
-        s_l = grid_w.parent.ids.sprite_layer
+        s_l = grid_w.parent.sprite_layer
         unit = self.unit
         # uw = unit.make_widget(pos_hint={'center_x': 0.5, 'y': 0.3})
         uw = unit.make_widget()
-        cw = self.place.make_widget()
-        uw.y = cw.center_y
-        uw.center_x = cw.center_x
+        cw = self.place.make_widget().anchor
+        cw.connect(uw)
+        # uw.y = cw.center_y
+        # uw.center_x = cw.center_x
+        # print("UNIT POS")
+        # print(uw.pos)
+        # print("CELL POS")
+        # print(cw.center, cw.cell.pos)
 
         # print("\nUNIT {} \n PLACE{} \nOLD PLACE{}\n".format(self.unit, self.place, self.old_place))
         if not self.old_place:

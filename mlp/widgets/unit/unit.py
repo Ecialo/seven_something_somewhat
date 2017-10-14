@@ -14,10 +14,7 @@ class Unit(FullImage):
         self.scale = self.default_scale
 
     def on_select(self, game_widget):
-        # print(self.unit.action_bar)
         game_widget.stats = self.unit._stats.make_widget(pos_hint={'x': 0.0, 'y': 0.5})
-        # print(self.unit.action_bar)
-        # game_widget.stats = self.unit.stats.make_widget(pos_hint={'x': 0.0, 'y': 0.5})
         game_widget.add_widget(game_widget.stats)
         if game_widget.parent.username == self.unit.stats.owner or game_widget.parent.username == 'overlord':
             game_widget.action_bar = self.unit.stats.action_bar.make_widget(
@@ -28,8 +25,8 @@ class Unit(FullImage):
             )
             game_widget.add_widget(game_widget.action_bar)
             game_widget.add_widget(game_widget.current_action_bar)
-            # self.center = self.pos
 
-    # def on_place_in_cell(self, cell):
-    #     if self.parent:
-    #         pass
+    # def update_pos(self):
+    #     cw = self.unit.real_cell.make_widget().ids.anchor
+    #     self.y = cw.center_y
+    #     self.center_x = cw.center_x

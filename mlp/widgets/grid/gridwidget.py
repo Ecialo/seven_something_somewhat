@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from math import cos, sin, pi, sqrt, degrees, radians
+
 import numpy as np
 from numpy import matlib as mtl
 from kivy.lang import Builder
@@ -12,9 +14,12 @@ from kivy.properties import (
     NumericProperty,
     BooleanProperty,
 )
-from math import cos, sin, pi, sqrt, degrees, radians
 from kivy.uix.image import Image
-from ..unit.unit import Unit
+
+from ..sprite_manager.sprite_layer import (
+    SpriteLayer,
+    Anchor
+)
 
 __author__ = 'ecialo'
 H_COEF = sqrt(3)/2
@@ -47,6 +52,8 @@ class HexCellWidget(relativelayout.FloatLayout):
             size=(hex_size*2, hex_size*2),
             **kwargs
         )
+        self.anchor = Anchor()
+        self.add_widget(self.anchor)
 
     @property
     def hex_size(self):
@@ -207,13 +214,24 @@ class CompositeArena(relativelayout.RelativeLayout):
     def __init__(self, gridwidget, **kwargs):
         super().__init__(**kwargs)
         self.gridwidget = gridwidget
+        self.sprite_layer = SpriteLayer()
         self.add_widget(gridwidget)
+        self.add_widget(self.sprite_layer)
         self.bind(scale=self.rescale)
+        # for child in self.ids.sprite_layer.children:
+            # child.scale = scale * child.default_scale
+            # child.update_pos()
 
     def rescale(self, _, scale):
+        self.sprite_layer.rescale(scale)
         self.gridwidget.scale = scale
-        for child in self.ids.sprite_layer.children:
-            child.scale = scale * child.default_scale
+            # child.update_pos()
+
+    # def on_pos(self, inst, value):
+    #     for child in self.ids.sprite_layer.children:
+    #         child.scale = scale * child.default_scale
+            # child.update_pos()
+
 
     @property
     def cursor(self):
