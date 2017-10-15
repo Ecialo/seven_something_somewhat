@@ -1,3 +1,6 @@
+from itertools import islice
+from collections import deque
+
 import numpy as np
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.widget import Widget
@@ -58,6 +61,15 @@ class Link(Anchor):
         from_anchor.connect(self)
         to_anchor.connect(self)
 
+    def __add__(self, other):
+        if isinstance(other, Link):
+            return Chain([self, other])
+        elif isinstance(other, Chain):
+            other.links.appendleft(self)
+            return other
+        else:
+            raise TypeError("Not a Link or Chain")
+
     def update_pos(self, _):
         self.update_vector()
         self.pos = np.array(self.from_anchor.pos) + self.v * self.progress
@@ -65,29 +77,43 @@ class Link(Anchor):
     def update_vector(self):
         self.v = np.array(self.to_anchor.pos) - np.array(self.from_anchor.pos)
 
-    def run_along(self):
-        anim = Animation(progress=1.0)
-        anim.start(self)
+    def make_run_along_animation(self):
+        return MoveAnimation([self])
 
 
 class Chain:
 
     def __init__(self, links):
-        self.links = links
+        self.links = deque(links)
 
-    def run_along(self):
-        anim = Animation(progress=1.0)
-        anim.start(self)
+    def __add__(self, other):
+        if isinstance(other, Link):
+            self.links.append(other)
+            return self
+        elif isinstance(other, Chain):
+            self.links += other.links
+            return self
+
+    def make_run_along_animation(self):
+        return MoveAnimation(self.links)
 
 
-class MoveAnimation(Animation):
+class MoveAnimation:
 
-    def __init__(self, path, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, path):
+        # super().__init__(**kwargs)
         self.path = path
 
     def start(self, widget):
-        pass
+        anim_sequence = [
+            Animation(progres=1.0) for _ in self.path
+        ]
+        anim_sequence[0].bind(on_start=self.on_start)
+        anim_sequence[-1].bind(on_complete=self.on_complete)
+        for i, anim in islice(enumerate(anim_sequence), 0, len(anim_sequence) - 1):
+            anim.bind(on_complete=self.transfer_widget(i))
+        long_animation = sum(anim_sequence)
+        long_animation.start(widget)
 
     def on_start(self, widget):
         widget.disconnect()
@@ -96,3 +122,11 @@ class MoveAnimation(Animation):
     def on_complete(self, widget):
         widget.disconnect()
         self.path[-1].to_anchor.connect(widget)
+
+    def transfer_widget(self, part_i):
+
+        def on_complete(widget):
+            widget.disconnect()
+            self.path[part_i + 1].connect(widget)
+
+        return on_complete

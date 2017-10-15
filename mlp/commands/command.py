@@ -85,10 +85,11 @@ class Move(Command):
 
     def execute(self):
         anchors = [cell.make_widget().anchor for cell in self.path]
-        links = [from_anchor.link(to_anchor) for from_anchor, to_anchor in zip(anchors, anchors[1::])]
+        animation = sum(
+            (from_anchor.link(to_anchor) for from_anchor, to_anchor in zip(anchors, anchors[1::]))
+        ).make_run_along_animation()
         uw = self.unit.make_widget()
-
-
+        animation.start(uw)
 
     def dump(self):
         return {
