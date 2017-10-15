@@ -3,7 +3,7 @@ import io
 import cbor2
 from cbor2.types import CBORTag
 
-from mlp.commands.command import Command
+from .commands.command import Command
 from .actions.base.status import (
     Status,
     STATUSES,

@@ -26,6 +26,12 @@ class Unit(FullImage):
             game_widget.add_widget(game_widget.action_bar)
             game_widget.add_widget(game_widget.current_action_bar)
 
+    def connect(self, anchor):
+        pass
+
+    def disconnect(self):
+        pass
+
     def update_pos(self, anchor):
         cw = anchor
         self.y = cw.center_y

@@ -5,10 +5,10 @@ from kivy.uix import (
 )
 from ..grid import CompositeArena
 from ..general import camera
-from mlp.serialization import (
+from ...serialization import (
     remote_action_append,
 )
-from mlp.protocol import *
+from ...protocol import *
 from ..cursor import MainCursor
 import blinker
 

@@ -1,4 +1,4 @@
-from mlp.replication_manager import MetaRegistry
+from ..replication_manager import MetaRegistry
 from ..grid import Grid
 
 EFFECTS = MetaRegistry()['Command']
@@ -72,4 +72,27 @@ class Revoke(Command):
             "name": self.name,
             "unit": self.unit,
             "cell": self.cell,
+        }
+
+
+class Move(Command):
+
+    name = "move"
+
+    def __init__(self, unit=None, path=None):
+        self.unit = unit
+        self.path = path
+
+    def execute(self):
+        anchors = [cell.make_widget().anchor for cell in self.path]
+        links = [from_anchor.link(to_anchor) for from_anchor, to_anchor in zip(anchors, anchors[1::])]
+        uw = self.unit.make_widget()
+
+
+
+    def dump(self):
+        return {
+            "name": self.name,
+            "unit": self.unit,
+            "path": self.path,
         }

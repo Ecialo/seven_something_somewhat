@@ -42,6 +42,9 @@ class Anchor(Widget):
         for con in self.connected:
             con.update_pos(self)
 
+    def link(self, anchor):
+        return Link(self, anchor)
+
 
 class Link(Anchor):
 
@@ -61,3 +64,34 @@ class Link(Anchor):
 
     def update_vector(self):
         self.v = np.array(self.to_anchor.pos) - np.array(self.from_anchor.pos)
+
+    def run_along(self):
+        anim = Animation(progress=1.0)
+        anim.start(self)
+
+
+class Chain:
+
+    def __init__(self, links):
+        self.links = links
+
+    def run_along(self):
+        anim = Animation(progress=1.0)
+        anim.start(self)
+
+
+class MoveAnimation(Animation):
+
+    def __init__(self, path, **kwargs):
+        super().__init__(**kwargs)
+        self.path = path
+
+    def start(self, widget):
+        pass
+
+    def on_start(self, widget):
+        pass
+
+    def on_complete(self, widget):
+        widget.disconnect()
+        self.path[-1]
