@@ -12,6 +12,7 @@ class Unit(FullImage):
         super().__init__(source=unit.widget['sprite'], **kwargs)
         self.default_scale = unit.widget.get('scale', 1.0)
         self.scale = self.default_scale
+        self.current_anchor = None
 
     def on_select(self, game_widget):
         game_widget.stats = self.unit._stats.make_widget(pos_hint={'x': 0.0, 'y': 0.5})
@@ -27,10 +28,12 @@ class Unit(FullImage):
             game_widget.add_widget(game_widget.current_action_bar)
 
     def connect(self, anchor):
-        pass
+        self.current_anchor = anchor
+        anchor.connect(self)
 
     def disconnect(self):
-        pass
+        self.current_anchor.disconnect(self)
+        self.current_anchor = None
 
     def update_pos(self, anchor):
         cw = anchor

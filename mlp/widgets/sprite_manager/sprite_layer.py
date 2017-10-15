@@ -8,6 +8,8 @@ from kivy.properties import NumericProperty
 from kivy.animation import Animation
 from kivy.lang import Builder
 
+
+from ...tools import rsum
 Builder.load_file('./mlp/widgets/sprite_manager/sprite_layer.kv')
 
 
@@ -72,7 +74,10 @@ class Link(Anchor):
 
     def update_pos(self, _):
         self.update_vector()
-        self.pos = np.array(self.from_anchor.pos) + self.v * self.progress
+        point = tuple(np.array(self.from_anchor.pos) + self.v * self.progress)
+        # print("FANCY POS")
+        # print(point, (type(int(point[0])), type(int(point[1]))))
+        self.pos = (float(point[0]), float(point[1]))
 
     def update_vector(self):
         self.v = np.array(self.to_anchor.pos) - np.array(self.from_anchor.pos)
@@ -112,7 +117,7 @@ class MoveAnimation:
         anim_sequence[-1].bind(on_complete=self.on_complete)
         for i, anim in islice(enumerate(anim_sequence), 0, len(anim_sequence) - 1):
             anim.bind(on_complete=self.transfer_widget(i))
-        long_animation = sum(anim_sequence)
+        long_animation = rsum(anim_sequence)
         long_animation.start(widget)
 
     def on_start(self, widget):

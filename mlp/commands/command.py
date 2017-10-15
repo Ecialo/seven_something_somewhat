@@ -1,5 +1,6 @@
 from ..replication_manager import MetaRegistry
 from ..grid import Grid
+from ..tools import rsum
 
 EFFECTS = MetaRegistry()['Command']
 CommandMeta = MetaRegistry().make_registered_metaclass("Command")
@@ -85,7 +86,7 @@ class Move(Command):
 
     def execute(self):
         anchors = [cell.make_widget().anchor for cell in self.path]
-        animation = sum(
+        animation = rsum(
             (from_anchor.link(to_anchor) for from_anchor, to_anchor in zip(anchors, anchors[1::]))
         ).make_run_along_animation()
         uw = self.unit.make_widget()

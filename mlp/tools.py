@@ -1,4 +1,6 @@
 import re
+import operator as op
+from functools import reduce
 
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 all_cap_re = re.compile('([a-z0-9])([A-Z])')
@@ -21,3 +23,7 @@ class dotdict(dict):
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+
+def rsum(iterable):
+    return reduce(op.add, iterable)

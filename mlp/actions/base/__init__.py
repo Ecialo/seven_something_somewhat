@@ -2,10 +2,7 @@ from collections.abc import Iterable
 
 import blinker
 
-from mlp.commands.command import (
-    Place,
-    Revoke,
-)
+from ...commands import command as com
 from .effect import (
     UnitEffect,
     MetaEffect,
@@ -56,10 +53,11 @@ class Move(UnitEffect):
                 next_cell = grid.find_path(target.cell, path_part)[1]
 
                 # send command
-                trace.send(command=Place(
+                trace.send(command=com.Move(
                     unit=target,
-                    place=next_cell,
-                    old_place=target.cell
+                    path=[target.cell, next_cell]
+                    # place=next_cell,
+                    # old_place=target.cell
                 ))
 
                 if next_cell.object is None:
@@ -83,7 +81,7 @@ class Damage(UnitEffect):
         with self.configure(context) as c:
             target.stats.health -= c.amount
             if target.stats.health <= 0:
-                trace.send(command=Revoke(target, target.cell))
+                trace.send(command=com.Revoke(target, target.cell))
                 target.kill()
             self.info_message = self.info_message.format(target, c.amount)
             super()._apply(target, context)
