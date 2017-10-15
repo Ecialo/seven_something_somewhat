@@ -26,7 +26,7 @@ class Unit(FullImage):
             game_widget.add_widget(game_widget.action_bar)
             game_widget.add_widget(game_widget.current_action_bar)
 
-    # def update_pos(self):
-    #     cw = self.unit.real_cell.make_widget().ids.anchor
-    #     self.y = cw.center_y
-    #     self.center_x = cw.center_x
+    def update_pos(self, anchor):
+        cw = anchor
+        self.y = cw.center_y
+        self.center_x = cw.center_x
