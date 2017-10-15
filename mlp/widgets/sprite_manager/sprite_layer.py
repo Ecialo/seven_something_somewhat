@@ -90,8 +90,9 @@ class MoveAnimation(Animation):
         pass
 
     def on_start(self, widget):
-        pass
+        widget.disconnect()
+        self.path[0].connect(widget)
 
     def on_complete(self, widget):
         widget.disconnect()
-        self.path[-1]
+        self.path[-1].to_anchor.connect(widget)
