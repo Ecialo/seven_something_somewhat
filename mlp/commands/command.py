@@ -6,11 +6,21 @@ EFFECTS = MetaRegistry()['Command']
 CommandMeta = MetaRegistry().make_registered_metaclass("Command")
 
 
+def save_pop(deque):
+    try:
+        return deque.popleft()
+    except IndexError:
+        return None
+
+
 class Command(metaclass=CommandMeta):
 
     name = ""
 
-    def execute(self):
+    def execute(self, rest_commands):
+        pass
+
+    def _execute(self):
         pass
 
     def dump(self):
@@ -26,27 +36,21 @@ class Place(Command):
         self.place = place
         self.old_place = old_place
 
-    def execute(self):
-        # pass
+    def execute(self, rest_commands):
+        self._execute()
+        c = save_pop(rest_commands)
+        if c:
+            c.execute(rest_commands)
+
+    def _execute(self):
         grid_w = Grid.locate().make_widget()
         s_l = grid_w.parent.sprite_layer
         unit = self.unit
-        # uw = unit.make_widget(pos_hint={'center_x': 0.5, 'y': 0.3})
         uw = unit.make_widget()
         cw = self.place.make_widget().anchor
         uw.connect(cw)
-        # uw.y = cw.center_y
-        # uw.center_x = cw.center_x
-        # print("UNIT POS")
-        # print(uw.pos)
-        # print("CELL POS")
-        # print(cw.center, cw.cell.pos)
-
-        # print("\nUNIT {} \n PLACE{} \nOLD PLACE{}\n".format(self.unit, self.place, self.old_place))
         if not self.old_place:
             s_l.add_widget(uw)
-        #     self.old_place.make_widget().remove_widget(uw)
-        # self.place.make_widget().add_widget(uw)
 
     def dump(self):
         return {
@@ -65,7 +69,13 @@ class Revoke(Command):
         self.unit = unit
         self.cell = cell
 
-    def execute(self):
+    def execute(self, rest_commands):
+        self._execute()
+        c = save_pop(rest_commands)
+        if c:
+            c.execute(rest_commands)
+
+    def _execute(self):
         self.cell.make_widget().remove_widget(self.unit.make_widget())
 
     def dump(self):
@@ -83,14 +93,24 @@ class Move(Command):
     def __init__(self, unit=None, path=None):
         self.unit = unit
         self.path = path
+        self._rest_commands = None
 
-    def execute(self):
+    def execute(self, rest_commands):
+        self._rest_commands = rest_commands
+        self._execute()
+
+    def _execute(self):
         anchors = [cell.make_widget().anchor for cell in self.path]
         animation = rsum(
             (from_anchor.link(to_anchor) for from_anchor, to_anchor in zip(anchors, anchors[1::]))
-        ).make_run_along_animation()
+        ).make_run_along_animation(callback=self.execute_next)
         uw = self.unit.make_widget()
         animation.start(uw)
+
+    def execute_next(self):
+        c = save_pop(self._rest_commands)
+        if c:
+            c.execute(self._rest_commands)
 
     def dump(self):
         return {

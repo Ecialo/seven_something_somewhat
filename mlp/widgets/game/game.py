@@ -90,6 +90,11 @@ class RemoteGame(floatlayout.FloatLayout):
 
     def process_commands(self, _, commands):
         print(commands)
-        for command in commands:
-            command.execute()
+        try:
+            command = commands.popleft()
+        except IndexError:
+            print("FAIL")
+        else:
+            print("SUCCESS")
+            command.execute(commands)
 

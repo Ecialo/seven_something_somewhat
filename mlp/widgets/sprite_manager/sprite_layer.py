@@ -100,8 +100,8 @@ class Link(Anchor):
     def update_vector(self):
         self.v = np.array(self.to_anchor.center) - np.array(self.from_anchor.center)
 
-    def make_run_along_animation(self):
-        return MoveAnimation([self])
+    def make_run_along_animation(self, callback):
+        return MoveAnimation([self], callback)
 
     def on_progress(self, inst, value):
         inst.update_pos(None)
@@ -130,17 +130,18 @@ class Chain:
             self.links += other.links
             return self
 
-    def make_run_along_animation(self):
-        return MoveAnimation(self.links)
+    def make_run_along_animation(self, callback):
+        return MoveAnimation(self.links, callback)
 
 
 class MoveAnimation:
 
-    def __init__(self, path):
+    def __init__(self, path, callback):
         # super().__init__(**kwargs)
         self.path = path
         self._animations = None
         self._widget = None
+        self._callback = callback
 
     def start(self, widget):
         print("PATH")
@@ -170,6 +171,7 @@ class MoveAnimation:
         widget = self._widget
         widget.disconnect()
         self.path[-1].to_anchor.connect(widget)
+        self._callback()
 
     def monitor_progress(self, inst, progress):
         print(progress)
