@@ -27,7 +27,6 @@ from mlp.game import (
 from mlp.protocol import *
 from mlp.player import Player
 # from mlp.unit import Muzik
-from tests import GrassGrid
 from mlp.loader import load
 import logging
 logger = logging.getLogger(__name__)

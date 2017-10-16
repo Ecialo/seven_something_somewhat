@@ -8,7 +8,9 @@ from functools import (
     reduce,
 )
 from operator import add
+
 import blinker
+
 from .replication_manager import GameObject
 from .tools import dict_merge
 
