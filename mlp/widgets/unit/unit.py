@@ -32,7 +32,8 @@ class Unit(FullImage):
         anchor.connect(self)
 
     def disconnect(self):
-        self.current_anchor.disconnect(self)
+        if self.current_anchor:
+            self.current_anchor.disconnect(self)
         self.current_anchor = None
 
     def update_pos(self, anchor):

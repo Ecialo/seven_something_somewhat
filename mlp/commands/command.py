@@ -34,7 +34,7 @@ class Place(Command):
         # uw = unit.make_widget(pos_hint={'center_x': 0.5, 'y': 0.3})
         uw = unit.make_widget()
         cw = self.place.make_widget().anchor
-        cw.connect(uw)
+        uw.connect(cw)
         # uw.y = cw.center_y
         # uw.center_x = cw.center_x
         # print("UNIT POS")

@@ -4,12 +4,18 @@ from collections import deque
 import numpy as np
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty
+from kivy.properties import (
+    NumericProperty,
+    # ObjectProperty,
+)
 from kivy.animation import Animation
 from kivy.lang import Builder
+from kivy.graphics import (
+    Line,
+    Rectangle,
+    Color,
+)
 
-
-from ...tools import rsum
 Builder.load_file('./mlp/widgets/sprite_manager/sprite_layer.kv')
 
 
@@ -42,6 +48,7 @@ class Anchor(Widget):
 
     def disconnect(self, w):
         self.connected.remove(w)
+        print(self, self.connected)
 
     def on_pos(self, inst, value):
         for con in self.connected:
@@ -54,6 +61,8 @@ class Anchor(Widget):
 class Link(Anchor):
 
     progress = NumericProperty(0.0)
+    # from_anchor = ObjectProperty()
+    # to_anchor = ObjectProperty()
 
     def __init__(self, from_anchor, to_anchor, **kwargs):
         super().__init__(**kwargs)
@@ -62,6 +71,13 @@ class Link(Anchor):
         self.v = None
         from_anchor.connect(self)
         to_anchor.connect(self)
+        self.bind(progress=self.on_progress)
+        with self.canvas:
+            Color(rgba=(0.0, 1.0, 0.0, 1.0))
+            self.point = Rectangle(pos=self.pos, size=(15, 15))
+            self.link = Line(points=[*self.from_anchor.center, *self.to_anchor.center], width=1)
+        self.bind(pos=self.redraw)
+        # self.bind(pos=self.pos_printer)
 
     def __add__(self, other):
         if isinstance(other, Link):
@@ -74,16 +90,31 @@ class Link(Anchor):
 
     def update_pos(self, _):
         self.update_vector()
-        point = tuple(np.array(self.from_anchor.pos) + self.v * self.progress)
+        point = tuple(np.array(self.from_anchor.center) + self.v * self.progress)
+        # print(point)
         # print("FANCY POS")
         # print(point, (type(int(point[0])), type(int(point[1]))))
         self.pos = (float(point[0]), float(point[1]))
+        # self.redraw()
 
     def update_vector(self):
-        self.v = np.array(self.to_anchor.pos) - np.array(self.from_anchor.pos)
+        self.v = np.array(self.to_anchor.center) - np.array(self.from_anchor.center)
 
     def make_run_along_animation(self):
         return MoveAnimation([self])
+
+    def on_progress(self, inst, value):
+        inst.update_pos(None)
+
+    def redraw(self, *args):
+        # print(self.pos, self.from_anchor.center, self.to_anchor.center)
+        point = tuple(np.array(self.from_anchor.center) + self.v)
+        self.point.pos = self.pos
+        # self.link.points = [*self.from_anchor.center, *self.to_anchor.center]
+        self.link.points = [*self.from_anchor.center, *point]
+
+    def pos_printer(self, inst, value):
+        print(inst, value)
 
 
 class Chain:
@@ -108,30 +139,47 @@ class MoveAnimation:
     def __init__(self, path):
         # super().__init__(**kwargs)
         self.path = path
+        self._animations = None
+        self._widget = None
 
     def start(self, widget):
+        print("PATH")
+        self._widget = widget
         anim_sequence = [
-            Animation(progres=1.0) for _ in self.path
+            Animation(progress=1.0, duration=0.5) for _ in self.path
         ]
+        print(anim_sequence)
         anim_sequence[0].bind(on_start=self.on_start)
-        anim_sequence[-1].bind(on_complete=self.on_complete)
+        anim_sequence[-1].on_complete = self.on_complete
+        print(anim_sequence[0] is anim_sequence[-1])
         for i, anim in islice(enumerate(anim_sequence), 0, len(anim_sequence) - 1):
-            anim.bind(on_complete=self.transfer_widget(i))
-        long_animation = rsum(anim_sequence)
-        long_animation.start(widget)
+            print("OHOHO")
+            anim.on_complete = self.transfer_widget(i)
+        self._animations = anim_sequence
+        self._animations[0].start(self.path[0])
 
-    def on_start(self, widget):
+    def on_start(self, _, __=None):
+        print("Connect to link")
+        widget = self._widget
         widget.disconnect()
         self.path[0].connect(widget)
+        # self.path[0].from_anchor.parent.parent.parent.sprite_layer.add_widget(self.path[0])
 
-    def on_complete(self, widget):
+    def on_complete(self, _):
+        print("Connect to endpoint")
+        widget = self._widget
         widget.disconnect()
         self.path[-1].to_anchor.connect(widget)
 
+    def monitor_progress(self, inst, progress):
+        print(progress)
+
     def transfer_widget(self, part_i):
 
-        def on_complete(widget):
-            widget.disconnect()
-            self.path[part_i + 1].connect(widget)
+        def on_complete(_, __=None):
+            print("COMPLETE")
+            self._widget.disconnect()
+            self.path[part_i + 1].connect(self._widget)
+            self._animations[part_i + 1].start(self.path[part_i + 1])
 
         return on_complete
