@@ -27,4 +27,14 @@ class TestGrid:
     def test_left_bottom_area(self):
         grid = self.grid
         cells = grid.get_area((0, 0), 1)
-        assert cells == {grid[0, 1], grid[1, 1], grid[1, 0], grid[0, 0  ]}
+        assert cells == {grid[0, 1], grid[1, 1], grid[1, 0], grid[0, 0]}
+
+    def test_right_bottom_area(self):
+        grid = self.grid
+        cells = grid.get_area((4, 0), 1)
+        assert cells == {grid[3, 0], grid[4, 0], grid[3, 1], grid[4, 1]}
+
+    def test_right_top_area(self):
+        grid = self.grid
+        cells = grid.get_area((4, 4), 1)
+        assert cells == {grid[3, 4], grid[4, 3], grid[4, 4]}
