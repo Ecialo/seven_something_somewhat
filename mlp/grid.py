@@ -13,6 +13,7 @@ import blinker
 
 from .replication_manager import GameObject
 from .tools import dict_merge
+from .bind_widget import bind_widget
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -150,10 +151,12 @@ class RectGrid(Grid):
         return iter(chain(*self._grid))
 
 
+@bind_widget('HexCellWidget')
 class HexCell(Cell):
     pass
 
 
+@bind_widget('Hexgrid')
 class HexGrid(Grid):
 
     cell = HexCell

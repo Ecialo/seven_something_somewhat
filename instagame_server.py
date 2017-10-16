@@ -24,6 +24,7 @@ from mlp.game import (
     Game,
     TurnOrderManager,
 )
+from mlp.grid import HexGrid
 from mlp.protocol import *
 from mlp.player import Player
 # from mlp.unit import Muzik
@@ -99,7 +100,7 @@ class TestServer(tcpserver.TCPServer):
             print(inital_data['players'])
             inital_data['players'] = [registry.load_obj(pl_struct) for pl_struct in inital_data['players']]
             print(inital_data['players'])
-            grid = GrassGrid((5, 5))
+            grid = HexGrid((5, 5))
             self.game = Game(grid=grid, turn_order_manager=TurnOrderManager(), **inital_data)
             self.game.turn_order_manager.rearrange()
             # self.game.switch_state()
