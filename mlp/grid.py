@@ -170,16 +170,6 @@ class HexGrid(Grid):
                 adj_cell = self[sum_iterables(coord, d)]
                 if adj_cell is not None:
                     cell.adjacent.append(adj_cell)
-        # for i, j in product(range(w), range(h)):
-        #     cur_cell = self._grid[i][j]
-            # if i > 0:
-            #     cur_cell.adjacent.append(self._grid[i - 1][j])
-            # if i < w - 1:
-            #     cur_cell.adjacent.append(self._grid[i + 1][j])
-            # if j > 0:
-            #     cur_cell.adjacent.append(self._grid[i][j - 1])
-            # if j < h - 1:
-            #     cur_cell.adjacent.append(self._grid[i][j + 1])
 
     @staticmethod
     def cube_to_offsets(pos):
@@ -266,7 +256,7 @@ class HexGrid(Grid):
             q, r = item
             w, h = self.size
             # # print(q, r)
-            if q < w and r < h:
+            if 0 <= q < w and 0 <= r < h:
                 return self._grid[q][r]
             else:
                 return None

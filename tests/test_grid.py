@@ -4,7 +4,7 @@ from ..mlp.grid import HexGrid
 class TestGrid:
 
     def setUp(self):
-        self.grid = HexGrid((9, 9))
+        self.grid = HexGrid((5, 5))
 
     def test_get(self):
         grid = self.grid
@@ -22,7 +22,7 @@ class TestGrid:
     def test_left_top_area(self):
         grid = self.grid
         cells = grid.get_area((0, 4), 1)
-        assert cells == {grid[0, 4], grid[3, 3], grid[1, 4]}
+        assert cells == {grid[0, 4], grid[0, 3], grid[1, 4]}
 
     def test_left_bottom_area(self):
         grid = self.grid
