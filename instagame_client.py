@@ -13,7 +13,6 @@ from mlp import screens
 from mlp import protocol as pr
 from mlp import game
 from mlp import player
-from tests.gridwidget import GrassGrid
 from mlp.replication_manager import MetaRegistry
 # from mlp.unit import Muzik
 from mlp.loader import load
