@@ -45,11 +45,12 @@ class Action(metaclass=ActionMeta):
     widget = None
     _check = None
 
-    def __init__(self, owner, **kwargs):
+    def __init__(self, owner, speed=None, **kwargs):
         # print("CREATE NEW")
         # print(kwargs)
         self.owner = owner
         self._context = None
+        self.action_speed = self.action_speed if speed is None else speed
         for setup_struct in self.setup_fields:
             field_name = setup_struct['name']
             setattr(self, field_name, None)
@@ -65,13 +66,6 @@ class Action(metaclass=ActionMeta):
                 'area': effect['area']
             })
         self.effects = effects
-        # self.context = {
-        #     'action': self,
-        #     'owner': self.owner,
-        #     'source': self.owner.cell,
-        # }
-        # print()
-        # self.effects = [effect.copy() for effect in self.effects]
 
     @property
     def context(self):
@@ -145,6 +139,7 @@ class Action(metaclass=ActionMeta):
             {
                 'name': self.name,
                 'owner': self.owner,
+                'speed': self.action_speed,
             },
             fields
         )
