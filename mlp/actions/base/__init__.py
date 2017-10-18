@@ -53,14 +53,14 @@ class Move(UnitEffect):
                 next_cell = grid.find_path(target.cell, path_part)[1]
 
                 # send command
-                trace.send(command=com.Move(
-                    unit=target,
-                    path=[target.cell, next_cell]
-                    # place=next_cell,
-                    # old_place=target.cell
-                ))
 
                 if next_cell.object is None:
+                    trace.send(command=com.Move(
+                        unit=target,
+                        path=[target.cell, next_cell]
+                        # place=next_cell,
+                        # old_place=target.cell
+                    ))
                     # target.move(c.path)
                     target.move(next_cell)
             self.info_message = self.info_message.format(target, c.path)

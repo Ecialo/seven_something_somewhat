@@ -18,6 +18,8 @@ from kivy.graphics import (
 
 Builder.load_file('./mlp/widgets/sprite_manager/sprite_layer.kv')
 
+MOVE_DURATION = 0.5
+
 
 class SpriteLayer(RelativeLayout):
 
@@ -42,6 +44,9 @@ class Anchor(Widget):
         super().__init__(**kwargs)
         self.connected = []
 
+    def __repr__(self):
+        return "Anchor at {}".format(self.pos)
+
     def connect(self, w):
         self.connected.append(w)
         w.update_pos(self)
@@ -65,9 +70,9 @@ class Link(Anchor):
     # to_anchor = ObjectProperty()
 
     def __init__(self, from_anchor, to_anchor, **kwargs):
-        super().__init__(**kwargs)
         self.from_anchor = from_anchor
         self.to_anchor = to_anchor
+        super().__init__(**kwargs)
         self.v = None
         from_anchor.connect(self)
         to_anchor.connect(self)
@@ -87,6 +92,9 @@ class Link(Anchor):
             return other
         else:
             raise TypeError("Not a Link or Chain")
+
+    def __repr__(self):
+        return "Link from {} to {}".format(self.from_anchor, self.to_anchor)
 
     def update_pos(self, _):
         self.update_vector()
@@ -122,6 +130,9 @@ class Chain:
     def __init__(self, links):
         self.links = deque(links)
 
+    # def __repr__(self):
+    #     return ""
+
     def __add__(self, other):
         if isinstance(other, Link):
             self.links.append(other)
@@ -147,7 +158,7 @@ class MoveAnimation:
         print("PATH")
         self._widget = widget
         anim_sequence = [
-            Animation(progress=1.0, duration=0.5) for _ in self.path
+            Animation(progress=1.0, duration=MOVE_DURATION) for _ in self.path
         ]
         print(anim_sequence)
         anim_sequence[0].bind(on_start=self.on_start)
@@ -163,14 +174,14 @@ class MoveAnimation:
         print("Connect to link")
         widget = self._widget
         widget.disconnect()
-        self.path[0].connect(widget)
+        widget.connect(self.path[0])
         # self.path[0].from_anchor.parent.parent.parent.sprite_layer.add_widget(self.path[0])
 
     def on_complete(self, _):
         print("Connect to endpoint")
         widget = self._widget
         widget.disconnect()
-        self.path[-1].to_anchor.connect(widget)
+        widget.connect(self.path[-1].to_anchor)
         self._callback()
 
     def monitor_progress(self, inst, progress):
@@ -181,7 +192,7 @@ class MoveAnimation:
         def on_complete(_, __=None):
             print("COMPLETE")
             self._widget.disconnect()
-            self.path[part_i + 1].connect(self._widget)
+            self._widget.connect(self.path[part_i + 1])
             self._animations[part_i + 1].start(self.path[part_i + 1])
 
         return on_complete
