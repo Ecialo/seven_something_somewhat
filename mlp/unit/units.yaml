@@ -3,7 +3,7 @@
   resources:
     health: 100
     initiative: 3
-    action_points: 3
+    action_points: 5
     unit_state: !res
       type: option
       name: state

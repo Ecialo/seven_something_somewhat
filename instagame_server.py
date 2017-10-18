@@ -47,35 +47,18 @@ class TestServer(tcpserver.TCPServer):
 
     def __init__(self, *args):
         self.game = None
-        # m = Muzik()
-        # m2 = Muzik()
-        # m.place_in(self.game.grid[1, 1])
-        # m2.place_in(self.game.grid[2, 1])
         super().__init__(*args)
-
-        # self.m = Muzik()
-        # self.stream = None
-        # self.inqueue = queues.Queue()
-        # self.outqueue = queues.Queue()
 
     @gen.coroutine
     def handle_stream(self, stream, address):
         ioloop.IOLoop.current().spawn_callback(self.work_with, stream)
 
     async def send_update(self, stream):
-        # print(self.game.registry.game_objects)
-        # print(self.game.registry.dump())
-        # payload = self.game.registry.dump()
-        # payload = {
-            # 'commands': self.game.commands[::],
-            # 'registry': [CreateOrUpdateTag(o) for o in self.game.registry.dump()],
-        # }
         payload = [CreateOrUpdateTag(o) for o in self.game.registry.dump()]
         message = {
             'message_type': (message_type.GAME, game_message.UPDATE),
             'payload': payload
         }
-        # await stream.write(json.dumps(message).encode())
         await stream.write(encode(message) + SEPARATOR)
         payload = self.game.commands[::]
         message = {
@@ -88,7 +71,6 @@ class TestServer(tcpserver.TCPServer):
 
     async def work_with(self, stream):
         try:
-            # inital_message = await stream.read_bytes(1000, partial=True)
             inital_message = await stream.read_until(SEPARATOR)
         except iostream.StreamClosedError:
             print("Wait, what?")
@@ -103,9 +85,7 @@ class TestServer(tcpserver.TCPServer):
             grid = HexGrid((5, 5))
             self.game = Game(grid=grid, turn_order_manager=TurnOrderManager(), **inital_data)
             self.game.turn_order_manager.rearrange()
-            # self.game.switch_state()
         await self.send_update(stream)
-        # self.game.switch_state()
         while True:
             try:
                 msg = await stream.read_until(SEPARATOR)
@@ -137,4 +117,5 @@ class TestServer(tcpserver.TCPServer):
 
 server = TestServer()
 server.listen(1488)
+print("Start server on port 1488")
 ioloop.IOLoop.current().start()

@@ -199,8 +199,8 @@ class Unit(GameObject):
         return self.current_action_bar.apply_actions(speed)
 
     def refill_action_points(self):
-        self.stats.action_points = 3       # TODO сделать по людски
-        self.stats.move_points = 3
+        self.stats.action_points += 999       # TODO сделать по людски
+        # self.stats.move_points = 3
         for status in list(self.stats.statuses.values()):
             status.tick()
 
