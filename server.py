@@ -25,27 +25,11 @@ from mlp.game import (
     Game,
     TurnOrderManager,
 )
-from mlp.unit import Muzik
-from mlp.actions import action
-from mlp.player import Player
 from mlp.bind_widget import bind_widget
 from mlp.grid import (
     HexCell,
     HexGrid,
 )
-from mlp.terrain import Grass
-
-@bind_widget('HexCellWidget')
-class GrassCell(HexCell):
-
-    def __init__(self, pos, grid=None):
-        super().__init__(pos, grid=grid, terrain=Grass())
-
-
-@bind_widget('Hexgrid')
-class GrassGrid(HexGrid):
-
-    cell = GrassCell
 
 
 ALL = "all"
