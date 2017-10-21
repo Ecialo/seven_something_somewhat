@@ -188,7 +188,7 @@ class PurgeableCBOREncoder(cbor2.CBOREncoder):
 
 mlp_decoder = cbor2.CBORDecoder(semantic_decoders={
     40: RefDecoder(),
-    41: remote_call_decoder,
+    # 41: remote_call_decoder,
     42: ActionDecoder(),
     43: CreateOrUpdateDecoder(),
     44: CellDecoder(),
@@ -224,3 +224,11 @@ def mlp_dumps(obj):
 def mlp_loads(payload):
     buf = io.BytesIO(payload)
     return mlp_decoder.decode(buf)
+
+
+def make_message(type_, payload=None):
+    message = {
+        "message_type": type_,
+        "payload": payload
+    }
+    return mlp_dumps(message)

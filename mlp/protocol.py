@@ -22,6 +22,7 @@ class Enum(Namespace):
         for const_name, const_val in zip(consts, range(len(consts))):
             setattr(self, const_name, const_val)
 
+ALL = 0
 
 message_type = Enum(
     "CHAT",
@@ -40,6 +41,8 @@ game_message = Enum(
 )
 
 lobby_message = Enum(
+    "ACCEPT",
+    "REFUSE",
     "JOIN",
     "LEAVE",
     "READY",

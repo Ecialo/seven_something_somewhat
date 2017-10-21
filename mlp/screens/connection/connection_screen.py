@@ -38,8 +38,11 @@ class ConnectionScreen(Screen):
         self.app.player_name = name
         nm.host = host
         nm.port = int(port)
-        self.app.connect()
+        nm.start()
         # self.app.connect_to_server(host=host, port=int(port))
+
+    def receive(self, message_struct):
+        pass
 
     def cancel(self):
         self.app.stop()
