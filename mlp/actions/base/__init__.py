@@ -6,6 +6,7 @@ from ...commands.command import (
     Place,
     Revoke,
 )
+from ...commands import command as com
 from .effect import (
     UnitEffect,
     MetaEffect,
@@ -56,13 +57,15 @@ class Move(UnitEffect):
                 next_cell = grid.find_path(target.cell, path_part)[1]
 
                 # send command
+
                 if next_cell.object is None:
-                    # target.move(c.path)
-                    trace.send(command=Place(
+                    trace.send(command=com.Move(
                         unit=target,
-                        place=next_cell,
-                        old_place=target.cell
+                        path=[target.cell, next_cell]
+                        # place=next_cell,
+                        # old_place=target.cell
                     ))
+                    # target.move(c.path)
                     target.move(next_cell)
             self.info_message = self.info_message.format(target, c.path)
             super()._apply(target, context)
@@ -82,7 +85,7 @@ class Damage(UnitEffect):
         with self.configure(context) as c:
             target.stats.health -= c.amount
             if target.stats.health <= 0:
-                trace.send(command=Revoke(target, target.cell))
+                trace.send(command=com.Revoke(target, target.cell))
                 target.kill()
             self.info_message = self.info_message.format(target, c.amount)
             super()._apply(target, context)
