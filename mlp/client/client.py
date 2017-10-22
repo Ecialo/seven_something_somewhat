@@ -52,11 +52,13 @@ class MLPClientApp(App):
         self.chat = cw
 
         root.ids.chat_button.bind(on_press=self.toggle_chat)
+        self.network_manager.start()
         return root
 
     def watch_network(self, _):
         for message in self.network_manager.dump():
             message_struct = mlp_loads(message)
+            print(message_struct)
             message_struct['message_type'] = tuple(message_struct['message_type'])
             self.screen_manager.current_screen.receive(message_struct)
 

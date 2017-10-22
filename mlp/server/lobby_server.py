@@ -11,7 +11,10 @@ from ..protocol import (
     lobby_message as lm,
     ALL,
 )
-from ..serialization import make_message
+from ..serialization import (
+    make_message,
+    mlp_loads,
+)
 from .user import User
 
 
@@ -23,17 +26,22 @@ class LobbyServer(tcpserver.TCPServer):
         self.queue = queues.Queue()
 
     async def handle_stream(self, stream, address):
+        print("Incoming connection")
         ioloop.IOLoop.current().spawn_callback(self.handshake, stream)
 
     async def handshake(self, stream):
-        username = await stream.read_until(SEPARATOR)
-        if username in self._users:
-            await self.refuse_connection(stream)
-        else:
-            await self.add_user(username, stream)
+        raw_message = await stream.read_until(SEPARATOR)
+        message_struct = mlp_loads(raw_message)
+        print(message_struct)
+        await self.refuse_connection(stream)
+        # if username in self._users:
+        #     await self.refuse_connection(stream)
+        # else:
+        #     await self.add_user(username, stream)
 
     @staticmethod
     async def refuse_connection(stream):
+        print("Refuse")
         await stream.write(make_message(
             (mt.LOBBY, lm.REFUSE)
         ))

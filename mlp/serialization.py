@@ -231,4 +231,4 @@ def make_message(type_, payload=None):
         "message_type": type_,
         "payload": payload
     }
-    return mlp_dumps(message)
+    return mlp_dumps(message) + SEPARATOR
