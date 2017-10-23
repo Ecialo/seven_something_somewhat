@@ -24,7 +24,8 @@ class ConnectionScreen(Screen):
         super(ConnectionScreen, self).__init__(**kwargs)
         self.app = app
         self.handlers = {
-            (mt.LOBBY, lm.REFUSE): self.refuse
+            (mt.LOBBY, lm.REFUSE): self.refuse,
+            (mt.LOBBY, lm.ACCEPT): self.accept,
         }
 
     def connect(self, host, port, name):
@@ -47,14 +48,14 @@ class ConnectionScreen(Screen):
         # nm.host = host
         # nm.port = int(port)
         # nm.start()
-        nm.send("lobby", make_message(
+        nm.send("lobby", (
             (mt.LOBBY, lm.JOIN),
             name
         ))
         # self.app.connect_to_server(host=host, port=int(port))
 
     def receive(self, message_struct):
-        print(message_struct)
+        # print(message_struct)
         self.handlers[message_struct["message_type"]](message_struct["payload"])
 
     def refuse(self, _):
@@ -62,7 +63,7 @@ class ConnectionScreen(Screen):
         # self.app.network_manager.loop.stop()
 
     def accept(self, _):
-        pass
+        self.app.screen_manager.current = 'lobby'
 
     def cancel(self):
         self.app.stop()

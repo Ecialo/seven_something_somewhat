@@ -4,6 +4,7 @@ from tornado import (
     queues,
     gen,
 )
+import blinker
 
 from ..protocol import (
     SEPARATOR,
@@ -17,6 +18,8 @@ from ..serialization import (
 )
 from .user import User
 
+process = blinker.signal("process")
+
 
 class LobbyServer(tcpserver.TCPServer):
 
@@ -25,6 +28,11 @@ class LobbyServer(tcpserver.TCPServer):
         self._users = {}
         self.queue = queues.Queue()
 
+        handlers = {}
+
+        process.connect(self.process_message)
+        ioloop.IOLoop.current().spawn_callback(self.send_message)
+
     async def handle_stream(self, stream, address):
         print("Incoming connection")
         ioloop.IOLoop.current().spawn_callback(self.handshake, stream)
@@ -32,12 +40,11 @@ class LobbyServer(tcpserver.TCPServer):
     async def handshake(self, stream):
         raw_message = await stream.read_until(SEPARATOR)
         message_struct = mlp_loads(raw_message)
-        print(message_struct)
-        await self.refuse_connection(stream)
-        # if username in self._users:
-        #     await self.refuse_connection(stream)
-        # else:
-        #     await self.add_user(username, stream)
+        username = message_struct['payload']
+        if username in self._users:
+            await self.refuse_connection(stream)
+        else:
+            await self.add_user(username, stream)
 
     @staticmethod
     async def refuse_connection(stream):
@@ -51,13 +58,16 @@ class LobbyServer(tcpserver.TCPServer):
         await stream.write(make_message(
             (mt.LOBBY, lm.ACCEPT)
         ))
-        await self.queue.put(
-            (ALL, make_message((mt.LOBBY, lm.JOIN), username))
-        )
+        # await self.queue.put(
+        #     (ALL, ((mt.LOBBY, lm.JOIN), username))
+        # )
         self._users[username] = User(username, stream)
         await self.queue.put(
-            (username, make_message((mt.LOBBY, lm.ONLINE), list(self._users)))
+            (ALL, ((mt.LOBBY, lm.ONLINE), list(self._users)))
         )
+
+    def process_message(self, user, message):
+        pass
 
     async def remove_user(self, user):
         pass
@@ -78,6 +88,6 @@ class LobbyServer(tcpserver.TCPServer):
         while True:
             destination, message = await self.queue.get()
             if destination is ALL:
-                await gen.multi([self._users[user].queue.put(message) for user in self._users])
+                await gen.multi([self._users[user].queue.put(make_message(*message)) for user in self._users])
             else:
-                await self._users[destination].queue.put(message)
+                await self._users[destination].queue.put(make_message(*message))

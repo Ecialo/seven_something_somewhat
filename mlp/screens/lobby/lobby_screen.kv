@@ -55,5 +55,20 @@
             BoxLayout:
                 size_hint: 1, None
 
-        ListView:
-            id: online_users
+    RecycleView:
+        id: online_users
+        pos_hint: {'right': 1.0}
+        size_hint: 0.2, 0.8
+        viewclass: 'Label'
+        RecycleBoxLayout:
+            orientation: 'vertical'
+            default_size: None, dp(56)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            canvas:
+                Color:
+                    rgba: 0.3, 0.3, 0.3, 1.0
+                Rectangle:
+                    pos: self.pos
+                    size: self.size

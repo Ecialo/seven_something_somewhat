@@ -18,6 +18,7 @@ from .serialization import (
     mlp_loads,
 )
 from .protocol import SEPARATOR
+from .serialization import make_message
 
 
 # class Connection:
@@ -89,7 +90,7 @@ class NetworkManager(Thread):
     def send(self, address, message):
         # print('send', struct)
         # message = self.encode(struct)
-        self.inqueue.put_nowait((address, message))
+        self.inqueue.put_nowait((address, make_message(*message)))
 
     def dump(self):
         data = deque()

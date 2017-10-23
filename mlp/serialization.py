@@ -196,7 +196,8 @@ mlp_decoder = cbor2.CBORDecoder(semantic_decoders={
     46: CommandDecoder(),
 })
 mlp_encoder = PurgeableCBOREncoder(
-    value_sharing=True,
+    # value_sharing=True,
+    value_sharing=False,
     encoders={
         Cell: encode_cell,
         Action: encode_action,
