@@ -9,17 +9,19 @@ from ..protocol import SEPARATOR
 from ..serialization import mlp_loads
 
 process = blinker.signal("process")
+disconnect = blinker.signal("disconnect")
 
 
 class User:
 
     def __init__(self, username, stream):
-        self._name = username
+        self.name = username
         self._stream = stream
         self.queue = queues.Queue()
         self.is_alive = True
 
         ioloop.IOLoop.current().spawn_callback(self.send_message)
+        ioloop.IOLoop.current().spawn_callback(self.await_message)
 
     async def await_message(self):
         while self.is_alive:
@@ -33,7 +35,9 @@ class User:
                 process.send(self, message=message_struct)
 
     async def disconnect(self):
-        pass
+        print("Disconnect", self)
+        self.is_alive = False
+        disconnect.send(self)
 
     async def send_message(self):
         while self.is_alive:

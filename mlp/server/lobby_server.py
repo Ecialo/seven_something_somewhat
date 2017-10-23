@@ -19,6 +19,7 @@ from ..serialization import (
 from .user import User
 
 process = blinker.signal("process")
+disconnect = blinker.signal("disconnect")
 
 
 class LobbyServer(tcpserver.TCPServer):
@@ -31,6 +32,7 @@ class LobbyServer(tcpserver.TCPServer):
         handlers = {}
 
         process.connect(self.process_message)
+        disconnect.connect(self.remove_user)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
 
     async def handle_stream(self, stream, address):
@@ -62,15 +64,20 @@ class LobbyServer(tcpserver.TCPServer):
         #     (ALL, ((mt.LOBBY, lm.JOIN), username))
         # )
         self._users[username] = User(username, stream)
-        await self.queue.put(
-            (ALL, ((mt.LOBBY, lm.ONLINE), list(self._users)))
-        )
+        await self.update_userlist()
 
     def process_message(self, user, message):
         pass
 
-    async def remove_user(self, user):
-        pass
+    def remove_user(self, user):
+        print("Remove", user)
+        self._users.pop(user.name)
+        ioloop.IOLoop.current().spawn_callback(self.update_userlist)
+
+    async def update_userlist(self):
+        await self.queue.put(
+            (ALL, ((mt.LOBBY, lm.ONLINE), list(self._users)))
+        )
 
     async def create_game_node(self):
         pass
