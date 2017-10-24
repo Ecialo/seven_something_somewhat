@@ -10,9 +10,6 @@ from ...protocol import (
     lobby_message as lm,
     message_type as mt,
 )
-from ...serialization import (
-    make_message
-)
 
 Builder.load_file('./mlp/screens/connection/connection_screen.kv')
 

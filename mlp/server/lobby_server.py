@@ -17,6 +17,7 @@ from ..serialization import (
     mlp_loads,
 )
 from .user import User
+from .game_session import GameSession
 
 process = blinker.signal("process")
 disconnect = blinker.signal("disconnect")
@@ -27,9 +28,13 @@ class LobbyServer(tcpserver.TCPServer):
     def __init__(self, *args):
         super().__init__(*args)
         self._users = {}
+        self._free_session = GameSession()
+        self._full_sessions = {}
         self.queue = queues.Queue()
 
-        handlers = {}
+        self.handlers = {
+            (mt.LOBBY, lm.FIND_SESSION): self.find_session,
+        }
 
         process.connect(self.process_message)
         disconnect.connect(self.remove_user)
@@ -67,7 +72,8 @@ class LobbyServer(tcpserver.TCPServer):
         await self.update_userlist()
 
     def process_message(self, user, message):
-        pass
+        message_type = tuple(message["message_type"])
+        ioloop.IOLoop.current().spawn_callback(self.handlers[message_type], user, message['payload'])
 
     def remove_user(self, user):
         print("Remove", user)
@@ -79,17 +85,13 @@ class LobbyServer(tcpserver.TCPServer):
             (ALL, ((mt.LOBBY, lm.ONLINE), list(self._users)))
         )
 
-    async def create_game_node(self):
-        pass
-
-    async def deconstruct_game_node(self):
-        pass
-
-    async def connect_user_to_game_node(self):
-        pass
-
-    async def disconnect_user_fom_game_node(self):
-        pass
+    async def find_session(self, user, _):
+        session = self._free_session
+        session.add_user(user)
+        if session.is_full():
+            self._full_sessions[session.uid] = session
+            self._free_session = GameSession()
+            session.start()
 
     async def send_message(self):
         while True:

@@ -45,11 +45,12 @@ lobby_message = Enum(
     "REFUSE",
     "JOIN",
     "LEAVE",
-    "READY",
-    "UNREADY",
+    "CREATE_SESSION",
+    "JOIN_SESSION",
+    "FIND_SESSION",
+    "LEAVE_SESSION",
     "ONLINE",
-    "GAME_OVER",
-    "START_GAME",
+    "UPDATE_SESSIONS",
 )
 chat_message = Enum(
     "BROADCAST"

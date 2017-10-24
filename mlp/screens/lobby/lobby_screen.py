@@ -17,29 +17,10 @@ class LobbyScreen(Screen):
     def __init__(self, app, **kwargs):
         super(LobbyScreen, self).__init__(**kwargs)
         self.app = app
-        self.ids.ready_checkbox.bind(state=self.on_ready_clicked)
 
         self.handlers = {
             (mt.LOBBY, lm.ONLINE): self.update_users
         }
-
-
-    # Обработка событий с виджетов
-
-    def on_ready_clicked(self, checkbox, state):
-        if state == 'down':
-            pass
-            # self.app.send_lobby_ready()
-        else:
-            pass
-            # self.app.send_lobby_not_ready()
-
-    def notify(self, text):
-        """
-        Показывает уведомление вверху экрана.
-        """
-
-        self.nm.notify(text)
 
     def receive(self, message_struct):
         # print(message_struct)
@@ -47,3 +28,16 @@ class LobbyScreen(Screen):
 
     def update_users(self, users):
         self.ids.online_users.data = [{'text': user} for user in sorted(users)]
+
+    def update_sessions(self, sessions):
+        pass
+
+    def find_session(self):
+        nm = self.app.network_manager
+        nm.send(
+            "lobby",
+            (
+                (mt.LOBBY, lm.FIND_SESSION),
+                None,
+            )
+        )
