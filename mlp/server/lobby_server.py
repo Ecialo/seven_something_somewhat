@@ -92,6 +92,11 @@ class LobbyServer(tcpserver.TCPServer):
             self._full_sessions[session.uid] = session
             self._free_session = GameSession()
             session.start()
+            for user in session.users:
+                await self.queue.put((
+                    user,
+                    ((mt.LOBBY, lm.JOIN), session.uid)
+                ))
 
     async def send_message(self):
         while True:

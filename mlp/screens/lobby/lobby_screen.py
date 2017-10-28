@@ -14,12 +14,17 @@ Builder.load_file('./mlp/screens/lobby/lobby_screen.kv')
 class LobbyScreen(Screen):
     app = prop.ObjectProperty()
 
-    def __init__(self, app, **kwargs):
+    def __init__(self, app, host, port, **kwargs):
         super(LobbyScreen, self).__init__(**kwargs)
         self.app = app
+        self.host = host
+        self.port = port
+        self.nm = self.app.network_manager
 
         self.handlers = {
-            (mt.LOBBY, lm.ONLINE): self.update_users
+            (mt.LOBBY, lm.ONLINE): self.update_users,
+            (mt.LOBBY, lm.JOIN): self.join_session,
+            (mt.LOBBY, lm.REFUSE): self.refuse,
         }
 
     def receive(self, message_struct):
@@ -33,7 +38,7 @@ class LobbyScreen(Screen):
         pass
 
     def find_session(self):
-        nm = self.app.network_manager
+        nm = self.nm
         nm.send(
             "lobby",
             (
@@ -41,3 +46,13 @@ class LobbyScreen(Screen):
                 None,
             )
         )
+
+    def join_session(self, session_uid):
+        self.nm.connect("{}/{}".format(self.host, session_uid), int(self.port), "game")
+        self.nm.send("game", (
+            (mt.LOBBY, lm.JOIN),
+            self.app.player_name
+        ))
+
+    def refuse(self, _):
+        self.app.notify("FUCK YOU")

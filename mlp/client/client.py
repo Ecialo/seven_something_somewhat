@@ -43,7 +43,7 @@ class MLPClientApp(App):
         sm.transition = FadeTransition()
         #
         sm.add_widget(screens.ConnectionScreen(app=self, name='connection'))
-        sm.add_widget(screens.LobbyScreen(app=self, name='lobby'))
+        # sm.add_widget(screens.LobbyScreen(app=self, name='lobby'))
         # sm.add_widget(screens.GameScreen(self, game.Game(), self.network_manager, name="game"))
         # sm.add_widget(screens.GameOverScreen(self, name="game_over"))
 

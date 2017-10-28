@@ -10,6 +10,7 @@ from ...protocol import (
     lobby_message as lm,
     message_type as mt,
 )
+from ..lobby import LobbyScreen
 
 Builder.load_file('./mlp/screens/connection/connection_screen.kv')
 
@@ -24,6 +25,8 @@ class ConnectionScreen(Screen):
             (mt.LOBBY, lm.REFUSE): self.refuse,
             (mt.LOBBY, lm.ACCEPT): self.accept,
         }
+        self.host = None
+        self.port = None
 
     def connect(self, host, port, name):
         if not host or not port or not name:
@@ -39,6 +42,8 @@ class ConnectionScreen(Screen):
                 fields=', '.join(l))
             self.app.notify(err)
             return
+        self.host = host
+        self.port = port
         nm = self.app.network_manager
         self.app.player_name = name
         nm.connect(host, int(port), "lobby")
@@ -60,6 +65,8 @@ class ConnectionScreen(Screen):
         # self.app.network_manager.loop.stop()
 
     def accept(self, _):
+        sm = self.app.screen_manager
+        sm.add_widget(LobbyScreen(app=self.app, name='lobby', host=self.host, port=self.port))
         self.app.screen_manager.current = 'lobby'
 
     def cancel(self):
