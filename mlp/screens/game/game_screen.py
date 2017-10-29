@@ -42,4 +42,6 @@ class GameScreen(Screen):
 
     def receive(self, message_struct):
         # print(message_struct)
-        self.handlers[message_struct["message_type"]](message_struct["payload"])
+        if message_struct['message_type'][0] == mt.GAME:
+            self.game.receive_message(message_struct)
+        # self.handlers[message_struct["message_type"]](message_struct["payload"])

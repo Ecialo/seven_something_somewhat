@@ -136,6 +136,7 @@ class RemoteGame(floatlayout.FloatLayout):
 
     def on_receive_message(self, struct):
         # print(struct)
+        # print("LOAD GAME", self.is_loaded)
         if not self.is_loaded:
             self.grid = self.game.grid.make_widget(pos_hint={'center_x': 0.5, 'center_y': 0.5})
             arena = CompositeArena(self.grid)
