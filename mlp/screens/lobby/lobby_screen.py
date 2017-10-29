@@ -25,6 +25,7 @@ class LobbyScreen(Screen):
             (mt.LOBBY, lm.ONLINE): self.update_users,
             (mt.LOBBY, lm.JOIN): self.join_session,
             (mt.LOBBY, lm.REFUSE): self.refuse,
+            (mt.LOBBY, lm.ACCEPT): self.accept,
         }
 
     def receive(self, message_struct):
@@ -47,8 +48,9 @@ class LobbyScreen(Screen):
             )
         )
 
-    def join_session(self, session_uid):
-        self.nm.connect("{}/{}".format(self.host, session_uid), int(self.port), "game")
+    def join_session(self, port):
+        print("Connect to {} {}".format(self.host, port))
+        self.nm.connect(self.host, int(port), "game")
         self.nm.send("game", (
             (mt.LOBBY, lm.JOIN),
             self.app.player_name
@@ -56,3 +58,6 @@ class LobbyScreen(Screen):
 
     def refuse(self, _):
         self.app.notify("FUCK YOU")
+
+    def accept(self, _):
+        self.app.screen_manager.current = 'game'

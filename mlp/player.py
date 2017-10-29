@@ -1,6 +1,6 @@
 from .replication_manager import GameObject
-from .serialization import RefTag
 from .tools import dict_merge
+from .unit import UnitsRegistry
 
 
 class Player(GameObject):
@@ -34,3 +34,10 @@ class Player(GameObject):
         self.name = struct['name']
         self.main_unit = self.registry.load_obj(struct['main_unit'])
         # self.units = struct['units']
+
+    @classmethod
+    def make_from_skel(cls, skel):
+        return cls(
+            name=skel['name'],
+            main_unit=UnitsRegistry()[skel['unit']](skel['name'])
+        )

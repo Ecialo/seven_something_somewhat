@@ -46,6 +46,7 @@ class ConnectionScreen(Screen):
         self.port = port
         nm = self.app.network_manager
         self.app.player_name = name
+        print("Try connect to {}:{}".format(host, port))
         nm.connect(host, int(port), "lobby")
         # nm.host = host
         # nm.port = int(port)

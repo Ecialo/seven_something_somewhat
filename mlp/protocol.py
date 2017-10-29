@@ -8,10 +8,10 @@ class Namespace:
         return "\n".join(map(lambda name_val: "{0} = {1}".format(name_val[0], name_val[1]), self.items()))
 
     def values(self):
-        return self.__dict__.itervalues()
+        return self.__dict__.values()
 
     def names(self):
-        return self.__dict__.iterkeys()
+        return self.__dict__.keys()
 
     def items(self):
         return self.__dict__.items()

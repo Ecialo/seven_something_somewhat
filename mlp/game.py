@@ -138,7 +138,7 @@ class Game:
         if players:
             self.switch_state()
             summon.send(None, unit=players[0].main_unit, cell=self._grid[2, 4])
-            summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
+            # summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
             self.switch_state()
         #     players[0].main_unit.place_in(self._grid[3, 4])
         #     players[-1].main_unit.place_in(self._grid[-1, -1])

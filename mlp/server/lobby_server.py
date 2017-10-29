@@ -1,3 +1,5 @@
+from collections import deque
+
 from tornado import (
     tcpserver,
     ioloop,
@@ -28,7 +30,7 @@ class LobbyServer(tcpserver.TCPServer):
     def __init__(self, *args):
         super().__init__(*args)
         self._users = {}
-        self._free_session = GameSession()
+        self._free_session = GameSession(14088)
         self._full_sessions = {}
         self.queue = queues.Queue()
 
@@ -90,12 +92,13 @@ class LobbyServer(tcpserver.TCPServer):
         session.add_user(user)
         if session.is_full():
             self._full_sessions[session.uid] = session
-            self._free_session = GameSession()
+            self._free_session = GameSession(14089)
             session.start()
+            await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
             for user in session.users:
                 await self.queue.put((
                     user,
-                    ((mt.LOBBY, lm.JOIN), session.uid)
+                    ((mt.LOBBY, lm.JOIN), session.port)
                 ))
 
     async def send_message(self):

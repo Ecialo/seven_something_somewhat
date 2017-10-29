@@ -28,7 +28,7 @@ from .serialization import make_message
 
 class NetworkManager(Thread):
 
-    def __init__(self, host=None, port=None, encoder=mlp_dumps, decoder=mlp_loads):
+    def __init__(self, encoder=mlp_dumps, decoder=mlp_loads):
         super().__init__(name="NetworkManager")
         self.loop = ioloop.IOLoop.current()
         self.client = tcpclient.TCPClient()

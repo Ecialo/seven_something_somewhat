@@ -13,6 +13,7 @@ from .. import network_manager
 from .. import screens
 from .. import protocol as pr
 from ..widgets.chat.chat_widget import ChatWidget
+from ..game import Game
 
 
 class MLPClientApp(App):
@@ -44,9 +45,8 @@ class MLPClientApp(App):
         #
         sm.add_widget(screens.ConnectionScreen(app=self, name='connection'))
         # sm.add_widget(screens.LobbyScreen(app=self, name='lobby'))
-        # sm.add_widget(screens.GameScreen(self, game.Game(), self.network_manager, name="game"))
+        sm.add_widget(screens.GameScreen(self, Game(), self.network_manager, name="game"))
         # sm.add_widget(screens.GameOverScreen(self, name="game_over"))
-
         self.screen_manager = sm
         self.notifications_mgr = nm
         self.chat = cw
