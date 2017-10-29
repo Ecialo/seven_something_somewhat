@@ -78,17 +78,38 @@ class Oper(Property):
         return self.oper(self.left.get(context), self.right.get(context))
 
 
+class IndexProperty(Property):
+
+    def __init__(self, source, index):
+        self.source = source
+        self.index = index
+
+    def get(self, context):
+        return self.source.get(context)[self.index]
+
 PROPERTY_TABLE = {
 }
 
 
-def property_constructor(loader, node):
-    property_ = loader.construct_scalar(node)
+def str2prop(property_):
     if property_ in PROPERTY_TABLE:
         return PROPERTY_TABLE[property_]()
     elif property_.startswith("owner") or property_.startswith("target"):
         return UnitAttribute(property_)
+    elif property_.endswith("]"):
+        property_, index = property_.split("[")
+        index = index.rstrip("]")
+        try:
+            index = int(index)
+        except ValueError:
+            index = index
+        property_ = str2prop(property_)
+        return IndexProperty(property_, index)
     else:
         return Attribute(property_)
+
+def property_constructor(loader, node):
+    property_ = loader.construct_scalar(node)
+    return str2prop(property_)
 
 PROPERTY_TAG = "!prop"
