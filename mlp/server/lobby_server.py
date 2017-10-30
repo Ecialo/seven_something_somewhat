@@ -12,6 +12,7 @@ from ..protocol import (
     SEPARATOR,
     message_type as mt,
     lobby_message as lm,
+    game_message as gm,
     ALL,
 )
 from ..serialization import (
@@ -39,6 +40,7 @@ class LobbyServer(tcpserver.TCPServer):
 
         self.handlers = {
             (mt.LOBBY, lm.FIND_SESSION): self.find_session,
+            (mt.GAME, gm.GAME_OVER): self.terminate_session,
         }
 
         process.connect(self.process_message)
@@ -47,6 +49,9 @@ class LobbyServer(tcpserver.TCPServer):
 
     def get_port(self):
         return self.port_pool.popleft()
+
+    def return_port(self, port):
+        self.port_pool.append(port)
 
     async def handle_stream(self, stream, address):
         print("Incoming connection")
@@ -106,6 +111,12 @@ class LobbyServer(tcpserver.TCPServer):
                     user,
                     ((mt.LOBBY, lm.JOIN), session.port)
                 ))
+
+    async def terminate_session(self, session, _):
+        await session.shutdown()
+        self.return_port(session.port)
+        self._full_sessions.pop(session.uid)
+        print(self._full_sessions)
 
     async def send_message(self):
         while True:

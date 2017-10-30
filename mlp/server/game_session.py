@@ -14,7 +14,6 @@ from ..serialization import mlp_loads
 
 mlp.set_start_method('spawn')
 
-terminate_session = blinker.signal("terminate_session")
 process = blinker.signal("process")
 
 
@@ -63,15 +62,19 @@ class GameSession:
         while self.is_alive:
             try:
                 msg = await self._stream.read_until(SEPARATOR)
-                print("FROM GAME SERVER")
-                print(msg)
+                # print("FROM GAME SERVER")
+                # print(msg)
                 msg = msg.rstrip(SEPARATOR)
             except iostream.StreamClosedError:
-                await self.disconnect()
+                await self.shutdown()
             else:
-                pass
-                # message_struct = mlp_loads(msg)
-                # process.send(self, message=message_struct)
+                # pass
+                message_struct = mlp_loads(msg)
+                process.send(self, message=message_struct)
 
-    async def disconnect(self):
-        pass
+    async def shutdown(self):
+        self.users.clear()
+        self.is_alive = False
+        if self._game_process.is_alive():
+            self._game_process.terminate()
+

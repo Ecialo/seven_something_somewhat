@@ -34,12 +34,12 @@ disconnect = blinker.signal("disconnect")
 
 class GameServer(tcpserver.TCPServer):
 
-    def __init__(self, players, stream, *args, **kwargs):
+    def __init__(self, players, lobby_stream, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.players = players
         self._users = {}
         self.queue = queues.Queue()
-        self.lobby_stream = stream
+        self.lobby_stream = lobby_stream
         self.game = None
 
         self.handlers = {
@@ -49,11 +49,12 @@ class GameServer(tcpserver.TCPServer):
         self.is_started = False
         self.is_alive = True
         process.connect(self.process_message)
+        disconnect.connect(self.remove_user)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
 
     async def handle_stream(self, stream, address):
-        print("From game with love")
-        await self.lobby_stream.write(b"OLOLO"+SEPARATOR)
+        # print("From game with love")
+        # await self.lobby_stream.write(b"OLOLO"+SEPARATOR)
         ioloop.IOLoop.current().spawn_callback(self.handshake, stream)
 
     async def handshake(self, stream):
@@ -65,7 +66,7 @@ class GameServer(tcpserver.TCPServer):
             await self.refuse_connection(stream)
         else:
             await self.add_user(username, stream)
-        print(len(self._users), len(self.players))
+        # print(len(self._users), len(self.players))
         if len(self._users) == len(self.players):
             await self.start_game()
 
@@ -121,10 +122,17 @@ class GameServer(tcpserver.TCPServer):
 
     def remove_user(self, user):
         self._users.pop(user.name)
+        ioloop.IOLoop.current().spawn_callback(self.check_status)
 
     async def check_status(self):
         if len(self._users) == 0:
-            pass
+            await self.shutdown()
+
+    async def shutdown(self):
+        self.is_alive = False
+        await self.lobby_stream.write(make_message(
+            (mt.GAME, gm.GAME_OVER)
+        ))
 
 
 def start_game_server(port, socket, players):
