@@ -24,13 +24,16 @@ from .game_session import GameSession
 process = blinker.signal("process")
 disconnect = blinker.signal("disconnect")
 
+MAX_SESSIONS = 10
+
 
 class LobbyServer(tcpserver.TCPServer):
 
     def __init__(self, *args):
         super().__init__(*args)
+        self.port_pool = deque(list(range(14088, 14088 + MAX_SESSIONS)))
         self._users = {}
-        self._free_session = GameSession(14088)
+        self._free_session = GameSession(self.get_port())
         self._full_sessions = {}
         self.queue = queues.Queue()
 
@@ -41,6 +44,9 @@ class LobbyServer(tcpserver.TCPServer):
         process.connect(self.process_message)
         disconnect.connect(self.remove_user)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
+
+    def get_port(self):
+        return self.port_pool.popleft()
 
     async def handle_stream(self, stream, address):
         print("Incoming connection")
@@ -92,7 +98,7 @@ class LobbyServer(tcpserver.TCPServer):
         session.add_user(user)
         if session.is_full():
             self._full_sessions[session.uid] = session
-            self._free_session = GameSession(14089)
+            self._free_session = GameSession(self.get_port())
             session.start()
             await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
             for user in session.users:

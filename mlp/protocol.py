@@ -38,6 +38,7 @@ game_message = Enum(
     "ACTION_REMOVE",
     "READY",
     "COMMAND",
+    "GAME_OVER",
 )
 
 lobby_message = Enum(

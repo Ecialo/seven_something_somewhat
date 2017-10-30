@@ -1,6 +1,7 @@
 from tornado import (
     tcpserver,
     ioloop,
+    iostream,
     queues,
     gen,
 )
@@ -33,22 +34,26 @@ disconnect = blinker.signal("disconnect")
 
 class GameServer(tcpserver.TCPServer):
 
-    def __init__(self, players, *args, **kwargs):
+    def __init__(self, players, stream, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.players = players
         self._users = {}
         self.queue = queues.Queue()
+        self.lobby_stream = stream
         self.game = None
 
         self.handlers = {
 
         }
 
+        self.is_started = False
+        self.is_alive = True
         process.connect(self.process_message)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
 
     async def handle_stream(self, stream, address):
         print("From game with love")
+        await self.lobby_stream.write(b"OLOLO"+SEPARATOR)
         ioloop.IOLoop.current().spawn_callback(self.handshake, stream)
 
     async def handshake(self, stream):
@@ -88,7 +93,7 @@ class GameServer(tcpserver.TCPServer):
         await self.send_update()
 
     async def send_message(self):
-        while True:
+        while self.is_alive:
             destination, message = await self.queue.get()
             if destination is ALL:
                 await gen.multi([self._users[user].queue.put(make_message(*message)) for user in self._users])
@@ -114,14 +119,18 @@ class GameServer(tcpserver.TCPServer):
         message_type = tuple(message["message_type"])
         ioloop.IOLoop.current().spawn_callback(self.handlers[message_type], user, message['payload'])
 
+    def remove_user(self, user):
+        self._users.pop(user.name)
 
-def start_game_server(port, players):
+    async def check_status(self):
+        if len(self._users) == 0:
+            pass
+
+
+def start_game_server(port, socket, players):
     load()
     print("START SERVER AT PORT {}".format(port))
-    server = GameServer(players)
-    # server.listen(port)
+    server = GameServer(players, iostream.IOStream(socket))
     server.bind(port)
     server.start()
-    # print("OLOLO")
     ioloop.IOLoop.current().start()
-    # print("AZAZA")

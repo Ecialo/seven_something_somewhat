@@ -1,9 +1,21 @@
 import uuid
 import multiprocessing as mlp
+import socket
+
+import blinker
+from tornado import (
+    ioloop,
+    iostream
+)
 
 from .game_server import start_game_server
+from ..protocol import SEPARATOR
+from ..serialization import mlp_loads
 
 mlp.set_start_method('spawn')
+
+terminate_session = blinker.signal("terminate_session")
+process = blinker.signal("process")
 
 
 class GameSession:
@@ -13,6 +25,8 @@ class GameSession:
         self.port = port
         self.uid = uuid.uuid1()
         self._game_process = None
+        self._stream = None
+        self.is_alive = True
 
     def add_user(self, user):
         self.users[user.name] = user
@@ -22,6 +36,9 @@ class GameSession:
         return len(self.users) == 1
 
     def start(self):
+        ssock, csock = socket.socketpair()
+        self._stream = iostream.IOStream(ssock)
+
         players = [
             {
                 'name': name,
@@ -34,8 +51,27 @@ class GameSession:
             name="GameServer {}".format(self.uid),
             args=(
                 self.port,
+                csock,
                 players,
             ),
             # daemon=True
         )
         self._game_process.start()
+        ioloop.IOLoop.current().spawn_callback(self.await_message)
+
+    async def await_message(self):
+        while self.is_alive:
+            try:
+                msg = await self._stream.read_until(SEPARATOR)
+                print("FROM GAME SERVER")
+                print(msg)
+                msg = msg.rstrip(SEPARATOR)
+            except iostream.StreamClosedError:
+                await self.disconnect()
+            else:
+                pass
+                # message_struct = mlp_loads(msg)
+                # process.send(self, message=message_struct)
+
+    async def disconnect(self):
+        pass
