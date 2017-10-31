@@ -284,7 +284,6 @@ class Unit(GameObject):
             raise TypeError("Wrong status type")
 
 
-
 def new_unit_constructor(loader, node):
     u_s = loader.construct_mapping(node)
 

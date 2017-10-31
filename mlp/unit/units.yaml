@@ -2,6 +2,7 @@
   name: Muzik
   resources:
     health: 100
+    armor: 0
     initiative: 3
     action_points: 5
     unit_state: !res
@@ -38,6 +39,7 @@
   name: Dog
   resources:
     health: 15
+    armor: 0
     initiative: 4
     action_points: 5
   actions:
