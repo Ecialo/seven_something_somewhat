@@ -51,6 +51,11 @@
   name: Dummy
   resources:
     health: 100
+    armor: !res
+      name: armor
+      type: numeric
+      max: 100
+      initial: 0
   actions:
     - Move
   widget:

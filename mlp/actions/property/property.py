@@ -94,7 +94,7 @@ PROPERTY_TABLE = {
 def str2prop(property_):
     if property_ in PROPERTY_TABLE:
         return PROPERTY_TABLE[property_]()
-    elif property_.startswith("owner") or property_.startswith("target"):
+    elif property_.startswith("owner") or property_.startswith("target") or property_.startswith("victim"):
         return UnitAttribute(property_)
     elif property_.endswith("]"):
         property_, index = property_.split("[")

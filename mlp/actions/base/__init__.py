@@ -83,7 +83,7 @@ class Damage(UnitEffect):
 
     def _apply(self, target, context):
         with self.configure(context) as c:
-            target.stats.health -= c.amount
+            target.stats.health -= max(1, c.amount - target.stats.armor)
             if target.stats.health <= 0:
                 trace.send(command=com.Revoke(target, target.cell))
                 target.kill()
@@ -166,8 +166,13 @@ class ChangeStat(UnitEffect):
                 target,
                 c.value,
             )
+            # print("SET")
+            # print(target.stats, c.stat_name, c.value)
             setattr(target.stats, c.stat_name, c.value)
             super()._apply(target, context)
+
+    def __repr__(self):
+        return "Change stat {} to {}".format(self.stat_name, self.value)
 
 
 # class Reflect(MetaEffect):
