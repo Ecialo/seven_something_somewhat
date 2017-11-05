@@ -63,19 +63,6 @@ class MLPClientApp(App):
             self.screen_manager.current_screen.receive(message_struct)
 
 
-    # def connect(self):
-    #     self.network_manager.start()
-    #     self.screen_manager.current = 'lobby'
-        # self.screen_manager.get_screen('game').username = self.player_name
-        # join_msg = {
-        #     "message_type": (pr.message_type.LOBBY, pr.lobby_message.JOIN),
-        #     "payload":
-        #         {
-        #             "name": self.player_name,
-        #         }
-        # }
-        # self.network_manager.send(join_msg)
-
     def user_join(self, struct):
         username = struct['name']
         self.users_in_lobby.append(username)

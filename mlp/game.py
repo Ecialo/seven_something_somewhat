@@ -35,6 +35,7 @@ summon = blinker.signal("summon")
 revoke = blinker.signal("revoke")
 trace = blinker.signal("trace")
 commands = blinker.signal("commands")
+game_over = blinker.signal("game_over")
 
 
 @bind_widget("TurnOrderIndicator")
@@ -137,8 +138,8 @@ class Game:
         # self._grid.summon()
         if players:
             self.switch_state()
-            summon.send(None, unit=players[0].main_unit, cell=self._grid[2, 4])
-            # summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
+            summon.send(None, unit=players[0].main_unit, cell=self._grid[3, 4])
+            summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
             self.switch_state()
         #     players[0].main_unit.place_in(self._grid[3, 4])
         #     players[-1].main_unit.place_in(self._grid[-1, -1])
@@ -287,8 +288,9 @@ class Game:
         #     logger.debug("{} real stats {}".format(unit, unit.stats.resources))
         return anyone_not_pass
 
-    def declare_winner(self, player):
-        self.winner = player
+    @staticmethod
+    def declare_winner(player):
+        game_over.send(None, player=player)
 
     def switch_state(self):
         self.state = int(not self.state)

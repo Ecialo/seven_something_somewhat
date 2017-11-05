@@ -32,6 +32,9 @@ class GameScreen(Screen):
         self.add_widget(self.game.make_widget(network_manager=network_manager))
         # self.add_widget(Button)
 
+    def on_enter(self, *args):
+        self.username = self.app.player_name
+
     def game_update(self, payload):
         print("KEK")
         self.game.handlers[(mt.GAME, gm.UPDATE)](payload)

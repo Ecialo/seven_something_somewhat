@@ -1,7 +1,7 @@
 - !new_unit
   name: Muzik
   resources:
-    health: 100
+    health: 1
     initiative: 3
     action_points: 5
     unit_state: !res

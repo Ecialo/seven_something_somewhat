@@ -30,6 +30,7 @@ from ..game import (
 
 process = blinker.signal("process")
 disconnect = blinker.signal("disconnect")
+game_over = blinker.signal("game_over")
 
 
 class GameServer(tcpserver.TCPServer):
@@ -50,6 +51,7 @@ class GameServer(tcpserver.TCPServer):
         self.is_alive = True
         process.connect(self.process_message)
         disconnect.connect(self.remove_user)
+        game_over.connect(self.process_game_over)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
 
     async def handle_stream(self, stream, address):
@@ -133,6 +135,12 @@ class GameServer(tcpserver.TCPServer):
         await self.lobby_stream.write(make_message(
             (mt.GAME, gm.GAME_OVER)
         ))
+
+    def process_game_over(self, _, player):
+        ioloop.IOLoop.current().spawn_callback(self._process_game_over, player)
+
+    async def _process_game_over(self, player):
+        pass
 
 
 def start_game_server(port, socket, players):
