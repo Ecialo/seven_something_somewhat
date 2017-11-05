@@ -31,8 +31,8 @@ class GameSession:
         self.users[user.name] = user
 
     def is_full(self):
-        return len(self.users) == 2
-        # return len(self.users) == 1
+        # return len(self.users) == 2
+        return len(self.users) == 1
 
     def start(self):
         ssock, csock = socket.socketpair()

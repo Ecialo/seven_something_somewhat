@@ -121,8 +121,8 @@ class RemoteGame(floatlayout.FloatLayout):
         # )
         for unit in self.game.units:
             for action in unit.current_action_bar:
-                self.network_manager.send(remote_action_append(action))
-        self.network_manager.send(
+                self.network_manager.send('game', remote_action_append(action))
+        self.network_manager.send('game',
             {
                 'message_type': (message_type.GAME, game_message.READY),
                 # 'payload': {'player': self.parent.app.player_name}

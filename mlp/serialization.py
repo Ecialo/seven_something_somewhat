@@ -99,25 +99,36 @@ class CreateOrUpdateDecoder:
 
 
 def remote_action_append(action):
-    msg_struct = {
-        "message_type": (message_type.GAME, game_message.ACTION_APPEND),
-        "payload": {
+    # msg_struct = {
+    #     "message_type": (message_type.GAME, game_message.ACTION_APPEND),
+    #     "payload": {
+    #         'action': action
+    #     }
+    # }
+    msg_struct = (
+        (message_type.GAME, game_message.ACTION_APPEND),
+        {
             'action': action
         }
-    }
+    )
     return msg_struct
 
 
 def remote_action_remove(action):
     unit = action.owner
     # action_index = unit.current_action_bar.actions.index(action)
-    msg_struct = {
-        "message_type": (message_type.GAME, game_message.ACTION_REMOVE),
-        "payload": {
-            # 'action_index': action_index,
+    # msg_struct = {
+    #     "message_type": (message_type.GAME, game_message.ACTION_REMOVE),
+    #     "payload": {
+    #         'unit': unit,
+    #     }
+    # }
+    msg_struct = (
+        (message_type.GAME, game_message.ACTION_REMOVE),
+        {
             'unit': unit,
         }
-    }
+    )
     return msg_struct
 
 
@@ -227,9 +238,14 @@ def mlp_loads(payload):
     return mlp_decoder.decode(buf)
 
 
-def make_message(type_, payload=None):
-    message = {
+def make_struct(type_, payload=None):
+    struct = {
         "message_type": type_,
         "payload": payload
     }
+    return struct
+
+
+def make_message(type_, payload=None):
+    message = make_struct(type_, payload)
     return mlp_dumps(message) + SEPARATOR
