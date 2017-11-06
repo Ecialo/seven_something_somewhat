@@ -126,7 +126,7 @@ class Game:
             (message_type.GAME, game_message.ACTION_APPEND): self.append_action,
             (message_type.GAME, game_message.ACTION_REMOVE): self.remove_action,
             (message_type.GAME, game_message.COMMAND): self.envoke_commands,
-            # (message_type.GAME, game_message.READY): self.run,
+            (message_type.GAME, game_message.READY): self.setup_and_run,
         }
         self._grid = grid
         self._turn_order_manager = turn_order_manager
@@ -204,6 +204,12 @@ class Game:
                     self._turn_order_manager = o
                     break
         return self._turn_order_manager
+
+    def setup_and_run(self, payload):
+        for player in self.players:
+            if player.name == payload['author']:
+                player.is_ready = True
+        self.run()
 
     def run(self):
         """

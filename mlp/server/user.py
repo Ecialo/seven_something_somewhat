@@ -32,6 +32,8 @@ class User:
                 await self.disconnect()
             else:
                 message_struct = mlp_loads(msg)
+                if isinstance(message_struct['payload'], dict):
+                    message_struct['payload']['author'] = self.name
                 process.send(self, message=message_struct)
 
     async def disconnect(self):

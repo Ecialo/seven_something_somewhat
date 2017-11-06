@@ -119,8 +119,13 @@ class GameServer(tcpserver.TCPServer):
         self.game.registry.collect()
 
     def process_message(self, user, message):
+        # print("MESSAGE")
+        # print(message)
         message_type = tuple(message["message_type"])
-        ioloop.IOLoop.current().spawn_callback(self.handlers[message_type], user, message['payload'])
+        if message_type[0] == mt.GAME:
+            ioloop.IOLoop.current().spawn_callback(self.process_with_game, message)
+        else:
+            ioloop.IOLoop.current().spawn_callback(self.handlers[message_type], user, message['payload'])
 
     def remove_user(self, user):
         self._users.pop(user.name)
@@ -141,6 +146,10 @@ class GameServer(tcpserver.TCPServer):
 
     async def _process_game_over(self, player):
         pass
+
+    async def process_with_game(self, message):
+        self.game.receive_message(message)
+        await self.send_update()
 
 
 def start_game_server(port, socket, players):
