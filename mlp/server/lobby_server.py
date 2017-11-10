@@ -98,19 +98,20 @@ class LobbyServer(tcpserver.TCPServer):
             (ALL, ((mt.LOBBY, lm.ONLINE), list(self._users)))
         )
 
-    async def find_session(self, user, _):
-        session = self._free_session
-        session.add_user(user)
-        if session.is_full():
-            self._full_sessions[session.uid] = session
-            self._free_session = GameSession(self.get_port())
-            session.start()
-            await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
-            for user in session.users:
-                await self.queue.put((
-                    user,
-                    ((mt.LOBBY, lm.JOIN), session.port)
-                ))
+    async def find_session(self, user, opponent):
+        if opponent == "user":
+            session = self._free_session
+            session.add_user(user)
+            if session.is_full():
+                self._full_sessions[session.uid] = session
+                self._free_session = GameSession(self.get_port())
+                session.start()
+                await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
+                for user in session.users:
+                    await self.queue.put((
+                        user,
+                        ((mt.LOBBY, lm.JOIN), session.port)
+                    ))
 
     async def terminate_session(self, session, _):
         await session.shutdown()

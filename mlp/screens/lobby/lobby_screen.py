@@ -38,13 +38,13 @@ class LobbyScreen(Screen):
     def update_sessions(self, sessions):
         pass
 
-    def find_session(self):
+    def find_session(self, opponent):
         nm = self.nm
         nm.send(
             "lobby",
             (
                 (mt.LOBBY, lm.FIND_SESSION),
-                None,
+                opponent,
             )
         )
 

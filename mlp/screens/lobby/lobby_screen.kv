@@ -32,7 +32,12 @@
             MyButton:
                 id: create_session
                 text: "Find Game"
-                on_press: root.find_session()
+                on_press: root.find_session("user")
+
+            MyButton:
+                id: vs_ai
+                text: "VS AI"
+                on_press: root.find_session("ai")
 
 #    RecycleView:
 #        id: game_sessions
