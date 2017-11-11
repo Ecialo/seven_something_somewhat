@@ -27,6 +27,7 @@ class GameSession:
         self.port = port
         self.uid = uuid.uuid1()
         self._game_process = None
+        self._lock = None
         self._stream = None
         self.is_alive = True
 
@@ -55,6 +56,7 @@ class GameSession:
                 self.port,
                 csock,
                 players,
+                self._lock,
             ),
             # daemon=True
         )
@@ -93,6 +95,7 @@ class AIGameSession(GameSession):
     def __init__(self, port):
         super().__init__(port)
         self._bot_process = None
+        self._lock = mlp.Semaphore(0)
 
     def start(self):
         # Добавить бота
@@ -102,7 +105,7 @@ class AIGameSession(GameSession):
         self._bot_process = mlp.Process(
             target=run_bot,
             name="Bot {}".format(self.uid),
-            args=None,
+            args=(self.port, self._lock),
         )
         self._bot_process.start()
 

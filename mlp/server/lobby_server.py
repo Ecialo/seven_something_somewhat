@@ -116,10 +116,11 @@ class LobbyServer(tcpserver.TCPServer):
             session.start()
             await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
             for user in session.users:
-                await self.queue.put((
-                    user,
-                    ((mt.LOBBY, lm.JOIN), session.port)
-                ))
+                if user != "bot":
+                    await self.queue.put((
+                        user,
+                        ((mt.LOBBY, lm.JOIN), session.port)
+                    ))
 
     async def terminate_session(self, session, _):
         await session.shutdown()

@@ -32,6 +32,13 @@ from ..game import (
 process = blinker.signal("process")
 disconnect = blinker.signal("disconnect")
 game_over = blinker.signal("game_over")
+next_phase = blinker.signal("next_phase")
+
+
+async def unlock(lock):
+    print("TIME TO UNLOCK")
+    lock.release()
+    print("UNLOCKED ^^")
 
 
 class GameServer(tcpserver.TCPServer):
@@ -53,6 +60,7 @@ class GameServer(tcpserver.TCPServer):
         process.connect(self.process_message)
         disconnect.connect(self.remove_user)
         game_over.connect(self.process_game_over)
+        next_phase.connect(self.next_phase)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
 
     async def handle_stream(self, stream, address):
@@ -124,8 +132,6 @@ class GameServer(tcpserver.TCPServer):
         ))
 
     def process_message(self, user, message):
-        # print("MESSAGE")
-        # print(message)
         message_type = tuple(message["message_type"])
         if message_type[0] == mt.GAME:
             ioloop.IOLoop.current().spawn_callback(self.process_with_game, message)
@@ -135,6 +141,9 @@ class GameServer(tcpserver.TCPServer):
     def remove_user(self, user):
         self._users.pop(user.name)
         ioloop.IOLoop.current().spawn_callback(self.check_status)
+
+    def next_phase(self, _):
+        ioloop.IOLoop.current().spawn_callback(self.send_update)
 
     async def check_status(self):
         if len(self._users) == 0:
@@ -154,10 +163,12 @@ class GameServer(tcpserver.TCPServer):
 
     async def process_with_game(self, message):
         self.game.receive_message(message)
-        await self.send_update()
+        # await self.send_update()
 
 
-def start_game_server(port, socket, players):
+def start_game_server(port, socket, players, lock=None):
+    if lock:
+        ioloop.IOLoop.current().spawn_callback(unlock, lock)
     load()
     print("START SERVER AT PORT {}".format(port))
     server = GameServer(players, iostream.IOStream(socket))

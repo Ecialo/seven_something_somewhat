@@ -36,6 +36,7 @@ revoke = blinker.signal("revoke")
 trace = blinker.signal("trace")
 commands = blinker.signal("commands")
 game_over = blinker.signal("game_over")
+next_phase = blinker.signal("next_phase")
 
 
 @bind_widget("TurnOrderIndicator")
@@ -245,6 +246,7 @@ class Game:
                 player.is_ready = False
             result = True
             self.clear_presumed()
+            next_phase.send()   # Тут высылается сигнал о том, что можно высылать клиентам обновление
         self.switch_state()
         return result
 
