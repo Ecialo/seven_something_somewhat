@@ -197,71 +197,83 @@ class PurgeableCBOREncoder(cbor2.CBOREncoder):
     def purge(self):
         self.shared_containers.clear()
 
-# mlp_decoder = cbor2.CBORDecoder(semantic_decoders={
-#     40: RefDecoder(),
-#     # 41: remote_call_decoder,
-#     42: ActionDecoder(),
-#     43: CreateOrUpdateDecoder(),
-#     44: CellDecoder(),
-#     45: status_decoder,
-#     46: CommandDecoder(),
-# })
+
+class PurgeableCBORDecoder(cbor2.CBORDecoder):
+
+    def purge(self):
+        self.shareables.clear()
+
+mlp_decoder = PurgeableCBORDecoder(semantic_decoders={
+    40: RefDecoder(),
+    # 41: remote_call_decoder,
+    42: ActionDecoder(),
+    43: CreateOrUpdateDecoder(),
+    44: CellDecoder(),
+    45: status_decoder,
+    46: CommandDecoder(),
+})
 
 
-def mlp_decoder():
-    return cbor2.CBORDecoder(semantic_decoders={
-        40: RefDecoder(),
-        # 41: remote_call_decoder,
-        42: ActionDecoder(),
-        43: CreateOrUpdateDecoder(),
-        44: CellDecoder(),
-        45: status_decoder,
-        46: CommandDecoder(),
-    })
-# mlp_encoder = PurgeableCBOREncoder(
-#     value_sharing=True,
-#     # value_sharing=False,
-#     encoders={
-#         Cell: encode_cell,
-#         Action: encode_action,
-#         GameObject: encode_game_object,
-#         Status: encode_status,
-#         Command: encode_command,
-#     }
-# )
+# def mlp_decoder():
+#     return cbor2.CBORDecoder(semantic_decoders={
+#         40: RefDecoder(),
+#         41: remote_call_decoder,
+        # 42: ActionDecoder(),
+        # 43: CreateOrUpdateDecoder(),
+        # 44: CellDecoder(),
+        # 45: status_decoder,
+        # 46: CommandDecoder(),
+    # })
+mlp_encoder = PurgeableCBOREncoder(
+    value_sharing=True,
+    # value_sharing=False,
+    encoders={
+        Cell: encode_cell,
+        Action: encode_action,
+        GameObject: encode_game_object,
+        Status: encode_status,
+        Command: encode_command,
+    }
+)
 
 
-def mlp_encoder():
-    return PurgeableCBOREncoder(
-        value_sharing=True,
-        # value_sharing=False,
-        encoders={
-            Cell: encode_cell,
-            Action: encode_action,
-            GameObject: encode_game_object,
-            Status: encode_status,
-            Command: encode_command,
-        }
-    )
+# def mlp_encoder():
+#     return PurgeableCBOREncoder(
+#         value_sharing=True,
+#         # value_sharing=False,
+#         encoders={
+#             Cell: encode_cell,
+#             Action: encode_action,
+#             GameObject: encode_game_object,
+#             Status: encode_status,
+#             Command: encode_command,
+#         }
+#     )
 
 
 def mlp_dump(obj, fp):
-    mlp_encoder().encode(obj, fp)
+    mlp_encoder.encode(obj, fp)
+    mlp_encoder.purge()
 
 
 def mlp_load(fp):
-    return mlp_decoder().decode(fp)
+    val = mlp_decoder.decode(fp)
+    mlp_decoder.purge()
+    return val
 
 
 def mlp_dumps(obj):
     buf = io.BytesIO()
-    mlp_encoder().encode(obj, buf)
+    mlp_encoder.encode(obj, buf)
+    mlp_encoder.purge()
     return buf.getvalue()
 
 
 def mlp_loads(payload):
     buf = io.BytesIO(payload)
-    return mlp_decoder().decode(buf)
+    val = mlp_decoder.decode(buf)
+    mlp_decoder.purge()
+    return val
 
 
 def make_struct(type_, payload=None):
