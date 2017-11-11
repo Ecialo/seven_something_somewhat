@@ -70,8 +70,8 @@
     - EmpoweredLunge
     - Kick
     - EmpoweredKick
-    #- Parry
-    #- EmpoweredParry
+    - Parry
+    - EmpoweredParry
   widget:
     sprite: './data/sprite.png'
     scale: 0.33

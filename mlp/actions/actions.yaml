@@ -62,6 +62,25 @@
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
+    
+- !new_action
+  name: TemporaryFixAttack
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        extra_tags: ["melee"]
+        amount: !expr [!prop owner.damage, '*', 0.5]
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
+  widget:
+    icon: './data/punch(1).png'
+    pressed_icon: './data/punch.png'
 
 - !new_action
   name: GetRifle
@@ -100,7 +119,7 @@
     pressed_icon: './data/two-handed-sword2.png'
 #
 - !new_action
-  name: Parry
+  name: OldParry
   action_type: FULL
   speed: FAST
   cost: 1
@@ -110,7 +129,7 @@
         name: AddStatus
         extra_tags: ["plan"]
         status: !status
-          name: Parry
+          name: OldParry
       area: !prop source
   check: !expr [!prop owner.unit_state, "==", "sword"]
   widget:
@@ -402,6 +421,53 @@
   widget:
     icon: './data/emp_lunge.png'
     pressed_icon: './data/emp_lunge_pressed.png' 
+    
+- !new_action
+  name: Parry
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: Parry
+      area: !area
+        name: Cell
+        cell: !prop source
+  widget:
+    icon: './data/sword-clash(1).png'
+    pressed_icon: './data/sword-clash.png'
+    
+- !new_action
+  name: EmpoweredParry
+  action_type: FULL
+  speed: FAST
+  cost: 2
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: TotalParry
+      area: !area
+        name: Cell
+        cell: !prop source
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/empowered_parry.png'
+    pressed_icon: './data/empowered_parry_pressed.png'
     
 
 - !new_action

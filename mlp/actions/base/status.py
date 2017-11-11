@@ -83,7 +83,7 @@ class Status(metaclass=StatusMeta):
             if isinstance(effect, MetaEffect):
                 effect.apply(target, self.context, effect_context=context)
             else:
-                effect.apply(target.cell, self.context)
+                effect.apply(self.context['target'].cell, self.context)
 
     def __repr__(self):
         return "Status {}".format(self.name)
