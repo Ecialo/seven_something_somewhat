@@ -9,6 +9,7 @@ from ...protocol import (
     message_type as mt,
     game_message as gm,
     lobby_message as lm,
+    context_message as cm,
 )
 from ...loader import load
 
@@ -27,6 +28,7 @@ class GameScreen(Screen):
         self.handlers = {
             (mt.GAME, gm.UPDATE): self.game_update,
             (mt.GAME, gm.COMMAND): self.game_commands,
+            (mt.CONTEXT, cm.READY): lambda _: None
         }
 
         self.add_widget(self.game.make_widget(network_manager=network_manager))

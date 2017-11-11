@@ -6,6 +6,7 @@ import kivy.properties as prop
 from ...protocol import (
     message_type as mt,
     lobby_message as lm,
+    context_message as cm,
 )
 
 Builder.load_file('./mlp/screens/lobby/lobby_screen.kv')
@@ -52,7 +53,7 @@ class LobbyScreen(Screen):
         print("Connect to {} {}".format(self.host, port))
         self.nm.connect(self.host, int(port), "game")
         self.nm.send("game", (
-            (mt.LOBBY, lm.JOIN),
+            (mt.CONTEXT, cm.JOIN),
             self.app.player_name
         ))
 

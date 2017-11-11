@@ -14,6 +14,7 @@ from ..protocol import (
     message_type as mt,
     lobby_message as lm,
     game_message as gm,
+    context_message as cm,
 )
 from ..serialization import (
     mlp_loads,
@@ -117,6 +118,10 @@ class GameServer(tcpserver.TCPServer):
         ))
         self.game.commands.clear()
         self.game.registry.collect()
+        await self.queue.put((
+            ALL,
+            ((mt.CONTEXT, cm.READY), None)
+        ))
 
     def process_message(self, user, message):
         # print("MESSAGE")

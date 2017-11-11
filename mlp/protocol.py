@@ -28,6 +28,7 @@ message_type = Enum(
     "CHAT",
     "GAME",
     "LOBBY",
+    "CONTEXT",
 )
 
 game_message = Enum(
@@ -55,6 +56,11 @@ lobby_message = Enum(
 )
 chat_message = Enum(
     "BROADCAST"
+)
+
+context_message = Enum(
+    "READY",
+    "JOIN",
 )
 
 SEPARATOR = b"|||"

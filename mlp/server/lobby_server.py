@@ -20,7 +20,10 @@ from ..serialization import (
     mlp_loads,
 )
 from .user import User
-from .game_session import GameSession
+from .game_session import (
+    UserGameSession,
+    AIGameSession,
+)
 
 process = blinker.signal("process")
 disconnect = blinker.signal("disconnect")
@@ -34,7 +37,7 @@ class LobbyServer(tcpserver.TCPServer):
         super().__init__(*args)
         self.port_pool = deque(list(range(14088, 14088 + MAX_SESSIONS)))
         self._users = {}
-        self._free_session = GameSession(self.get_port())
+        self._free_session = UserGameSession(self.get_port())
         self._full_sessions = {}
         self.queue = queues.Queue()
 
@@ -100,18 +103,23 @@ class LobbyServer(tcpserver.TCPServer):
 
     async def find_session(self, user, opponent):
         if opponent == "user":
+            # session = UserGameSession(self.get_port())
             session = self._free_session
-            session.add_user(user)
-            if session.is_full():
-                self._full_sessions[session.uid] = session
-                self._free_session = GameSession(self.get_port())
-                session.start()
-                await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
-                for user in session.users:
-                    await self.queue.put((
-                        user,
-                        ((mt.LOBBY, lm.JOIN), session.port)
-                    ))
+        else:
+            session = AIGameSession(self.get_port())
+        # session = self._free_session
+        session.add_user(user)
+        if session.is_full():
+            self._full_sessions[session.uid] = session
+            if self._free_session is session:
+                self._free_session = UserGameSession(self.get_port())
+            session.start()
+            await gen.sleep(1)      # TODO сделать нормальное ожидание старта сервера
+            for user in session.users:
+                await self.queue.put((
+                    user,
+                    ((mt.LOBBY, lm.JOIN), session.port)
+                ))
 
     async def terminate_session(self, session, _):
         await session.shutdown()

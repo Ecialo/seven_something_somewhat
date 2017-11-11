@@ -11,6 +11,9 @@ from tornado import (
 from .game_server import start_game_server
 from ..protocol import SEPARATOR
 from ..serialization import mlp_loads
+from ..bot import (
+    run_bot,
+)
 
 mlp.set_start_method('spawn')
 
@@ -78,3 +81,32 @@ class GameSession:
         if self._game_process.is_alive():
             self._game_process.terminate()
 
+
+class UserGameSession(GameSession):
+
+    def is_full(self):
+        return len(self.users) == 2
+
+
+class AIGameSession(GameSession):
+
+    def __init__(self, port):
+        super().__init__(port)
+        self._bot_process = None
+
+    def start(self):
+        # Добавить бота
+        self.users['bot'] = None
+        super().start()
+        # Запустить бота
+        self._bot_process = mlp.Process(
+            target=run_bot,
+            name="Bot {}".format(self.uid),
+            args=None,
+        )
+        self._bot_process.start()
+
+    async def shutdown(self):
+        await super().shutdown()
+        if self._bot_process.is_alive():
+            self._bot_process.terminate()
