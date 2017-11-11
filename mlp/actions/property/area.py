@@ -103,13 +103,71 @@ class KRandomCells(Area):
 
 class Circle(Area):
 
-    def __init__(self, center, r):
+    def __init__(self, center, radius):
         self.center = center
-        self.r = r
+        self.radius = radius
 
     def get(self, context):
-        return self.grid.get_area(self.center.get(context), self.r)
+        return self.grid.get_area(self.center.get(context), self.radius)
+        
+class Ray(Area):
 
+    def __init__(self, source, target, length):
+        self.source = source
+        self.target = target
+        self.length = length
+
+    def get(self, context):
+        grid = self.grid
+        line = grid.get_line(self.source.get(context), self.target.get(context), self.length)[1:]
+        for i, cell in enumerate(line):
+            if cell.object:
+                return line[:i + 1]
+        return line
+        
+class Tail(Area):
+
+    def __init__(self, source, target, length, start=None):
+        self.source = source
+        self.target = target
+        self.length = length
+        self.start = start
+
+    def get(self, context):
+        grid = self.grid
+        distance = grid.distance(self.source.get(context), self.target.get(context))
+        start = self.start or distance
+        line = grid.get_line(self.source.get(context), self.target.get(context), self.length + start)[start + 1:]
+        return line
+        
+class CardinalWave(Area):
+
+    def __init__(self, source, target, length):
+        self.source = source
+        self.target = target
+        self.length = length
+
+    def get(self, context):
+        grid = self.grid
+        distance = grid.distance(self.source.get(context), self.target.get(context))
+        if distance == 0:
+            return [self.source.get(context)]
+        cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
+        target_x, target_y, target_z = grid.offsets_to_cube(cardinal_target.pos)
+        source_x, source_y, source_z = grid.offsets_to_cube(self.source.get(context).pos)
+        left_x, left_y, left_z = (source_x + source_y - target_y - target_x, source_y + source_z - target_z - target_y, source_z + source_x - target_x - target_z)
+        right_x, right_y, right_z = (source_x + source_z - target_z - target_x, source_y + source_x - target_x - target_y, source_z + source_y - target_y - target_z)
+        center_line = grid.get_line(self.source.get(context), cardinal_target, self.length)[1:]
+        result = []
+        for cell in center_line:
+            x, y, z = grid.offsets_to_cube(cell.pos)
+            left = grid[grid.cube_to_offsets((x + left_x, y + left_y, z + left_z))]
+            right = grid[grid.cube_to_offsets((x + right_x, y + right_y, z + right_z))]
+            if left is not None:
+                result.append(left)
+            if right is not None:
+                result.append(right)
+        return center_line + result
 
 def area_constructor(loader, node):
     a_s = loader.construct_mapping(node)
