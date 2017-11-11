@@ -21,7 +21,7 @@
       initial: 10
   actions:
     - Move
-    - Attack
+    - OldAttack
 #    - Kick
     - GetRifle
 #    - GetSword
@@ -48,6 +48,33 @@
   widget:
     sprite: './data/direwolf.png'
     scale: 2.0
+    
+- !new_unit
+  name: Fighter_sword
+  resources:
+    health: 125
+    initiative: 10
+    action_points: 4
+    damage: 25
+    endurance: 4
+    DR: 4
+    DR_threshold: 1
+    health_pots: 3
+    speed_pots: 2
+  actions:
+    - Move
+    - Attack
+    - Cleave
+    - EmpoweredCleave
+    - Lunge
+    - EmpoweredLunge
+    - Kick
+    - EmpoweredKick
+    #- Parry
+    #- EmpoweredParry
+  widget:
+    sprite: './data/sprite.png'
+    scale: 0.33
 
 - !new_unit
   name: Dummy

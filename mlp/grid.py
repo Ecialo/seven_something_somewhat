@@ -215,15 +215,19 @@ class HexGrid(Grid):
 
     def get_line(self, source_cell, target_cell, length=None):
         # TODO правильно продлевать длину линий
-        length = length or self.distance(source_cell, target_cell)
+        distance = self.distance(source_cell, target_cell)
+        if distance == 0:
+            return [source_cell]
+        step = 1 / distance
+        length = length or distance
         result = []
-        step = 1/length
         s_cube_pos = self.offsets_to_cube(source_cell.pos)
         t_cube_pos = self.offsets_to_cube(target_cell.pos)
         for i in range(length+1):
-            cell = self[self.round_cube(self.cube_inter(s_cube_pos, t_cube_pos, step*i))]
-            if cell is not None:
-                result.append(cell)
+            col, row = self.cube_to_offsets(self.round_cube(self.cube_inter(s_cube_pos, t_cube_pos, step*i)))
+            width, height = self.size
+            if col < width and col >= 0 and row < height and row >= 0:
+                result.append(self[(col, row)])
             else:
                 break
         return result

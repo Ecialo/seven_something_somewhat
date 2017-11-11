@@ -25,7 +25,7 @@
     pressed_icon: './data/run2.png'
 
 - !new_action
-  name: Attack
+  name: OldAttack
   action_type: STANDARD
   speed: NORMAL
   cost: 1
@@ -40,6 +40,25 @@
         radius: 1
         center: !prop source
   check: !expr [!prop owner.unit_state, "==", "sword"]
+  widget:
+    icon: './data/punch(1).png'
+    pressed_icon: './data/punch.png'
+    
+- !new_action
+  name: Attack
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        extra_tags: ["melee"]
+        amount: !prop owner.damage
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
@@ -161,21 +180,229 @@
 
 - !new_action
   name: Kick
-  action_type: STANDARD
-  speed: SLOW
+  action_type: MOVE
+  speed: FAST
   cost: 1
-  setup: []
+  setup: 
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Cell
+          cell: !prop selected
   effects:
     - effect: !eff
-        name: Fatigue
-        amount: 2
+        name: Damage
+        amount: 7
+        extra_tags: ["melee"]
       area: !area
-        name: Melee
-        radius: 1
-        center: !prop source
+        name: Cell
+        cell: !prop action.target
   widget:
     icon: './data/high-kick(1).png'
     pressed_icon: './data/high-kick.png'
+    
+- !new_action
+  name: EmpoweredKick
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup: 
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Cell
+          cell: !prop selected
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 10
+        extra_tags: ["melee"]
+      area: !area
+        name: Cell
+        cell: !prop action.target
+    - effect: !eff
+        name: Move
+        path: !area
+          name: Tail
+          source: !prop owner.cell
+          target: !prop action.target
+          length: 1
+      area: !area
+        name: Cell
+        cell: !prop action.target 
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/kick.png'
+    pressed_icon: './data/kick_pressed.png'
+    
+- !new_action
+  name: Cleave
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 2
+  setup: 
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: CardinalWave
+          length: 1
+          source: !prop source
+          target: !prop selected
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 1]
+        extra_tags: ["melee"]
+      area: !area
+        name: CardinalWave
+        length: 1
+        source: !prop owner.cell
+        target: !prop action.target
+  widget:
+    icon: './data/cleave.png'
+    pressed_icon: './data/cleave_pressed.png'   
+    
+- !new_action
+  name: EmpoweredCleave
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 2
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 1.4]
+        extra_tags: ["melee"]
+      area: !area
+        name: Adjacent
+        center: !prop owner.cell
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/emp_cleave.png'
+    pressed_icon: './data/emp_cleave_pressed.png' 
+
+- !new_action
+  name: Lunge
+  action_type: STANDARD
+  speed: FAST
+  cost: 2
+  setup: 
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 3
+  effects:
+    - effect: !eff
+        name: Move
+        path: !area
+          name: Ray
+          source: !prop owner.cell
+          target: !prop action.target
+          length: 1
+        extra_tags: ["plan"]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 0.6]
+        extra_tags: ["melee"]
+      area: !area
+        name: Ray
+        length: 2
+        source: !prop owner.cell
+        target: !prop action.target
+  widget:
+    icon: './data/lunge.png'
+    pressed_icon: './data/lunge_pressed.png'   
+    
+- !new_action
+  name: EmpoweredLunge
+  action_type: FULL
+  speed: NORMAL
+  cost: 2
+  setup: 
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Circle
+          center: !prop source
+          radius: 3
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 5
+  effects:
+    - effect: !eff
+        name: Move
+        extra_tags: ["plan"]
+        path: !area
+          name: Ray
+          source: !prop owner.cell
+          target: !prop action.target
+          length: 3
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 1]
+        extra_tags: ["melee"]
+      area: !area
+        name: Ray
+        source: !prop owner.cell
+        target: !prop action.target
+        length: 2
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/emp_lunge.png'
+    pressed_icon: './data/emp_lunge_pressed.png' 
+    
 
 - !new_action
   name: Regenerate
@@ -241,7 +468,7 @@
   speed: SLOW
   cost: 3
   setup:
-    - name: target_cell   # Сейчас это не клетка, а список клеток
+    - name: target_cell   # Currebtly this is not a cell but a list of cells
       cursor: line
       cursor_params:
         - !prop source
