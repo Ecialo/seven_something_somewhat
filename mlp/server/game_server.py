@@ -99,6 +99,7 @@ class GameServer(tcpserver.TCPServer):
         print("start_game")
         grid = HexGrid((5, 5))
         turn_order_manager = TurnOrderManager()
+        print(self.players)
         players = [Player.make_from_skel(player) for player in self.players]
         self.game = Game(grid=grid, players=players, turn_order_manager=turn_order_manager)
         self.game.turn_order_manager.rearrange()
@@ -132,6 +133,8 @@ class GameServer(tcpserver.TCPServer):
         ))
 
     def process_message(self, user, message):
+        print("MESSAGE")
+        print(message)
         message_type = tuple(message["message_type"])
         if message_type[0] == mt.GAME:
             ioloop.IOLoop.current().spawn_callback(self.process_with_game, message)
