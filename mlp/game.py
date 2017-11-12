@@ -128,6 +128,7 @@ class Game:
             (message_type.GAME, game_message.ACTION_REMOVE): self.remove_action,
             (message_type.GAME, game_message.COMMAND): self.envoke_commands,
             (message_type.GAME, game_message.READY): self.setup_and_run,
+            (message_type.GAME, game_message.GAME_OVER): lambda winner: game_over.send(winner=winner),
         }
         self._grid = grid
         self._turn_order_manager = turn_order_manager
@@ -136,22 +137,15 @@ class Game:
         trace.connect(self.add_to_commands)
         summon.connect(self.on_summon)
 
-        # self._grid.summon()
         if players:
             self.switch_state()
             summon.send(None, unit=players[0].main_unit, cell=self._grid[3, 4])
             summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
             self.switch_state()
-        #     players[0].main_unit.place_in(self._grid[3, 4])
-        #     players[-1].main_unit.place_in(self._grid[-1, -1])
         self.winner = None
         for unit in self.units:
-            print("STATE", unit.state)
             unit.clear_presumed()
             unit.update_position()
-            print(unit._presumed_stats.cell)
-            print(unit._stats.cell)
-        # self.switch_state()
 
     @property
     def units(self):
@@ -161,27 +155,20 @@ class Game:
         type_pair = tuple(struct['message_type'])
         self.handlers[type_pair](struct['payload'])
 
-    # @staticmethod
     def append_action(self, action_struct):
-        # print("APPEND")
         action = action_struct['action']
         author = action_struct['author']
-        # print(action.target_coord, action.context['action'].target_coord)
         if author == action.owner.stats.owner or author == "overlord":
             action.owner.append_action(action)
         self.clear_presumed()
         self.apply_actions()
-        # self.update_position()
 
-    # @staticmethod
     def remove_action(self, action_struct):
         unit = action_struct['unit']
-        # action_index = action_struct['action_index']
         author = action_struct['author']
         if unit.stats.owner == author or author == "overlord":
             unit.remove_action(None)
         self.clear_presumed()
-        # self.apply_actions()
         self.update_position()
 
     @property
@@ -228,13 +215,18 @@ class Game:
             anyone_not_pass = self.apply_actions(True)
             for unit in self.turn_order_manager:
                 unit.current_action_bar.clear()
-            dead_players = {player for player in self.players if player.main_unit.stats.health <= 0}
-            alive_players = set(self.players) - dead_players
-            if len(alive_players) == 1:
-                self.declare_winner(alive_players.pop())
-                return
+            # dead_players = {player for player in self.players if player.main_unit.stats.health <= 0}
+            # alive_players = set(self.players) - dead_players
+            # if len(alive_players) == 1:
+            #     self.declare_winner(alive_players.pop())
+            #     return
+
+            # Проверка на окончание игры
+            alive_players = list(filter(lambda player: player.is_alive, self.players))
+            if len(alive_players) <= 1:
+                game_over.send(winner=alive_players.pop().name)
+
             if not anyone_not_pass:
-                print("all pass")
                 self.action_log[-1].append("--------------")
                 for unit in self.units:
                     unit.launch_triggers(["turn", "end"], unit, unit.context)
@@ -296,9 +288,9 @@ class Game:
         #     logger.debug("{} real stats {}".format(unit, unit.stats.resources))
         return anyone_not_pass
 
-    @staticmethod
-    def declare_winner(player):
-        game_over.send(None, player=player)
+    # @staticmethod
+    # def declare_winner(player):
+    #     game_over.send(None, player=player)
 
     def switch_state(self):
         self.state = int(not self.state)
@@ -333,5 +325,5 @@ class Game:
         ))
 
     def envoke_commands(self, new_commands):
-        print("ENVOKE COMMANDS")
+        # print("ENVOKE COMMANDS")
         commands.send(commands=new_commands)

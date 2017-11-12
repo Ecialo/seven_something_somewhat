@@ -46,7 +46,7 @@ class MLPClientApp(App):
         sm.add_widget(screens.ConnectionScreen(app=self, name='connection'))
         # sm.add_widget(screens.LobbyScreen(app=self, name='lobby'))
         sm.add_widget(screens.GameScreen(self, Game(), self.network_manager, name="game"))
-        # sm.add_widget(screens.GameOverScreen(self, name="game_over"))
+        sm.add_widget(screens.GameOverScreen(self, name="game_over"))
         self.screen_manager = sm
         self.notifications_mgr = nm
         self.chat = cw
@@ -61,7 +61,6 @@ class MLPClientApp(App):
             print(message_struct)
             message_struct['message_type'] = tuple(message_struct['message_type'])
             self.screen_manager.current_screen.receive(message_struct)
-
 
     def user_join(self, struct):
         username = struct['name']
@@ -90,19 +89,6 @@ class MLPClientApp(App):
         msg = msg_struct["text"]
         self.chat.print_message("<{name}>: {msg}".format(name=name, msg=msg))
 
-    def send_lobby_ready(self):
-        message = {
-            "message_type": (pr.message_type.LOBBY, pr.lobby_message.READY),
-            "payload": None,
-        }
-        self.network_manager.send(message)
-
-    def send_lobby_not_ready(self):
-        message = {
-            "message_type": (pr.message_type.LOBBY, pr.lobby_message.UNREADY),
-            "payload": None,
-        }
-        self.network_manager.send(message)
 
     def on_stop(self):
         self.network_manager.loop.stop()

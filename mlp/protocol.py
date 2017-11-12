@@ -32,7 +32,6 @@ message_type = Enum(
 )
 
 game_message = Enum(
-    # "CREATE",
     "UPDATE",
     "CALL",
     "ACTION_APPEND",

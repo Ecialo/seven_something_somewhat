@@ -1,6 +1,11 @@
+import blinker
+
 from .replication_manager import GameObject
 from .tools import dict_merge
 from .unit import UnitsRegistry
+
+death = blinker.signal("death")
+game_over = blinker.signal("game_over")
 
 
 class Player(GameObject):
@@ -12,16 +17,10 @@ class Player(GameObject):
         self.name = name
         self.main_unit = main_unit
         self.is_ready = False
-        # self.units = []
+        self.is_alive = True
+        death.connect(self.on_death)
 
     def dump(self):
-        # return {
-        #     **super().dump(),
-        #     'name': self.name,
-        #     # 'main_unit': RefTag(self.main_unit),
-        #     'main_unit': self.main_unit.dump(),
-        #     # 'units': [RefTag(unit) for unit in self.units]
-        # }
         return dict_merge(
             super().dump(),
             {
@@ -41,3 +40,7 @@ class Player(GameObject):
             name=skel['name'],
             main_unit=UnitsRegistry()[skel['unit']](skel['name'])
         )
+
+    def on_death(self, _, unit):
+        if unit is self.main_unit:
+            self.is_alive = False

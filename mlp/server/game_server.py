@@ -112,6 +112,7 @@ class GameServer(tcpserver.TCPServer):
                 await gen.multi([self._users[user].queue.put(make_message(*message)) for user in self._users])
             else:
                 await self._users[destination].queue.put(make_message(*message))
+            self.queue.task_done()
 
     async def send_update(self):
         print("send_update")
@@ -153,16 +154,23 @@ class GameServer(tcpserver.TCPServer):
             await self.shutdown()
 
     async def shutdown(self):
+        await self.queue.join()
         self.is_alive = False
         await self.lobby_stream.write(make_message(
             (mt.GAME, gm.GAME_OVER)
         ))
 
-    def process_game_over(self, _, player):
-        ioloop.IOLoop.current().spawn_callback(self._process_game_over, player)
+    def process_game_over(self, _, winner):
+        ioloop.IOLoop.current().spawn_callback(self._process_game_over, winner)
 
-    async def _process_game_over(self, player):
-        pass
+    async def _process_game_over(self, winner):
+        print("PROCESS GAMEOVER", winner)
+        await self.queue.put((
+            ALL,
+            ((mt.GAME, gm.GAME_OVER), winner)
+        ))
+        print("SHUTDOWN")
+        await self.shutdown()
 
     async def process_with_game(self, message):
         self.game.receive_message(message)
