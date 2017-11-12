@@ -388,6 +388,7 @@
           source: !prop source
           target: !prop selected
           length: 5
+          widget: [0, 1, 0]
   effects:
     - effect: !eff
         name: Move

@@ -1,6 +1,7 @@
 from kivy.uix import button
 from kivy.event import EventDispatcher
 
+from ..actions.property.area import FixedArea
 
 class Cursor(EventDispatcher):
 
@@ -185,84 +186,92 @@ class LineSelectCursor(RequestCursor):
         self.requester.select_result = self.selected_cells[-1].cell
         # TODO Смотри multiselectcursor     
         
-        
-class GeometryLastSelectCursor(RequestCursor):
-
-    def __init__(self, game_widget, requester, available_cells, shape):
-        super().__init__(game_widget, requester)
-        # self.context = requester.action.context
-        self.available_cells = available_cells
-        print("\n\n\n", available_cells)
-        self.shape = shape
-        self.selected_cells = []
-        # self.selected = None
-        self.highlighted_cells = None
-
-    def activate(self):
-        super().activate()
-        self.highlighted_cells = [c.make_widget() for c in self.available_cells.get(self.context)]
-        for cell in self.highlighted_cells:
-            cell.is_highlighted = True
-        for cell in self.selected_cells:
-            cell.is_selected = True
-
-    def deactivate(self):
-        super().deactivate()
-        for cell in self.highlighted_cells:
-            cell.is_highlighted = False
-        for cell in self.selected_cells:
-            cell.is_selected = False
-
-    def select(self, cell):
-        self.deactivate()
-        self._context['selected'] = cell.cell
-        self.selected_cells = [c.make_widget() for c in self.shape.get(self.context)]
-        self.activate()
-
-    def send(self, _):
-        super().send(_)
-        # self.requester.select_result = [c.cell for c in self.selected_cells]
-        self.requester.select_result = self.selected_cells[-1].cell
+#
+# class GeometryLastSelectCursor(RequestCursor):
+#
+#     def __init__(self, game_widget, requester, available_cells, shape):
+#         super().__init__(game_widget, requester)
+#         # self.context = requester.action.context
+#         self.available_cells = available_cells
+#         print("\n\n\n", available_cells)
+#         self.shape = shape
+#         self.selected_cells = []
+#         # self.selected = None
+#         self.highlighted_cells = None
+#
+#     def activate(self):
+#         super().activate()
+#         self.highlighted_cells = [c.make_widget() for c in self.available_cells.get(self.context)]
+#         for cell in self.highlighted_cells:
+#             cell.is_highlighted = True
+#         for cell in self.selected_cells:
+#             cell.is_selected = True
+#
+#     def deactivate(self):
+#         super().deactivate()
+#         for cell in self.highlighted_cells:
+#             cell.is_highlighted = False
+#         for cell in self.selected_cells:
+#             cell.is_selected = False
+#
+#     def select(self, cell):
+#         self.deactivate()
+#         self._context['selected'] = cell.cell
+#         self.selected_cells = [c.make_widget() for c in self.shape.get(self.context)]
+#         self.activate()
+#
+#     def send(self, _):
+#         super().send(_)
+#         # self.requester.select_result = [c.cell for c in self.selected_cells]
+#         self.requester.select_result = self.selected_cells[-1].cell
         
         
 class GeometrySelectCursor(RequestCursor):
 
     def __init__(self, game_widget, requester, available_cells, shape):
         super().__init__(game_widget, requester)
-        # self.context = requester.action.context
         self.available_cells = available_cells
-        print("\n\n\n", available_cells)
         self.shape = shape
-        self.selected_cells = []
-        # self.selected = None
-        self.highlighted_cells = None
+        self.selected_cells = FixedArea()
+        self.highlighted_cells = FixedArea()
 
     def activate(self):
         super().activate()
-        self.highlighted_cells = [c.make_widget() for c in self.available_cells.get(self.context)]
-        for cell in self.highlighted_cells:
-            cell.is_highlighted = True
-        for cell in self.selected_cells:
-            cell.is_selected = True
+        # self.highlighted_cells = [c.make_widget() for c in self.available_cells.get(self.context)]
+        self.highlighted_cells = self.available_cells.get(self.context)
+        self.highlighted_cells.highlight()
+        self.selected_cells.select()
 
     def deactivate(self):
         super().deactivate()
-        for cell in self.highlighted_cells:
-            cell.is_highlighted = False
-        for cell in self.selected_cells:
-            cell.is_selected = False
+        self.highlighted_cells.playdown()
+        # for cell in self.highlighted_cells:
+        #     cell.is_highlighted = False
+        self.selected_cells.unselect()
+        # for cell in self.selected_cells:
+        #     cell.is_selected = False
 
     def select(self, cell):
-        if cell in self.highlighted_cells:
+        # print(cell)
+        if cell.cell in self.highlighted_cells:
+            # print(cell)
             self.deactivate()
             self._context['selected'] = cell.cell
-            self.selected_cells = [c.make_widget() for c in self.shape.get(self.context)]
+            # self.selected_cells = [c.make_widget() for c in self.shape.get(self.context)]
+            self.selected_cells = self.shape.get(self.context)
             self.activate()
 
     def send(self, _):
         super().send(_)
         # self.requester.select_result = [c.cell for c in self.selected_cells]
         self.requester.select_result = self._context['selected']
+
+
+class GeometryLastSelectCursor(GeometrySelectCursor):
+
+    def send(self, _):
+        super().send(_)
+        self.requester.select_result = self.selected_cells[-1].cell
 
 CURSOR_TABLE = {
     'any_cell': MultiSelectCursor,

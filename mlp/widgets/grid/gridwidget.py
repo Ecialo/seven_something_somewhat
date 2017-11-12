@@ -39,11 +39,13 @@ def in_polygon(x, y, xp, yp):
 
 class HexCellWidget(relativelayout.FloatLayout):
 
+    default_select_color = [1.0, 0, 0]
     mesh_vertices = ListProperty([])
     circuit = ListProperty([])
     is_selected = BooleanProperty(False)
     is_highlighted = BooleanProperty(False)
     rotator = mtl.eye(3)
+    select_color = ListProperty([1.0, 0, 0])
 
     def __init__(self, cell, **kwargs):
         self.cell = cell
