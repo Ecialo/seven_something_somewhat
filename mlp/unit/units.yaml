@@ -2,8 +2,9 @@
   name: Muzik
   resources:
     health: 100
+    armor: 0
     initiative: 3
-    action_points: 3
+    action_points: 5
     unit_state: !res
       type: option
       name: state
@@ -22,7 +23,7 @@
     - Move
     - OldAttack
 #    - Kick
-#    - GetRifle
+    - GetRifle
 #    - GetSword
 #    - Parry
 #    - Shoot
@@ -38,6 +39,7 @@
   name: Dog
   resources:
     health: 15
+    armor: 0
     initiative: 4
     action_points: 5
   actions:
@@ -78,6 +80,11 @@
   name: Dummy
   resources:
     health: 100
+    armor: !res
+      name: armor
+      type: numeric
+      max: 100
+      initial: 0
   actions:
     - Move
   widget:

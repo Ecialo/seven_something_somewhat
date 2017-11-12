@@ -253,10 +253,11 @@ class GeometrySelectCursor(RequestCursor):
             cell.is_selected = False
 
     def select(self, cell):
-        self.deactivate()
-        self._context['selected'] = cell.cell
-        self.selected_cells = [c.make_widget() for c in self.shape.get(self.context)]
-        self.activate()
+        if cell in self.highlighted_cells:
+            self.deactivate()
+            self._context['selected'] = cell.cell
+            self.selected_cells = [c.make_widget() for c in self.shape.get(self.context)]
+            self.activate()
 
     def send(self, _):
         super().send(_)

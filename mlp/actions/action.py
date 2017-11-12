@@ -59,6 +59,8 @@ class CurrentActionBar:
     def append_action(self, action):
         # if self.check_slots(action) and action.pre_check() and action.post_check():
         if self.check_slots(action) and action.check():
+            if self.actions and self.actions[-1].action_speed > action.action_speed:
+                action.action_speed = self.actions[-1].action_speed
             self.actions.append(action)
             # action.append_to_bar_effect()
 
