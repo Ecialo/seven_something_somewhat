@@ -13,8 +13,7 @@ from mlp.serialization import (
 )
 from ..general.image_button.image_button import ImageButton
 from ..cursor import CURSOR_TABLE
-# texture_released = CoreImage('/home/alessandro/PycharmProjects/mlp/run.png').texture
-# texture_pressed = CoreImage('/home/alessandro/PycharmProjects/mlp/run2.png').texture
+
 Builder.load_file('./mlp/widgets/action/action.kv')
 
 
@@ -174,7 +173,7 @@ class CurrentActionBar(GridLayout):
         # print(action)
         msg_struct = remote_action_remove(action)
         msg_struct[1]["author"] = action.owner.stats.owner
-        self.parent.receive_message(msg_struct)
+        self.parent.receive_message(make_struct(*msg_struct))
         # self.parent.network_manager.send(remote_action_remove(action))
 
 # if __name__ == '__main__':
