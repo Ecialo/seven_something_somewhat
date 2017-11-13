@@ -48,13 +48,13 @@ class RemoteGame(floatlayout.FloatLayout):
     def run_game(self, _):
         for unit in self.game.units:
             for action in unit.current_action_bar:
-                self.network_manager.send(remote_action_append(action))
-        self.network_manager.send(
-            {
-                'message_type': (message_type.GAME, game_message.READY),
-                'payload': {}
-            }
                 self.network_manager.send('game', remote_action_append(action))
+        # self.network_manager.send(
+        #     {
+        #         'message_type': (message_type.GAME, game_message.READY),
+        #         'payload': {}
+        #     }
+        # self.network_manager.send('game', remote_action_append(action))
         self.network_manager.send('game', (
                 (message_type.GAME, game_message.READY),
                 # 'payload': {'player': self.parent.app.player_name}
