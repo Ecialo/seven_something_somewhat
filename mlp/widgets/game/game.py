@@ -54,6 +54,12 @@ class RemoteGame(floatlayout.FloatLayout):
                 'message_type': (message_type.GAME, game_message.READY),
                 'payload': {}
             }
+                self.network_manager.send('game', remote_action_append(action))
+        self.network_manager.send('game', (
+                (message_type.GAME, game_message.READY),
+                # 'payload': {'player': self.parent.app.player_name}
+                {}
+            )
         )
 
     @property
@@ -61,6 +67,8 @@ class RemoteGame(floatlayout.FloatLayout):
         return self.game.grid.make_widget().selected_cell.cell
 
     def on_receive_message(self, struct):
+        # print(struct)
+        # print("LOAD GAME", self.is_loaded)
         if not self.is_loaded:
             self.grid = self.game.grid.make_widget(pos_hint={'center_x': 0.5, 'center_y': 0.5})
             arena = CompositeArena(self.grid)

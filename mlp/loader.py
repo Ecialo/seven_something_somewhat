@@ -39,6 +39,7 @@ from .resource import (
     resource_constructor,
     RESOURCE_TAG,
 )
+from .player import Player
 
 # loader = yaml.Loader()
 yaml.add_constructor(NEW_ACTION_TAG, new_action_constructor)

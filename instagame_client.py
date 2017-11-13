@@ -9,7 +9,12 @@ from kivy.uix.screenmanager import (
 )
 from mlp import network_manager
 from mlp import screens
-from mlp import protocol as pr
+from mlp.protocol import (
+    game_message as gm,
+    message_type as mt,
+    lobby_message as lm,
+    context_message as cm,
+)
 from mlp import game
 from mlp import player
 from mlp.replication_manager import MetaRegistry
@@ -23,8 +28,9 @@ class InstagameApp(App):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.network_manager = network_manager.NetworkManager(host='localhost', port=1488)
+        self.network_manager = network_manager.NetworkManager()
         self.network_watcher = Clock.schedule_interval(self.watch_network, 0)
+        self.player_name = "overlord"
 
         sm = ScreenManager()
         sm.transition = FadeTransition()
@@ -40,8 +46,13 @@ class InstagameApp(App):
 
     def build(self):
         self.network_manager.start()
+        self.network_manager.connect(host='localhost', port=1488, name="game")
         self.network_manager.send(
-            {"players": [pl.dump() for pl in self.players]}
+            "game",
+            (
+                (mt.CONTEXT, cm.JOIN),
+                {"players": [pl.dump() for pl in self.players]}
+            )
         )
         return self.screen_manager
 
@@ -51,9 +62,9 @@ class InstagameApp(App):
             message_struct = self.network_manager.decode(message)
             print("INCOMING MESSAGE")
             print(message_struct)
-            if message_struct['message_type'][0] == pr.message_type.GAME:
+            if message_struct['message_type'][0] == mt.GAME:
                 self.receive_game_message(message_struct)
-            elif tuple(message_struct['message_type']) == (pr.message_type.LOBBY, pr.lobby_message.GAME_OVER):
+            elif tuple(message_struct['message_type']) == (mt.LOBBY, lm.GAME_OVER):
                 self.game_over(message_struct['payload'])
             # type_pair = tuple(message_struct['message_type'])
             # print("receive", message_struct)

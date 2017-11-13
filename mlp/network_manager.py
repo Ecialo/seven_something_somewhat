@@ -1,7 +1,10 @@
 from threading import Thread
 import queue
-# from .replication_manager import RefDecoder
-from collections import deque
+from collections import (
+    deque,
+    defaultdict,
+)
+
 from tornado import (
     ioloop,
     gen,
@@ -9,77 +12,85 @@ from tornado import (
     tcpclient,
     iostream
 )
+
 from .serialization import (
     mlp_dumps,
     mlp_loads,
 )
 from .protocol import SEPARATOR
-# from collections import deque
-# from kivy.app import App
-# from kivy.uix.label import Label
-# from kivy.uix.textinput import TextInput
-# from kivy.uix.boxlayout import BoxLayout
-# from kivy.clock import Clock
+from .serialization import make_message
+
+
+# class Connection:
+#     def __init__(self):
+#         pass
 
 
 class NetworkManager(Thread):
 
-    def __init__(self, host=None, port=None, encoder=mlp_dumps, decoder=mlp_loads):
+    def __init__(self, encoder=mlp_dumps, decoder=mlp_loads):
         super().__init__(name="NetworkManager")
         self.loop = ioloop.IOLoop.current()
         self.client = tcpclient.TCPClient()
+        self.connections = {}
+        self.queues = defaultdict(tq.Queue)
         self.inqueue = tq.Queue()
         self.outqueue = queue.Queue()
         self.encode = encoder
         self.decode = decoder
 
-        self.host = host
-        self.port = port
+        # self.host = host
+        # self.port = port
+
+    def connect(self, host, port, name):
+        self.loop.spawn_callback(self._connect, host, port, name)
 
     @gen.coroutine
-    def connect(self):
-    # async def connect(self):
-        host, port = self.host, self.port
-        # stream = await self.client.connect(host, port)
+    def _connect(self, host, port, name):
+        print("Connect", name)
         stream = yield self.client.connect(host, port)
-        # stream.set_nodelay(True)
-        self.loop.spawn_callback(self.consumer, stream)
+        print("Success")
+        self.connections[name] = stream
+        print(self.connections)
         self.loop.spawn_callback(self.receiver, stream)
-
+        self.loop.spawn_callback(self.named_consumer(name))
 
     @gen.coroutine
-    def consumer(self, stream):
-    # async def consumer(self, stream):
+    def consumer(self):
         while True:
-            # text = await self.inqueue.get()
-            text = yield self.inqueue.get()
-            # print("bytes sended", text)
-            # await stream.write(text)
-            yield stream.write(text + SEPARATOR)
+            address, text = yield self.inqueue.get()
+            yield self.queues[address].put(text)
+            self.inqueue.task_done()
 
+    def named_consumer(self, name):
+        @gen.coroutine
+        def consumer():
+            while True:
+                text = yield self.queues[name].get()
+                stream = self.connections[name]
+                try:
+                    yield stream.write(text)
+                except iostream.StreamClosedError:
+                    break
+                self.queues[name].task_done()
+
+        return consumer
 
     @gen.coroutine
     def receiver(self, stream):
-    # async def receiver(self, stream):
         while True:
             try:
-                # text = await stream.read_bytes(10000, partial=True)
-                # text = yield stream.read_bytes(100000, partial=True)
                 text = yield stream.read_until(SEPARATOR)
                 text = text.rstrip(SEPARATOR)
-                # status = stream.get_fd_error()
-                # if status:
-                #     print(str(status))
-                # print("bytes recieved", text)
             except iostream.StreamClosedError:
                 break
             else:
                 self.outqueue.put_nowait(text)
 
-    def send(self, struct):
+    def send(self, address, message):
         # print('send', struct)
-        message = self.encode(struct)
-        self.inqueue.put_nowait(message)
+        # message = self.encode(struct)
+        self.inqueue.put_nowait((address, make_message(*message)))
 
     def dump(self):
         data = deque()
@@ -88,5 +99,5 @@ class NetworkManager(Thread):
         return data
 
     def run(self):
-        self.loop.spawn_callback(self.connect)
+        self.loop.spawn_callback(self.consumer)
         self.loop.start()
