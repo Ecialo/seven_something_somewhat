@@ -6,6 +6,8 @@ from .unit import UnitsRegistry
 
 death = blinker.signal("death")
 game_over = blinker.signal("game_over")
+summon = blinker.signal("summon")
+revoke = blinker.signal("revoke")
 
 
 class Player(GameObject):
@@ -16,9 +18,12 @@ class Player(GameObject):
         super().__init__(id_)
         self.name = name
         self.main_unit = main_unit
+        self.units = set()
         self.is_ready = False
         self.is_alive = True
         death.connect(self.on_death)
+        summon.connect(self.on_summon)
+        revoke.connect(self.on_revoke)
 
     def dump(self):
         return dict_merge(
@@ -44,3 +49,11 @@ class Player(GameObject):
     def on_death(self, _, unit):
         if unit is self.main_unit:
             self.is_alive = False
+
+    def on_summon(self, _, unit, cell=None):
+        if unit.stats.owner == self.name:
+            self.units.add(unit)
+
+    def on_revoke(self, _, unit, cell=None):
+        if unit.stats.owner == self.name:
+            self.units.remove(unit)

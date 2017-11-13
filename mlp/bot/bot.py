@@ -18,12 +18,18 @@ from ..serialization import (
     mlp_loads,
     make_message,
 )
+from .strategy.fixed_tactic_strategy import FixedTacticStrategy
+from .tactic.pass_tactic import PassTactic
 
 
 class Bot:
 
-    def __init__(self):
+    def __init__(self, strategy):
         self.client = tcpclient.TCPClient()
+        self.queue = queues.Queue()
+
+        self.strategy = strategy
+        self._player = None
 
         self.game = Game()
 
@@ -32,10 +38,14 @@ class Bot:
             (mt.LOBBY, lm.ACCEPT): lambda _: None
         }
 
-        self.queue = queues.Queue()
-
-    # def connect(self, host, port):
-    #     ioloop.IOLoop.current().spawn_callback(self._connect, host, port)
+    @property
+    def player(self):
+        if not self._player:
+            for pl in self.game.players:
+                if pl.name == "bot":
+                    self._player = pl
+                    break
+        return self._player
 
     async def connect(self, host, port):
         stream = await self.client.connect(host, port)
@@ -54,6 +64,7 @@ class Bot:
             else:
                 message_struct = mlp_loads(msg)
                 message_struct["message_type"] = tuple(message_struct["message_type"])
+                print(message_struct["message_type"])
                 ioloop.IOLoop.current().spawn_callback(self.process_message, message_struct)
 
     async def consumer(self, stream):
@@ -77,9 +88,11 @@ class Bot:
             await self.handlers[message_struct["message_type"]](message_struct["payload"])
 
     async def next_turn(self, _):
-        await self.queue.put(
-            ((mt.GAME, gm.READY), {})
-        )
+        actions = self.strategy.make_decisions(player=self.player)
+        print("\n\nACTIONS")
+        print(actions)
+        for action in actions:
+            await self.queue.put(action)
 
     async def handshake(self):
         self.queue.put(
@@ -92,6 +105,6 @@ def run_bot(port, lock=None):
     if lock:
         lock.acquire()
     loop = ioloop.IOLoop.current()
-    bot = Bot()
+    bot = Bot(FixedTacticStrategy(PassTactic()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()

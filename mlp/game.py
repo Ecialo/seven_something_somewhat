@@ -15,6 +15,7 @@ from .replication_manager import (
     GameObject,
 )
 from .tools import dict_merge
+from .player import Player
 from .unit import (
     Unit,
     PLANNING,
@@ -132,7 +133,7 @@ class Game:
         }
         self._grid = grid
         self._turn_order_manager = turn_order_manager
-        self.players = players
+        self._players = players
 
         trace.connect(self.add_to_commands)
         summon.connect(self.on_summon)
@@ -146,6 +147,13 @@ class Game:
         for unit in self.units:
             unit.clear_presumed()
             unit.update_position()
+
+    @property
+    def players(self):
+        if self._players is None:
+            return self.registry.categories[Player.__name__]
+        else:
+            return self._players
 
     @property
     def units(self):

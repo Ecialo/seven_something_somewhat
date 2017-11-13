@@ -99,12 +99,6 @@ class CreateOrUpdateDecoder:
 
 
 def remote_action_append(action):
-    # msg_struct = {
-    #     "message_type": (message_type.GAME, game_message.ACTION_APPEND),
-    #     "payload": {
-    #         'action': action
-    #     }
-    # }
     msg_struct = (
         (message_type.GAME, game_message.ACTION_APPEND),
         {
@@ -116,13 +110,6 @@ def remote_action_append(action):
 
 def remote_action_remove(action):
     unit = action.owner
-    # action_index = unit.current_action_bar.actions.index(action)
-    # msg_struct = {
-    #     "message_type": (message_type.GAME, game_message.ACTION_REMOVE),
-    #     "payload": {
-    #         'unit': unit,
-    #     }
-    # }
     msg_struct = (
         (message_type.GAME, game_message.ACTION_REMOVE),
         {
