@@ -58,6 +58,10 @@ class Unit(GameObject):
         }
 
     @property
+    def action_bar(self):
+        return self._stats.action_bar
+
+    @property
     def _presumed_stats(self):
         return self._stats.presumed
 

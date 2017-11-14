@@ -26,6 +26,9 @@ class ActionBar:
         self.owner = owner
         self.actions = []
 
+    def __iter__(self):
+        return iter(self.actions)
+
     def append_action(self, action):
         self.actions.append(action(self.owner))
 
@@ -33,7 +36,6 @@ class ActionBar:
         for i, action in enumerate(self.actions):
             if action.name == action_to_remove.name:
                 action_index = i
-                print("HOORAY FOR", i)
                 break
         else:
             return
@@ -44,7 +46,6 @@ class ActionBar:
 
     def load(self, struct):
         self.actions = [self.registry[action_name](self.owner) for action_name in struct]
-        print(self.actions)
 
 
 @bind_widget("CurrentActionBar")
@@ -66,12 +67,6 @@ class CurrentActionBar:
 
     def remove_action(self, action_index):
         self.actions.clear()
-        # try:
-        #     action = self.actions.pop(action_index)
-        # except IndexError:
-        #     action = self.actions.pop(0)
-        # finally:
-        # action.remove_from_bar_effect()
 
     def check_slots(self, action):
         action_type = action.action_type
