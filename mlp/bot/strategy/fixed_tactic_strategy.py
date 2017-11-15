@@ -12,7 +12,9 @@ class FixedTacticStrategy(Strategy):
 
     def make_decisions(self, player):
         actions = []
+        print("\n\n\nSTART THINKING")
         for unit in player.units:
+            print("TRY UNIT")
             actions += self.tactic.realize(unit)
         actions.append(((mt.GAME, gm.READY), {}))
         return actions

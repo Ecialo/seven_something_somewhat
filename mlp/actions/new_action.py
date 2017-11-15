@@ -82,17 +82,17 @@ class Action(metaclass=ActionMeta):
     def context(self, value):
         self._context = value
 
-    def setup(self):
+    def setup(self, setup_dict=None):
+        setup_dict = setup_dict or {}
+        print(self.setup_fields, setup_dict)
         for setup_struct in self.setup_fields:
-            print(setup_struct)
-            # cursor_params = [
-            #     p.get(self.context) if isinstance(p, Property) else p
-            #     for p in setup_struct['cursor_params']
-            # ]
-            cursor_params = setup_struct['cursor_params']
-            value = yield [setup_struct['cursor']] + [cursor_params]
+            print(setup_struct['name'], setup_dict)
+            if setup_struct['name'] in setup_dict:
+                value = setup_dict[setup_struct['name']]
+            else:
+                cursor_params = setup_struct['cursor_params']
+                value = yield [setup_struct['cursor']] + [cursor_params]
             setattr(self, setup_struct['name'], value)
-            # print("AFTER SETUP", vars(self))
 
     def clear(self):
         for setup_struct in self.setup_fields:

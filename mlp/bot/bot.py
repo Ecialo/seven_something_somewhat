@@ -19,7 +19,8 @@ from ..serialization import (
     make_message,
 )
 from .strategy.fixed_tactic_strategy import FixedTacticStrategy
-from .tactic.pass_tactic import PassTactic
+from .tactic.random_walk_tactic import RandomWalkTactic
+# from .tactic.pass_tactic import PassTactic
 
 
 class Bot:
@@ -85,7 +86,9 @@ class Bot:
         if message_struct['message_type'][0] == mt.GAME:
             self.game.receive_message(message_struct)
         else:
-            await self.handlers[message_struct["message_type"]](message_struct["payload"])
+            cor = self.handlers[message_struct["message_type"]](message_struct["payload"])
+            if cor:
+                await cor
 
     async def next_turn(self, _):
         actions = self.strategy.make_decisions(player=self.player)
@@ -105,6 +108,6 @@ def run_bot(port, lock=None):
     if lock:
         lock.acquire()
     loop = ioloop.IOLoop.current()
-    bot = Bot(FixedTacticStrategy(PassTactic()))
+    bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()

@@ -18,7 +18,7 @@ class Player(GameObject):
         super().__init__(id_)
         self.name = name
         self.main_unit = main_unit
-        self.units = set()
+        self.units = []
         self.is_ready = False
         self.is_alive = True
         death.connect(self.on_death)
@@ -31,13 +31,14 @@ class Player(GameObject):
             {
                 'name': self.name,
                 'main_unit': self.main_unit.dump(),
+                'units': self.units,
             }
         )
 
     def load(self, struct):
         self.name = struct['name']
         self.main_unit = self.registry.load_obj(struct['main_unit'])
-        # self.units = struct['units']
+        self.units = struct['units']
 
     @classmethod
     def make_from_skel(cls, skel):
@@ -52,7 +53,7 @@ class Player(GameObject):
 
     def on_summon(self, _, unit, cell=None):
         if unit.stats.owner == self.name:
-            self.units.add(unit)
+            self.units.append(unit)
 
     def on_revoke(self, _, unit, cell=None):
         if unit.stats.owner == self.name:

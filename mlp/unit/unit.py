@@ -191,15 +191,15 @@ class Unit(GameObject):
         where = "{}".format(self.stats.cell)
         return " ".join((who, where))
 
-    # def __cmp__(self, other):
-    #     return 1 if id(self) > id(other) else (-1 if id(self) < id(other) else 0)
+    def __cmp__(self, other):
+        return 1 if id(self) > id(other) else (-1 if id(self) < id(other) else 0)
 
-    # def __eq__(self, other):
-    #     return id(self) == id(other)
-    #
-    # def __lt__(self, other):
-    #     return id(self) < id(other)
-    #
+    def __eq__(self, other):
+        return id(self) == id(other)
+
+    def __lt__(self, other):
+        return id(self) < id(other)
+
     def switch_state(self):
         self.state = int(not self.state)
         self.update_position()
