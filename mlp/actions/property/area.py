@@ -1,4 +1,5 @@
 from random import shuffle
+
 from .property import Property
 from ...grid import HexGrid
 from ...tools import dotdict
@@ -8,11 +9,54 @@ AREAS = MetaRegistry()['Area']
 AreaMeta = MetaRegistry().make_registered_metaclass("Area")
 
 
+class FixedArea:
+
+    def __init__(self, cells=None, color=None):
+        self.cells = cells or []
+        self.color = color
+        # print(self.color)
+
+    def __getitem__(self, item):
+        return self.cells[item]
+
+    def __iter__(self):
+        return iter(self.cells)
+
+    def __contains__(self, item):
+        return item in self.cells
+
+    def select(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            print(w.select_color)
+            w.select_color = self.color or w.default_select_color
+            w.is_selected = True
+
+    def unselect(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            w.is_selected = False
+
+    def highlight(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            w.is_highlighted = True
+
+    def playdown(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            w.is_highlighted = False
+
+
 class Area(Property, metaclass=AreaMeta):
 
     _grid = None
+    color = None
 
     def get(self, context):
+        return FixedArea(self._get(context), self.color)
+
+    def _get(self, context):
         pass
 
     @property
@@ -27,7 +71,7 @@ class Cell(Area):
     def __init__(self, cell):
         self.cell = cell
 
-    def get(self, context):
+    def _get(self, context):
         return [self.cell.get(context)]
 
 
@@ -36,7 +80,7 @@ class Adjacent(Area):
     def __init__(self, center):
         self.center = center
 
-    def get(self, context):
+    def _get(self, context):
         center = self.center.get(context)
         return center.adjacent
 
@@ -47,7 +91,7 @@ class Melee(Area):
         self.radius = radius
         self.center = center
 
-    def get(self, context):
+    def _get(self, context):
         grid = self.grid
         for cell in grid.get_area(self.center.get(context), self.radius):
             if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
@@ -62,7 +106,7 @@ class Line(Area):
         self.target = target
         self.length = length
 
-    def get(self, context):
+    def _get(self, context):
         grid = self.grid
         return grid.get_line(self.source.get(context), self.target.get(context), self.length)
 
@@ -75,7 +119,7 @@ class KNearestNeighbors(Area):
         self.k = k
         self.filter = filter
 
-    def get(self, context):
+    def _get(self, context):
         grid = self.grid
         area = self.area.get(context)
         filter_ = self.filter
@@ -93,7 +137,7 @@ class KRandomCells(Area):
         self.filter = filter
         self.k = k
 
-    def get(self, context):
+    def _get(self, context):
         cells = self.area.get(context)
         filter_ = self.filter
         actual_cells = [cell for cell in cells if filter_.get(dotdict({'cell': cell}))]
@@ -107,9 +151,10 @@ class Circle(Area):
         self.center = center
         self.radius = radius
 
-    def get(self, context):
+    def _get(self, context):
         return self.grid.get_area(self.center.get(context), self.radius)
-        
+
+
 class Ray(Area):
 
     def __init__(self, source, target, length):
@@ -117,14 +162,15 @@ class Ray(Area):
         self.target = target
         self.length = length
 
-    def get(self, context):
+    def _get(self, context):
         grid = self.grid
         line = grid.get_line(self.source.get(context), self.target.get(context), self.length)[1:]
         for i, cell in enumerate(line):
             if cell.object:
                 return line[:i + 1]
         return line
-        
+
+
 class Tail(Area):
 
     def __init__(self, source, target, length, start=None):
@@ -133,13 +179,14 @@ class Tail(Area):
         self.length = length
         self.start = start
 
-    def get(self, context):
+    def _get(self, context):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
         start = self.start or distance
         line = grid.get_line(self.source.get(context), self.target.get(context), self.length + start)[start + 1:]
         return line
-        
+
+
 class CardinalWave(Area):
 
     def __init__(self, source, target, length):
@@ -147,7 +194,7 @@ class CardinalWave(Area):
         self.target = target
         self.length = length
 
-    def get(self, context):
+    def _get(self, context):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
         if distance == 0:
@@ -169,10 +216,13 @@ class CardinalWave(Area):
                 result.append(right)
         return center_line + result
 
+
 def area_constructor(loader, node):
     a_s = loader.construct_mapping(node)
     name = a_s.pop("name")
+    color = a_s.pop("widget", None)
     area = AREAS[name](**a_s)
+    area.color = color
     return area
 
 AREA_TAG = "!area"

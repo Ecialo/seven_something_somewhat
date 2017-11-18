@@ -57,8 +57,7 @@
     action_points: 4
     damage: 25
     endurance: 4
-    DR: 4
-    DR_threshold: 1
+    armor: 4
     health_pots: 3
     speed_pots: 2
   actions:
@@ -85,6 +84,8 @@
       type: numeric
       max: 100
       initial: 0
+    damage: 20
+    action_points: 4
   actions:
     - Move
   widget:
