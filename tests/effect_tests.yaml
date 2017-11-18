@@ -147,11 +147,13 @@
     status: !status
       name: Burning
       power: 15
+      duration: 1
   - !eff
     name: AddStatus
     status: !status
       name: Burning
       power: 10
+      duration: 1
   check: !prop victim.statuses.Burning.power
   result: 15
 
@@ -161,11 +163,29 @@
     status: !status
       name: Burning
       power: 10
+      duration: 1
   - !eff
     name: AddStatus
     status: !status
       name: Burning
       power: 15
+      duration: 1
   check: !prop victim.statuses.Burning.power
   result: 15
+
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+      duration: 1
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 15
+      duration: 2
+  check: !prop victim.statuses.Burning.duration
+  result: 2
 
