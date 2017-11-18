@@ -121,4 +121,24 @@
     - 'and'
     - [!prop owner.health, '==', 95]
 
+- effects:
+  - !eff
+    name: ChangeStat
+    stat_name: armor
+    value: 10
+  check: !prop victim.armor
+  result: 10
+
+- effects:
+  - !eff
+    name: ChangeStat
+    stat_name: armor
+    value: 10
+  - !eff
+    name: Damage
+    extra_tags: ["melee"]
+    amount: 15
+  check: !prop victim.health
+  result: 95
+
 

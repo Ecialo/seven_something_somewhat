@@ -1,22 +1,4 @@
 #:import fch kivy.uix.filechooser
-#<-HexCellWidget>:
-#    id: hexcell
-#    canvas:
-#        PushMatrix:
-#        Color:
-#            rgba: 0, 0, 0, 1
-#        Translate:
-#            xy: self.pos
-#        Line:
-#            points: self.points_vertices
-#            width: 1.5
-#        Color:
-#            rgba: 0, 0, 0, 0.5*self.is_selected
-#        Mesh:
-#            vertices: self.mesh_vertices
-#            mode: 'triangle_fan'
-#            indices: range(6)
-#        PopMatrix:
 
 <HexCellWidget>:
     id: cell
@@ -31,24 +13,32 @@
             mode: 'triangle_fan'
             indices: range(6)
         Color:
-            rgba: ((1.0, 0, 0, 1.0) if self.is_selected else (0, 0, 0, 1.0))
+            rgb: (self.select_color if self.is_selected else (0, 0, 0))
         Line:
             points: self.circuit
             width: 1.5
+#        Color:
+#            rgba: (0.0, 1.0, 0.0, 0.75)
+#        Rectangle:
+#            pos: (0, 0)
+#            size: self.size
         PopMatrix
+#    Widget:
+#        id: anchor
+#        size: (0, 0)
+#        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+#        canvas:
+#            Color:
+#                rgba: (0.0, 0.0, 1.0, 1.0)
+#            Rectangle:
+#                pos: self.center
+
 
 
 
 <-Hexgrid>:
     id: grid
     size_hint: (None, None)
-#    size: background.size
-#    FullImage:
-#        id: background
-#        scale: grid.scale
-#        pos: (grid.x - self.width/2, grid.y)
-#        pos: grid.pos
-#        source: "./data/fonchik_pustynka1.png"
 
 <CompositeArena@RelativeLayout>:
     id: arena
@@ -58,12 +48,16 @@
     FullImage:
         id: background
         scale: arena.scale
-#        pos: (grid.x - self.width/2, grid.y)
-#        pos: grid.pos
         source: "./data/fonchik_pustynka1.png"
-#    Hexgrid:
-#        id: grid
-#        scale:
+#    spl.SpriteLayer:
+#        id: sprite_layer
+#        size_hint: (None, None)
+#        canvas:
+#            Color:
+#                rgba: (1.0, 0.0, 0.0, 0.5)
+#            Rectangle:
+#                pos: self.pos
+#                size: self.size
 
 
 <FullImage@Image>:

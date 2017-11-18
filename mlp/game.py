@@ -1,6 +1,6 @@
 import logging
 import os
-from bisect import insort
+from collections import deque
 from random import randint
 
 import blinker
@@ -324,4 +324,6 @@ class Game:
 
     def envoke_commands(self, new_commands):
         print("ENVOKE COMMANDS")
+        new_commands = deque(new_commands)
+        print(new_commands)
         commands.send(commands=new_commands)

@@ -6,6 +6,7 @@ from ...commands.command import (
     Place,
     Revoke,
 )
+from ...commands import command as com
 from .effect import (
     UnitEffect,
     MetaEffect,
@@ -56,13 +57,15 @@ class Move(UnitEffect):
                 next_cell = grid.find_path(target.cell, path_part)[1]
 
                 # send command
+
                 if next_cell.object is None:
-                    # target.move(c.path)
-                    trace.send(command=Place(
+                    trace.send(command=com.Move(
                         unit=target,
-                        place=next_cell,
-                        old_place=target.cell
+                        path=[target.cell, next_cell]
+                        # place=next_cell,
+                        # old_place=target.cell
                     ))
+                    # target.move(c.path)
                     target.move(next_cell)
             self.info_message = self.info_message.format(target, c.path)
             super()._apply(target, context)
@@ -80,9 +83,9 @@ class Damage(UnitEffect):
 
     def _apply(self, target, context):
         with self.configure(context) as c:
-            target.stats.health -= c.amount
+            target.stats.health -= max(1, c.amount - target.stats.armor)
             if target.stats.health <= 0:
-                trace.send(command=Revoke(target, target.cell))
+                trace.send(command=com.Revoke(target, target.cell))
                 target.kill()
             self.info_message = self.info_message.format(target, c.amount)
             super()._apply(target, context)
@@ -163,8 +166,13 @@ class ChangeStat(UnitEffect):
                 target,
                 c.value,
             )
+            # print("SET")
+            # print(target.stats, c.stat_name, c.value)
             setattr(target.stats, c.stat_name, c.value)
             super()._apply(target, context)
+
+    def __repr__(self):
+        return "Change stat {} to {}".format(self.stat_name, self.value)
 
 
 # class Reflect(MetaEffect):

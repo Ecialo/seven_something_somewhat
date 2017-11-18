@@ -383,11 +383,20 @@
           name: Circle
           center: !prop source
           radius: 3
-        - !area
-          name: Ray
-          source: !prop source
-          target: !prop selected
-          length: 5
+        -
+          - name: startup
+            area: !area
+              name: Ray
+              source: !prop source
+              target: !prop selected
+              length: 5
+              widget: [0, 1, 0]
+          - name: some_shit
+            area: !area
+              name: Circle
+              center: !prop startup[-1]
+              radius: 1
+              widget: [0, 0, 1]
   effects:
     - effect: !eff
         name: Move
