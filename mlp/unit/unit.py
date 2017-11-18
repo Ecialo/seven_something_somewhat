@@ -234,10 +234,16 @@ class Unit(GameObject):
             # print("NOW IN PLANNING")
 
     def add_status(self, status):
-        self.stats.statuses[status.name] = status
-        for event in status.events:
-            self.stats.triggers[event][status.name] = status
-        status.on_add(self)
+        if status.name in self.stats.statuses:
+            old_status = self.stats.statuses[status.name]
+            self.remove_status(old_status)
+            new_status = old_status + status
+            self.add_status(new_status)
+        else:
+            self.stats.statuses[status.name] = status
+            for event in status.events:
+                self.stats.triggers[event][status.name] = status
+            status.on_add(self)
         # # print("STATUS", self.state, self.stats.statuses)
 
     def remove_status(self, status):

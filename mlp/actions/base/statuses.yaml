@@ -114,8 +114,8 @@
 
 - !new_status
   name: Burning
-  tags: ["dot"]
+  subtype: Dot
 
 - !new_status
   name: Bleeding
-  tags: ["dot"]
+  subtype: Dot

@@ -1,10 +1,14 @@
 from collections import defaultdict
+
 from .stats import (
     PLANNING
 )
 from ..actions.action import ActionBar
 from ..actions.base.status import Status
-from ..tools import dict_merge
+from ..tools import (
+    dict_merge,
+    dotdict,
+)
 from ..bind_widget import bind_widget
 from ..resource import (
     Resource,
@@ -24,7 +28,7 @@ class Stats:
         self.name = owner.__class__.__name__
         self.owner = owner_name
         self._triggers = defaultdict(dict)
-        self.statuses = {}
+        self.statuses = dotdict()
         self.cell = None
         self.action_bar = ActionBar(owner)
         for name, resource in resources.items():

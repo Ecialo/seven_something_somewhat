@@ -29,7 +29,6 @@ class TestEffect:
         self.context = {
             'owner': self.author,
             'source': self.source,
-            # 'victim': self.victim.stats,
             'victim': self.victim,
         }
 
