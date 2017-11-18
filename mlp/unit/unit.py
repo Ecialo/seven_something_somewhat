@@ -10,7 +10,7 @@ from ..stats.new_stats import MajorStats
 # from mlp.stats.new_stats import MajorStats
 from ..grid import Grid
 from ..actions.action import *
-from ..actions.new_action import *
+# from ..actions.new_action import *
 from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status

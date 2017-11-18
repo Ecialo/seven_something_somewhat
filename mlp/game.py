@@ -6,7 +6,7 @@ from random import randint
 import blinker
 
 from mlp.commands.command import Place
-from .actions.new_action import SPEED
+from .actions.action import SPEED
 from .bind_widget import bind_widget
 from .grid import Grid
 from .protocol import *

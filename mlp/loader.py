@@ -1,5 +1,5 @@
 import yaml
-from .actions.new_action import (
+from .actions.action import (
     new_action_constructor,
     action_constructor,
     NEW_ACTION_TAG,
@@ -41,7 +41,6 @@ from .resource import (
 )
 from .player import Player
 
-# loader = yaml.Loader()
 yaml.add_constructor(NEW_ACTION_TAG, new_action_constructor)
 yaml.add_constructor(ACTION_TAG, action_constructor)
 
@@ -69,10 +68,5 @@ def load(paths=None):
         './mlp/unit/units.yaml',
     ]
     for path in paths:
-        # print(path)
         with open(path) as a:
-            # loader = yaml.Loader(a)
             yaml.load(a)
-
-# if __name__ == '__main__':
-#     c = load()

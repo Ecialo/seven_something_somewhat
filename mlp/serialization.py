@@ -8,7 +8,7 @@ from .actions.base.status import (
     Status,
     STATUSES,
 )
-from .actions.new_action import Action
+from .actions.action import Action
 from .grid import Cell
 from .protocol import *
 from .replication_manager import (
