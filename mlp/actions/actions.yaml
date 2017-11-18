@@ -64,10 +64,10 @@
     pressed_icon: './data/punch.png'
     
 - !new_action
-  name: TemporaryFixAttack
+  name: CounterAttack
   action_type: STANDARD
   speed: NORMAL
-  cost: 1
+  cost: 0
   setup: []
   effects:
     - effect: !eff
@@ -363,9 +363,9 @@
         extra_tags: ["melee"]
       area: !area
         name: Ray
-        length: 2
         source: !prop owner.cell
         target: !prop action.target
+        length: 2
   widget:
     icon: './data/lunge.png'
     pressed_icon: './data/lunge_pressed.png'   
@@ -376,27 +376,53 @@
   speed: NORMAL
   cost: 2
   setup: 
-    - name: target
+    # - name: target
+      # cursor: geometry_last
+      # cursor_params:
+        # - !area
+          # name: Circle
+          # center: !prop source
+          # radius: 5
+        # -
+          # - name: startup
+            # area: !area
+              # name: Ray
+              # source: !prop source
+              # target: !prop selected
+              # length: 3
+              # widget: [0, 1, 0]
+          # - name: some_shit
+            # area: !area
+              # name: Ray
+              # source: !prop startup[-1]
+              # target: !prop selected
+              # length: 2
+              # widget: [0, 0, 1]
+    - name: move
       cursor: geometry_last
       cursor_params:
         - !area
           name: Circle
           center: !prop source
           radius: 3
-        -
-          - name: startup
-            area: !area
-              name: Ray
-              source: !prop source
-              target: !prop selected
-              length: 5
-              widget: [0, 1, 0]
-          - name: some_shit
-            area: !area
-              name: Circle
-              center: !prop startup[-1]
-              radius: 1
-              widget: [0, 0, 1]
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 3
+          widget: [0, 0, 1]
+    - name: hit
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Circle
+          center: !prop action.move
+          radius: 2
+        - !area
+          name: Ray
+          source: !prop action.move
+          target: !prop selected
+          length: 2
   effects:
     - effect: !eff
         name: Move
@@ -404,7 +430,7 @@
         path: !area
           name: Ray
           source: !prop owner.cell
-          target: !prop action.target
+          target: !prop action.move
           length: 3
       area: !area
         name: Cell
@@ -416,7 +442,7 @@
       area: !area
         name: Ray
         source: !prop owner.cell
-        target: !prop action.target
+        target: !prop action.hit
         length: 2
     - effect: !eff
         name: ChangeStat

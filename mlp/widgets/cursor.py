@@ -248,7 +248,7 @@ class GeometrySelectCursor(RequestCursor):
 class GeometryLastSelectCursor(GeometrySelectCursor):
 
     def send(self, _):
-        super().send(_)
+        self.game.remove_cursor()
         self.requester.select_result = self.selected_cells[-1]
 
 CURSOR_TABLE = {
