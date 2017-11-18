@@ -141,4 +141,31 @@
   check: !prop victim.health
   result: 95
 
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 15
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+  check: !prop victim.statuses.Burning.power
+  result: 15
+
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 15
+  check: !prop victim.statuses.Burning.power
+  result: 15
 

@@ -114,6 +114,7 @@ def new_status_constructor(loader, node):
     s_s = loader.construct_mapping(node)
 
     subtype = s_s.pop('subtype', None)
+    print(subtype)
     if subtype:
         status_type = STATUSES[subtype]
     else:
