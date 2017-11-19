@@ -80,6 +80,8 @@
   name: Dummy
   resources:
     health: 100
+    action_points: 4
+    damage: 25
     armor: !res
       name: armor
       type: numeric

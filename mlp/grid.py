@@ -300,6 +300,14 @@ class HexGrid(Grid):
     def __iter__(self):
         return iter(chain(*self._grid))
 
+
+def cell_constructor(loader, node):
+    coord = tuple(loader.construct_sequence(node))
+    hexgrid = HexGrid.locate()
+    return hexgrid[coord]
+
+CELL_TAG = "!cell"
+
 if __name__ == '__main__':
     grid = HexGrid((10, 10))
     # print(grid.get_area((4, 4), 2))

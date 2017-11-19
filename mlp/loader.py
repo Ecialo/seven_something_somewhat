@@ -1,4 +1,5 @@
 import yaml
+
 from .actions.new_action import (
     new_action_constructor,
     action_constructor,
@@ -39,6 +40,10 @@ from .resource import (
     resource_constructor,
     RESOURCE_TAG,
 )
+from .grid import (
+    cell_constructor,
+    CELL_TAG,
+)
 
 # loader = yaml.Loader()
 yaml.add_constructor(NEW_ACTION_TAG, new_action_constructor)
@@ -58,6 +63,8 @@ yaml.add_constructor(UNIT_TAG, unit_constructor)
 yaml.add_constructor(NEW_UNIT_TAG, new_unit_constructor)
 
 yaml.add_constructor(RESOURCE_TAG, resource_constructor)
+
+yaml.add_constructor(CELL_TAG, cell_constructor)
 
 
 def load(paths=None):
