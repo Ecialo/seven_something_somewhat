@@ -62,6 +62,7 @@ class TestAction:
         context = {
             'A': unit_A,
             'B': unit_B,
+            'units': self.units,
         }
         for unit in self.units:
             unit.clear_presumed()
