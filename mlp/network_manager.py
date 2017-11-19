@@ -21,11 +21,6 @@ from .protocol import SEPARATOR
 from .serialization import make_message
 
 
-# class Connection:
-#     def __init__(self):
-#         pass
-
-
 class NetworkManager(Thread):
 
     def __init__(self, encoder=mlp_dumps, decoder=mlp_loads):
@@ -38,9 +33,6 @@ class NetworkManager(Thread):
         self.outqueue = queue.Queue()
         self.encode = encoder
         self.decode = decoder
-
-        # self.host = host
-        # self.port = port
 
     def connect(self, host, port, name):
         self.loop.spawn_callback(self._connect, host, port, name)
@@ -88,8 +80,6 @@ class NetworkManager(Thread):
                 self.outqueue.put_nowait(text)
 
     def send(self, address, message):
-        # print('send', struct)
-        # message = self.encode(struct)
         self.inqueue.put_nowait((address, make_message(*message)))
 
     def dump(self):

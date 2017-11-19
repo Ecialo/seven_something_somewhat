@@ -2,19 +2,23 @@ from itertools import (
     chain,
     combinations,
 )
-from ..resource import Resource
+
+
+import blinker
+
+
 from ..replication_manager import (
     GameObject,
 )
 from ..stats.new_stats import MajorStats
-# from mlp.stats.new_stats import MajorStats
-from ..grid import Grid
+from ..grid import (
+    Grid,
+    Cell,
+)
 from ..actions.action import *
-# from ..actions.new_action import *
 from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
-import blinker
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -67,21 +71,6 @@ class Unit(GameObject):
 
     @property
     def presumed_cell(self):
-        """
-        Сейчас это просто последняя клетка. Если отталкиваться от идеи, что в случае если клетка недостижима из текушщей
-        но достижима в принципе, то чувачок ищет путь до неё и идёт туда, то предполагаемая клетка должна высчитыватсья
-        примерно так:
-        1) Исходная предполагаемая клетка - наша клетка
-        2) Есть ли клетка в предполагаемом пути?
-        3) Если нет - заканчиваем. Если да достижима ли она?
-        4) Если нет - заканчиваем. Если да, то достижима ли она из текущей предполагаемой клетки
-        5) Если да, то новая предполагаемая клетка - наша клетка. Если нет - строим путь и берём ближайшую.
-        :return:
-        """
-        # pos = reduce(lambda prev, cur: (prev[0] + cur[1][0], prev[1] + cur[1][1]), self.presumed_path, self.pos)
-        # if self.presumed_path:
-        #     return self.cell.grid[self.presumed_path[-1][-1]]
-        # else:
         return self.cell
 
     @property
@@ -94,7 +83,6 @@ class Unit(GameObject):
             return self._stats
         else:
             return self._presumed_stats
-            # return self._stats.presumed
 
     @property
     def cell(self):
@@ -107,15 +95,12 @@ class Unit(GameObject):
     def place_in(self, cell):
         """
         Указать, что юнит на самом деле в этой клетке
-        :param cell:
-        :return:
         """
         self._stats.cell = cell
 
     def update_position(self):
         """
         Поместить юнит в нужную клетку
-        :return:
         """
         if self._last_cell:
             self._last_cell.take(self)
@@ -126,8 +111,6 @@ class Unit(GameObject):
     def move(self, cell):
         """
         Передвинуть юнит
-        :param cell:
-        :return:
         """
         if self.state == PLANNING:
             self._presumed_stats.cell = cell

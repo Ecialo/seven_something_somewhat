@@ -2,7 +2,6 @@ import os
 import logging
 
 from ..replication_manager import MetaRegistry
-# from ..serialization import ActionTag
 from ..bind_widget import bind_widget
 from ..protocol import Enum
 from .property.reference import Reference
