@@ -402,9 +402,10 @@
       cursor: geometry_last
       cursor_params:
         - !area
-          name: Circle
+          name: Ring
           center: !prop source
           radius: 3
+          inner_radius: 1
         - !area
           name: Ray
           source: !prop source
