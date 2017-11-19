@@ -92,12 +92,12 @@
       name: RemoveStatus
       status: !status
         name: TotalParry
-  on_harmful_melee:
+  on_harmful:
     - !eff
       name: Discard
     - !eff
       name: LaunchAction
-      action_name: TemporaryFixAttack
+      action_name: CounterAttack
       setup: {}
       
 

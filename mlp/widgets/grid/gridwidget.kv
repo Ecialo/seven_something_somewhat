@@ -13,7 +13,7 @@
             mode: 'triangle_fan'
             indices: range(6)
         Color:
-            rgba: ((1.0, 0, 0, 1.0) if self.is_selected else (0, 0, 0, 1.0))
+            rgb: (self.select_color if self.is_selected else (0, 0, 0))
         Line:
             points: self.circuit
             width: 1.5
