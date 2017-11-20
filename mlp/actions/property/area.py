@@ -25,6 +25,9 @@ class FixedArea:
     def __contains__(self, item):
         return item in self.cells
 
+    def __len__(self):
+        return len(self.cells)
+
     def select(self):
         for cell in self.cells:
             w = cell.make_widget()
