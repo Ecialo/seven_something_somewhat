@@ -86,7 +86,6 @@
       type: numeric
       max: 100
       initial: 0
-    damage: 20
     action_points: 4
   actions:
     - Move

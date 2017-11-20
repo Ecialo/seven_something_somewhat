@@ -19,8 +19,8 @@ from ..replication_manager import GameObject
 from ..actions.action import (
     ActionBar,
     CurrentActionBar,
-    # Action,
 )
+from ..actions.property.reference import Reference
 from ..actions.base.status import Status
 from ..actions.base.effect import AbstractEffect
 from ..stats import (
@@ -28,6 +28,9 @@ from ..stats import (
     Stats,
 )
 from ..grid import Cell
+
+PLANNING: int
+ACTION: int
 
 class Unit(GameObject):
     hooks = ClassVar[List[str]]
@@ -70,3 +73,6 @@ class Unit(GameObject):
     def __contains__(self, item: Union[Status, str]) -> bool: ...
 
 def new_unit_constructor(loader: Loader, node: MappingNode) -> type: ...
+def unit_constructor(loader: Loader, node: MappingNode) -> Reference: ...
+UNIT_TAG: str
+NEW_UNIT_TAG: str
