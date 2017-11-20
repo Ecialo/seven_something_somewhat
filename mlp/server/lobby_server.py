@@ -94,6 +94,9 @@ class LobbyServer(tcpserver.TCPServer):
     def remove_user(self, user):
         print("Remove", user)
         self._users.pop(user.name)
+        for game_session in self._full_sessions.values():
+            if user in game_session:
+                game_session.remove_user(user)
         ioloop.IOLoop.current().spawn_callback(self.update_userlist)
 
     async def update_userlist(self):

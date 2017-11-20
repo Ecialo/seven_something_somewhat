@@ -9,8 +9,15 @@ from tornado import (
 )
 
 from .game_server import start_game_server
-from ..protocol import SEPARATOR
-from ..serialization import mlp_loads
+from ..protocol import (
+    SEPARATOR,
+    message_type as mt,
+    context_message as cm,
+)
+from ..serialization import (
+    mlp_loads,
+    make_message,
+)
 from ..bot import (
     run_bot,
 )
@@ -25,18 +32,29 @@ class GameSession:
     def __init__(self, port):
         self.users = {}
         self.port = port
-        self.uid = uuid.uuid1()
+        self.uid = str(uuid.uuid1())
         self._game_process = None
         self._lock = None
         self._stream = None
         self.is_alive = True
 
+    def __contains__(self, item):
+        return item.name in self.users
+
     def add_user(self, user):
         self.users[user.name] = user
+
+    def remove_user(self, user):
+        self.users.pop(user.name)
+        if self.is_empty() and self._game_process and self._game_process.is_alive():
+            ioloop.IOLoop.current().spawn_callback(self.send_terminate_signal)
 
     def is_full(self):
         # return len(self.users) == 2
         return len(self.users) == 1
+
+    def is_empty(self):
+        return len(self.users) == 0
 
     def start(self):
         ssock, csock = socket.socketpair()
@@ -81,8 +99,14 @@ class GameSession:
     async def shutdown(self):
         self.users.clear()
         self.is_alive = False
+        # await self._stream.write()
         if self._game_process.is_alive():
             self._game_process.terminate()
+
+    async def send_terminate_signal(self):
+        await self._stream.write(make_message(
+            (mt.CONTEXT, cm.TERMINATE)
+        ))
 
 
 class UserGameSession(GameSession):
@@ -109,6 +133,7 @@ class AIGameSession(GameSession):
             args=(self.port, self._lock),
         )
         self._bot_process.start()
+        self.users.pop('bot')
 
     async def shutdown(self):
         await super().shutdown()

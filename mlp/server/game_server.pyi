@@ -6,6 +6,8 @@ from typing import (
     Tuple,
     Callable,
 )
+from socket import socket as soc
+from threading import Semaphore
 
 from tornado import (
     tcpserver,
@@ -17,7 +19,10 @@ from tornado import (
 from ..game import Game
 from .user import User
 from ..replay.replay_handler import ReplayHandler
-from ..protocol import Message
+from ..protocol import (
+    Message,
+    Handler,
+)
 
 
 class GameServer(tcpserver.TCPServer):
@@ -29,7 +34,7 @@ class GameServer(tcpserver.TCPServer):
     queue: queues.Queue
     is_alive: bool
     lobby_stream: iostream.IOStream
-    handlers: Dict[Tuple[int, int], Callable]
+    handlers: Handler
 
     def __init__(
             self,
@@ -54,3 +59,14 @@ class GameServer(tcpserver.TCPServer):
     async def send_message(self) -> None: ...
     async def process_with_game(self, message: Message) -> None: ...
     async def check_status(self) -> None: ...
+    async def await_from_session(self) -> None: ...
+
+def start_game_server(
+        session_name: str,
+        port: int,
+        socket: soc,
+        players: List[Dict[str, str]],
+        lock: Optional[Semaphore],
+) -> None: ...
+
+async def unlock(lock: Semaphore) -> None: ...

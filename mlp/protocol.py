@@ -1,7 +1,10 @@
 from typing import (
     Dict,
     Any,
+    Tuple,
+    Callable,
 )
+
 
 class Namespace:
 
@@ -27,7 +30,9 @@ class Enum(Namespace):
         for const_name, const_val in zip(consts, range(len(consts))):
             setattr(self, const_name, const_val)
 
+
 Message = Dict[str, Any]
+Handler = Dict[Tuple[int, int], Callable]
 
 ALL = 0
 
@@ -67,6 +72,7 @@ chat_message = Enum(
 context_message = Enum(
     "READY",
     "JOIN",
+    "TERMINATE",
 )
 
 SEPARATOR = b"|||"

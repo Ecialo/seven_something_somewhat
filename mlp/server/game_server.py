@@ -54,7 +54,7 @@ class GameServer(tcpserver.TCPServer):
         self.game = None
 
         self.handlers = {
-
+            (mt.CONTEXT, cm.TERMINATE): self.shutdown
         }
 
         self.is_started = False
@@ -64,6 +64,7 @@ class GameServer(tcpserver.TCPServer):
         game_over.connect(self.process_game_over)
         next_phase.connect(self.next_phase)
         ioloop.IOLoop.current().spawn_callback(self.send_message)
+        ioloop.IOLoop.current().spawn_callback(self.await_from_session)
 
     async def handle_stream(self, stream, address):
         # print("From game with love")
@@ -120,7 +121,7 @@ class GameServer(tcpserver.TCPServer):
         print("send_update")
         state_payload = [CreateOrUpdateTag(o) for o in self.game.registry.dump()]
         command_payload = self.game.commands[::]
-        await self.replay_handler.queue.put(state_payload, command_payload)  # Здесь пишутся реплеи
+        await self.replay_handler.queue.put((state_payload, command_payload))  # Здесь пишутся реплеи
         await self.queue.put((
             ALL,
             ((mt.GAME, gm.UPDATE), state_payload)
@@ -157,8 +158,11 @@ class GameServer(tcpserver.TCPServer):
             await self.shutdown()
 
     async def shutdown(self):
+        print("SHUTDOWN")
         await self.queue.join()
+        print("DONE QUEUE")
         await self.replay_handler.dump_replay()
+        print("DONE DUMP")
         self.is_alive = False
         await self.lobby_stream.write(make_message(
             (mt.GAME, gm.GAME_OVER)
@@ -178,7 +182,20 @@ class GameServer(tcpserver.TCPServer):
 
     async def process_with_game(self, message):
         self.game.receive_message(message)
-        # await self.send_update()
+
+    async def await_from_session(self):
+        while self.is_alive:
+            try:
+                msg = await self.lobby_stream.read_until(SEPARATOR)
+            except iostream.StreamClosedError:
+                print("LOLOLO")
+                break
+            message_struct = mlp_loads(msg)
+            message_type = tuple(message_struct["message_type"])
+            if message_type[0] == mt.GAME:
+                ioloop.IOLoop.current().spawn_callback(self.process_with_game, message)
+            else:
+                ioloop.IOLoop.current().spawn_callback(self.handlers[message_type])
 
 
 def start_game_server(session_name, port, socket, players, lock=None):
