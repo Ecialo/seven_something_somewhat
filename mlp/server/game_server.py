@@ -28,6 +28,7 @@ from ..game import (
     Game,
     TurnOrderManager,
 )
+from ..replay.replay_handler import ReplayHandler
 
 process = blinker.signal("process")
 disconnect = blinker.signal("disconnect")
@@ -43,8 +44,9 @@ async def unlock(lock):
 
 class GameServer(tcpserver.TCPServer):
 
-    def __init__(self, players, lobby_stream, *args, **kwargs):
+    def __init__(self, session_name, players, lobby_stream, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.replay_handler = ReplayHandler(session_name)
         self.players = players
         self._users = {}
         self.queue = queues.Queue()
@@ -116,15 +118,16 @@ class GameServer(tcpserver.TCPServer):
 
     async def send_update(self):
         print("send_update")
-        payload = [CreateOrUpdateTag(o) for o in self.game.registry.dump()]
+        state_payload = [CreateOrUpdateTag(o) for o in self.game.registry.dump()]
+        command_payload = self.game.commands[::]
+        await self.replay_handler.queue.put(state_payload, command_payload)  # Здесь пишутся реплеи
         await self.queue.put((
             ALL,
-            ((mt.GAME, gm.UPDATE), payload)
+            ((mt.GAME, gm.UPDATE), state_payload)
         ))
-        payload = self.game.commands[::]
         await self.queue.put((
             ALL,
-            ((mt.GAME, gm.COMMAND), payload)
+            ((mt.GAME, gm.COMMAND), command_payload)
         ))
         self.game.commands.clear()
         self.game.registry.collect()
@@ -155,6 +158,7 @@ class GameServer(tcpserver.TCPServer):
 
     async def shutdown(self):
         await self.queue.join()
+        await self.replay_handler.dump_replay()
         self.is_alive = False
         await self.lobby_stream.write(make_message(
             (mt.GAME, gm.GAME_OVER)
@@ -177,12 +181,12 @@ class GameServer(tcpserver.TCPServer):
         # await self.send_update()
 
 
-def start_game_server(port, socket, players, lock=None):
+def start_game_server(session_name, port, socket, players, lock=None):
     if lock:
         ioloop.IOLoop.current().spawn_callback(unlock, lock)
     load()
     print("START SERVER AT PORT {}".format(port))
-    server = GameServer(players, iostream.IOStream(socket))
+    server = GameServer(session_name, players, iostream.IOStream(socket))
     server.bind(port)
     server.start()
     ioloop.IOLoop.current().start()

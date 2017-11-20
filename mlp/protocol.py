@@ -1,3 +1,8 @@
+from typing import (
+    Dict,
+    Any,
+)
+
 class Namespace:
 
     def __init__(self, **consts):
@@ -21,6 +26,8 @@ class Enum(Namespace):
     def __init__(self, *consts):
         for const_name, const_val in zip(consts, range(len(consts))):
             setattr(self, const_name, const_val)
+
+Message = Dict[str, Any]
 
 ALL = 0
 

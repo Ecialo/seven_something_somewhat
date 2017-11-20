@@ -53,6 +53,7 @@ class GameSession:
             target=start_game_server,
             name="GameServer {}".format(self.uid),
             args=(
+                self.uid,
                 self.port,
                 csock,
                 players,
