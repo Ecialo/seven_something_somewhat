@@ -3,6 +3,7 @@ import yaml
 from ..mlp.grid import Cell
 from ..mlp.unit import UNITS
 from ..mlp.loader import load
+from ..mlp.grid import HexGrid
 
 DUMMY = 'Dummy'
 A = 'A'
@@ -16,18 +17,18 @@ class TestEffect:
     tests_path = "./tests/effect_tests.yaml"
 
     def setUp(self):
-        self.source = Cell((0, 0))
+        self.grid = HexGrid((5, 5))
+        self.source = self.grid[0, 0]
         self.author = UNITS[DUMMY](A)
         self.author.place_in(self.source)
         self.author.switch_state()
-        self.target = Cell((1, 1))
+        self.target = self.grid[1, 1]
         self.victim = UNITS[DUMMY](B)
         self.victim.place_in(self.target)
         self.victim.switch_state()
         self.context = {
             'owner': self.author,
             'source': self.source,
-            # 'victim': self.victim.stats,
             'victim': self.victim,
         }
 

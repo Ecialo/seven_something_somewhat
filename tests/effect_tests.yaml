@@ -87,7 +87,7 @@
   - !eff
     name: AddStatus
     status: !status
-      name: Parry
+      name: OldParry
   - !eff
     name: Damage
     extra_tags: ["melee"]
@@ -99,7 +99,7 @@
   - !eff
     name: AddStatus
     status: !status
-      name: Parry
+      name: OldParry
   - !eff
     name: Damage
     extra_tags: ["melee"]
@@ -111,7 +111,7 @@
   - !eff
     name: AddStatus
     status: !status
-      name: Parry
+      name: OldParry
   - !eff
     name: Damage
     extra_tags: ["melee"]
@@ -140,5 +140,107 @@
     amount: 15
   check: !prop victim.health
   result: 95
+  
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Parry
+  - !eff
+    name: Damage
+    extra_tags: ["melee"]
+    amount: 40
+  check: !prop victim.health
+  result: 100
 
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 15
+      duration: 1
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+      duration: 1
+  check: !prop victim.statuses.Burning.power
+  result: 15
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Parry
+  - !eff
+    name: Damage
+    extra_tags: ["melee"]
+    amount: 41
+  check: !prop victim.health
+  result: 59
+  
+# - effects:
+  # - !eff
+    # name: AddStatus
+    # status: !status
+      # name: TotalParry
+  # - !eff
+    # name: Damage
+    # extra_tags: ["melee"]
+    # amount: 10
+  # check: !expr
+    # - [!prop victim.health, '==', 100]
+    # - 'and'
+    # - [!prop owner.health, '==', 90]
+    
+# - effects:
+  # - !eff
+    # name: AddStatus
+    # status: !status
+      # name: TotalParry
+  # - !eff
+    # name: Damage
+    # extra_tags: ["melee"]
+    # amount: 20
+  # - !eff
+    # name: Damage
+    # extra_tags: ["melee"]
+    # amount: 50
+  # check: !expr
+    # - [!prop victim.health, '==', 100]
+    # - 'and'
+    # - [!prop owner.health, '==', 80]
+
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+      duration: 1
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 15
+      duration: 1
+  check: !prop victim.statuses.Burning.power
+  result: 15
+
+- effects:
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+      duration: 1
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 15
+      duration: 2
+  check: !prop victim.statuses.Burning.duration
+  result: 2
 

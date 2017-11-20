@@ -1,4 +1,14 @@
-from ..mlp.grid import HexGrid
+import io
+
+import yaml
+
+from ..mlp.loader import load
+from ..mlp.grid import (
+    HexGrid,
+    HexCell,
+)
+
+load()
 
 
 class TestGrid:
@@ -38,3 +48,11 @@ class TestGrid:
         grid = self.grid
         cells = grid.get_area((4, 4), 1)
         assert cells == {grid[3, 4], grid[4, 3], grid[4, 4]}
+
+    def test_cell_load(self):
+        cell = yaml.load(io.StringIO("!cell [0, 0]"))
+        assert cell == self.grid[0, 0]
+
+    def test_cell_type(self):
+        cell = yaml.load(io.StringIO("!cell [0, 0]"))
+        assert isinstance(cell, HexCell)
