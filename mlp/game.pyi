@@ -37,9 +37,9 @@ class Game:
 
     def __init__(
             self,
-            players: Optional[List[Player]],
-            grid: Optional[Grid],
-            turn_order_manager: Optional[TurnOrderManager],
+            players: Optional[List[Player]] = None,
+            grid: Optional[Grid] = None,
+            turn_order_manager: Optional[TurnOrderManager] = None,
     ) -> None: ...
     @property
     def units(self) -> List[Unit]: ...

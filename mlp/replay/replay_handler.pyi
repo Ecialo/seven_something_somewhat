@@ -2,6 +2,7 @@ from typing import (
     List,
     Dict,
     Union,
+    BinaryIO,
 )
 
 from tornado import (
@@ -16,7 +17,8 @@ class ReplayHandler:
     replay_path: str
     is_alive: bool
     queue: queues.Queue
-    replay: List[Dict[str, Union[List[CreateOrUpdateTag], List[Command]]]]
+    # replay: List[Dict[str, Union[List[CreateOrUpdateTag], List[Command]]]]
+    replay: BinaryIO
 
     def __init__(self, session_name: str) -> None: ...
     async def write_step(self) -> None: ...

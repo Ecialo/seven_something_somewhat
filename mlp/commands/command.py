@@ -61,6 +61,9 @@ class Place(Command):
             "place": self.place,
         }
 
+    def __repr__(self):
+        return "Place {} from {} to {}".format(self.unit, self.old_place, self.place)
+
 
 class Revoke(Command):
 

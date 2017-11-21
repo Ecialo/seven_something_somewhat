@@ -188,12 +188,12 @@ class GameServer(tcpserver.TCPServer):
             try:
                 msg = await self.lobby_stream.read_until(SEPARATOR)
             except iostream.StreamClosedError:
-                print("LOLOLO")
+                # print("LOLOLO")
                 break
             message_struct = mlp_loads(msg)
             message_type = tuple(message_struct["message_type"])
             if message_type[0] == mt.GAME:
-                ioloop.IOLoop.current().spawn_callback(self.process_with_game, message)
+                ioloop.IOLoop.current().spawn_callback(self.process_with_game, message_struct)
             else:
                 ioloop.IOLoop.current().spawn_callback(self.handlers[message_type])
 

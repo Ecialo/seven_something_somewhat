@@ -4,6 +4,7 @@ from tornado import (
 )
 
 from ..serialization import (
+    mlp_dumps,
     mlp_dump,
 )
 
@@ -18,7 +19,7 @@ class ReplayHandler:
         self.queue = queues.Queue()
         self.replay = []
         self.replay_path = self.make_replay_path(session_name)
-
+        # self.replay = open(self.replay_path, 'wb')
         ioloop.IOLoop.current().spawn_callback(self.write_step)
 
     async def write_step(self):
@@ -27,9 +28,13 @@ class ReplayHandler:
             res = await self.queue.get()
             state_payload, command_payload = res
             print("WORK")
+            # self.replay.writelines([mlp_dumps(state_payload), mlp_dumps(command_payload)])
+            # self.replay.writelines([mlp_dumps(state_payload), mlp_dumps(command_payload)])
+            # self.replay.write(mlp_dumps(state_payload) + b'\n')
+            # self.replay.write(mlp_dumps(command_payload) + b'\n')
             self.replay.append({
-                'state': state_payload,
-                'commands': command_payload,
+                'state': mlp_dumps(state_payload),
+                'commands': mlp_dumps(command_payload),
             })
             self.queue.task_done()
 
@@ -38,6 +43,7 @@ class ReplayHandler:
         print(self.queue)
         await self.queue.join()
         print("DONE")
+        # self.replay.close()
         with open(self.replay_path, 'wb') as replay:
             mlp_dump(self.replay, replay)
         self.is_alive = False
