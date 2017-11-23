@@ -1,3 +1,5 @@
+#Example Tests
+
 - A:
     unit: Dummy
     cell: !cell [0, 0]
@@ -47,3 +49,250 @@
     - cell: !cell [1, 0]
       check: !prop B.stats.health
       result: 75
+
+# Move tests
+
+# Move unit by 1 step
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: !cell [3, 3]
+  actions_B: []
+  checks:
+    - cell: !cell [3, 3]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+      
+# Move unit by via easy pathfinding 1 step
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: !cell [0, 1]
+  actions_B: []
+  checks:
+    - cell: !cell [1, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+      
+# Long Move
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: 
+          - !cell [0, 2]
+          - !cell [0, 1]
+  actions_B: []
+  checks:
+    - cell: !cell [0, 1]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+      
+# 2 consecutive Moves 
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: !cell [0, 2]
+    - action_name: Move
+      args:
+        path: !cell [0, 1]
+  actions_B: []
+  checks:
+    - cell: !cell [0, 1]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+      
+# Move back and forth
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: !cell [3, 3]
+    - action_name: Move
+      args:
+        path: !cell [2, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+   
+# Move into obstacle
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+      
+# Long Move with obstacle
+- A:
+    unit: Dummy
+    cell: !cell [0, 1]
+  B:
+    unit: Dummy
+    cell: !cell [2, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: 
+          - !cell [1, 2]
+          - !cell [2, 2]
+          - !cell [3, 3]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [1, 2]
+      check: !prop cell.object
+      result: !prop A
+      
+# Move in place
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Move
+      args:
+        path: !cell [2, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+      
+      
+      
+      
+# Attack tests 
+
+# Simple Attack
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Attack
+      args: {}
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop B.stats.health
+      result: !expr [100, '-', !prop A.stats.damage]
+      
+# Simple Attack against armored target
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Fighter_sword
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Attack
+      args: {}
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop B.stats.health
+      result: !expr [125, '-', !prop A.stats.damage, '+', !prop B.stats.armor]
+      
+# Attack out of range
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [0, 2]
+  actions_A:
+    - action_name: Attack
+      args: {}
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [0, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [0, 2]
+      check: !prop B.stats.health
+      result: 100
+    - cell: !cell [2, 2]
+      check: !prop A.stats.health
+      result: 100
