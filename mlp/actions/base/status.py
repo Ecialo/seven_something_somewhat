@@ -1,12 +1,6 @@
 from ...replication_manager import MetaRegistry
-from ...tools import (
-    convert,
-    dotdict,
-)
-from contextlib import contextmanager
 from ..property.property import (
     Property,
-    # Const,
 )
 from .effect import MetaEffect
 from ..property.reference import (
@@ -88,36 +82,23 @@ class Status(metaclass=StatusMeta):
     def __repr__(self):
         return "Status {}".format(self.name)
 
+    def __add__(self, other):
+        assert self.__class__ is other.__class__
+        return other
+
     def copy(self):
         return self.__class__(**vars(self))
 
 
-# class CustomStatus(Status):
-#
-#     on_add_effects = []
-#     on_remove_effects = []
-#
-#     def __init__(self, context=None, duration=-1, **kwargs):
-#         super().__init__(context, duration)
-#         for k, v in kwargs.items():
-#             setattr(self, k, v)
-#
-#     def on_add(self, target):
-#         with self.configure(self.context) as c:
-        # for effect in self.on_add_effects:
-        #     effect.apply(target.stats.cell, self.context)
-        #     TODO переписать эффекты, чтобы можно было просто передать цель
-    #
-    # def on_remove(self, target):
-    #     for effect in self.on_remove_effects:
-    #         effect.apply(target.stats.cell, self.context)
+class Dot(Status):
+    params = ["power"]
+    _tags = ["dot"]
 
-
-# def status_constructor(loader, node):
-#     s_s = loader.construct_mapping(node)
-#     name = s_s.pop("name")
-#     status = STATUSES[name](**s_s)
-#     return status
+    def __add__(self, other):
+        assert self.__class__ is other.__class__
+        self.power = max(self.power, other.power)
+        self.duration = max(self.duration, other.duration)
+        return self
 
 
 def status_constructor(loader, node):
@@ -132,14 +113,21 @@ STATUS_TAG = "!status"
 def new_status_constructor(loader, node):
     s_s = loader.construct_mapping(node)
 
-    class NewStatus(Status):
+    subtype = s_s.pop('subtype', None)
+    print(subtype)
+    if subtype:
+        status_type = STATUSES[subtype]
+    else:
+        status_type = Status
+
+    class NewStatus(status_type):
 
         name = s_s.pop("name")
-        on_add_effects = s_s.pop("on_add", [])
-        on_remove_effects = s_s.pop("on_remove", [])
-        params = s_s.pop("params", [])
-        events = {frozenset(k.split("_")[1::]): v for k, v in s_s.items()}
-        _tags = s_s.pop("tags", [])
+        on_add_effects = s_s.pop("on_add", []) or status_type.on_add_effects.copy()
+        on_remove_effects = s_s.pop("on_remove", []) or status_type.on_remove_effects.copy()
+        params = s_s.pop("params", []) or status_type.params.copy()
+        events = {frozenset(k.split("_")[1::]): v for k, v in s_s.items()} or status_type.events.copy()
+        _tags = s_s.pop("tags", []) or status_type._tags.copy()
 
     return NewStatus
 

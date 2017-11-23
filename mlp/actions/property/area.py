@@ -25,6 +25,9 @@ class FixedArea:
     def __contains__(self, item):
         return item in self.cells
 
+    def __len__(self):
+        return len(self.cells)
+
     def select(self):
         for cell in self.cells:
             w = cell.make_widget()
@@ -153,6 +156,17 @@ class Circle(Area):
 
     def _get(self, context):
         return self.grid.get_area(self.center.get(context), self.radius)
+
+
+class Ring(Area):
+
+    def __init__(self, center, radius, inner_radius=None):
+        self.center = center
+        self.radius = radius
+        self.inner_radius = inner_radius
+
+    def _get(self, context):
+        return self.grid.get_ring(self.center.get(context), self.radius, self.inner_radius)
 
 
 class Ray(Area):

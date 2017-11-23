@@ -1,3 +1,11 @@
+from typing import (
+    Dict,
+    Any,
+    Tuple,
+    Callable,
+)
+
+
 class Namespace:
 
     def __init__(self, **consts):
@@ -8,10 +16,10 @@ class Namespace:
         return "\n".join(map(lambda name_val: "{0} = {1}".format(name_val[0], name_val[1]), self.items()))
 
     def values(self):
-        return self.__dict__.itervalues()
+        return self.__dict__.values()
 
     def names(self):
-        return self.__dict__.iterkeys()
+        return self.__dict__.keys()
 
     def items(self):
         return self.__dict__.items()
@@ -23,33 +31,48 @@ class Enum(Namespace):
             setattr(self, const_name, const_val)
 
 
+Message = Dict[str, Any]
+Handler = Dict[Tuple[int, int], Callable]
+
+ALL = 0
+
 message_type = Enum(
     "CHAT",
     "GAME",
     "LOBBY",
+    "CONTEXT",
 )
 
 game_message = Enum(
-    # "CREATE",
     "UPDATE",
     "CALL",
     "ACTION_APPEND",
     "ACTION_REMOVE",
     "READY",
     "COMMAND",
+    "GAME_OVER",
 )
 
 lobby_message = Enum(
+    "ACCEPT",
+    "REFUSE",
     "JOIN",
     "LEAVE",
-    "READY",
-    "UNREADY",
+    "CREATE_SESSION",
+    "JOIN_SESSION",
+    "FIND_SESSION",
+    "LEAVE_SESSION",
     "ONLINE",
-    "GAME_OVER",
-    "START_GAME",
+    "UPDATE_SESSIONS",
 )
 chat_message = Enum(
     "BROADCAST"
+)
+
+context_message = Enum(
+    "READY",
+    "JOIN",
+    "TERMINATE",
 )
 
 SEPARATOR = b"|||"

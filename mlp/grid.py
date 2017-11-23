@@ -249,9 +249,10 @@ class HexGrid(Grid):
         generations = self._get_generations(pos_or_cell, r)
         return reduce(lambda prev, x: prev | x, generations, set())
 
-    def get_ring(self, pos_or_cell, r):
+    def get_ring(self, pos_or_cell, r, inner_r=None):
+        inner_r = inner_r or (r - 1)
         generations = self._get_generations(pos_or_cell, r)
-        return generations[-1] - (reduce(lambda prev, x: prev | x, generations[:-1:], set()))
+        return generations[-1] - (reduce(lambda prev, x: prev | x, generations[:inner_r:], set()))
 
     def __getitem__(self, item):
         if len(item) == 3:
@@ -299,6 +300,14 @@ class HexGrid(Grid):
 
     def __iter__(self):
         return iter(chain(*self._grid))
+
+
+def cell_constructor(loader, node):
+    coord = tuple(loader.construct_sequence(node))
+    hexgrid = HexGrid.locate()
+    return hexgrid[coord]
+
+CELL_TAG = "!cell"
 
 if __name__ == '__main__':
     grid = HexGrid((10, 10))

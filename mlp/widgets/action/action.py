@@ -5,14 +5,15 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.core.image import Image as CoreImage
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.lang import Builder
+
 from mlp.serialization import (
     remote_action_append,
     remote_action_remove,
+    make_struct
 )
 from ..general.image_button.image_button import ImageButton
 from ..cursor import CURSOR_TABLE
-# texture_released = CoreImage('/home/alessandro/PycharmProjects/mlp/run.png').texture
-# texture_pressed = CoreImage('/home/alessandro/PycharmProjects/mlp/run2.png').texture
+
 Builder.load_file('./mlp/widgets/action/action.kv')
 
 
@@ -134,8 +135,9 @@ class ActionBar(GridLayout):
         # print("SEND ACTION CONTEXT")
         # print("parent", self.parent)
         msg_struct = remote_action_append(action)
-        msg_struct['payload']["author"] = action.owner.stats.owner
-        self.parent.receive_message(msg_struct)
+        msg_struct[1]["author"] = action.owner.stats.owner
+        struct = make_struct(*msg_struct)
+        self.parent.receive_message(struct)
 
     def on_load(self, _):
         self.update_bar()
@@ -170,8 +172,8 @@ class CurrentActionBar(GridLayout):
     def send_action(self, action):
         # print(action)
         msg_struct = remote_action_remove(action)
-        msg_struct['payload']["author"] = action.owner.stats.owner
-        self.parent.receive_message(msg_struct)
+        msg_struct[1]["author"] = action.owner.stats.owner
+        self.parent.receive_message(make_struct(*msg_struct))
         # self.parent.network_manager.send(remote_action_remove(action))
 
 # if __name__ == '__main__':

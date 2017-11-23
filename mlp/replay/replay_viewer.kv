@@ -1,0 +1,26 @@
+FloatLayout:
+    id: top_overlay
+
+    FloatLayout:
+        id: ui_container
+        orientation: 'vertical'
+
+        ScreenManager:
+            id: screen_mgr
+
+        StackLayout:
+            id: menu_bar
+            pos_hint: {'center_x': 0.5, 'top': 1}
+
+            size_hint: 1, None
+            height: 0 # for now
+
+    Button:
+        # ideally, there should be a row with controls docked somewhere on the right,
+        # but since all we have is a lonely chat button...
+
+        id: next_step
+        size_hint: None, None
+        pos_hint: {'left': 1, 'bottom': 0}
+        size: (90, 30)
+        text: 'Next step'

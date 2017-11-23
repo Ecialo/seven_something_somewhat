@@ -19,6 +19,7 @@ class ChatWidget(BoxLayout):
         self.app = app
 
         self.ids.input_field.bind(on_text_validate=self.send_chat_message)
+        self.toggle()
 
     def print_message(self, msg):
         """

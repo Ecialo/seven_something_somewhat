@@ -9,25 +9,6 @@
 <ClickableLabel@ButtonBehavior+Label>
 <MyButton@ControlButton+Button>
 
-<MyCheckBox@RelativeLayout+ControlButton+ButtonBehavior>:
-    id: __layout
-    active: __cb.active
-    state: __cb.state
-    text: 'Default text'
-
-    CheckBox:
-        id: __cb
-        size_hint_x: None
-        pos: (-35, 0)
-
-    ClickableLabel:
-        id: __label
-        size_hint_x: None
-        pos: (15, 0)
-
-        text: __layout.text
-        on_press: __cb._do_press()
-
 
 <LobbyScreen@Screen>:
     BoxLayout:
@@ -43,17 +24,53 @@
             # It looks like a hack, but I joke you not, the layout overstretches otherwise.
             height: exit_button.height
 
-            MyCheckBox:
-                id: ready_checkbox
-                text: "I am ready"
-
             MyButton:
                 id: exit_button
                 text: "Exit"
                 on_press: app.stop()
 
-            BoxLayout:
-                size_hint: 1, None
+            MyButton:
+                id: create_session
+                text: "Find Game"
+                on_press: root.find_session("user")
 
-        ListView:
-            id: online_users
+            MyButton:
+                id: vs_ai
+                text: "VS AI"
+                on_press: root.find_session("ai")
+
+#    RecycleView:
+#        id: game_sessions
+#        pos_hint: {'right': 0.8}
+#        size_hint: 0.2, 0.8
+#        viewclass: 'Label'
+#        RecycleBoxLayout:
+#            orientation: 'vertical'
+#            default_size: None, dp(56)
+#            default_size_hint: 1, None
+#            size_hint_y: None
+#            height: self.minimum_height
+#            canvas:
+#                Color:
+#                    rgba: 0.3, 0.3, 0.3, 1.0
+#                Rectangle:
+#                    pos: self.pos
+#                    size: self.size
+
+    RecycleView:
+        id: online_users
+        pos_hint: {'right': 1.0}
+        size_hint: 0.2, 0.8
+        viewclass: 'Label'
+        RecycleBoxLayout:
+            orientation: 'vertical'
+            default_size: None, dp(56)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            canvas:
+                Color:
+                    rgba: 0.3, 0.3, 0.3, 1.0
+                Rectangle:
+                    pos: self.pos
+                    size: self.size

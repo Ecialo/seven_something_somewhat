@@ -1,10 +1,12 @@
 import os
-from .new_action import SPEED
-from ..replication_manager import MetaRegistry
-from ..serialization import ActionTag
-from ..bind_widget import bind_widget
-# from ..tools import dict_merge
 import logging
+
+from ..replication_manager import MetaRegistry
+from ..bind_widget import bind_widget
+from ..protocol import Enum
+from .property.reference import Reference
+from ..tools import dict_merge
+
 logger = logging.getLogger(__name__)
 handler = logging.FileHandler(
     './game_logs/actions_sequence{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
@@ -12,8 +14,159 @@ handler = logging.FileHandler(
 )
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
+
+ACTIONS = MetaRegistry()["Action"]
+ActionMeta = MetaRegistry().make_registered_metaclass("Action")
+
+
 FULL, MOVE, STANDARD = range(3)
-# FAST, NORMAL, SLOW = range(3)
+type_ = Enum(
+    "FULL",
+    "MOVE",
+    "STANDARD",
+)
+
+SPEED = Enum(
+    "FAST",
+    "NORMAL",
+    "SLOW",
+)
+
+
+class Action(metaclass=ActionMeta):
+    hooks = []
+
+    name = None
+    cost = 0
+    action_type = None
+    action_speed = None
+
+    setup_fields = []
+    effects = []
+    # area = None
+
+    widget = None
+    _check = None
+
+    def __init__(self, owner, speed=None, **kwargs):
+        self.owner = owner
+        self._context = None
+        self.action_speed = self.action_speed if speed is None else speed
+        for setup_struct in self.setup_fields:
+            field_name = setup_struct['name']
+            setattr(self, field_name, None)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        effects = []
+        for effect in self.effects:
+            effects.append({
+                'effect': effect['effect'],
+                'area': effect['area']
+            })
+        self.effects = effects
+
+    @property
+    def context(self):
+        if self._context:
+            return self._context
+        else:
+            return {
+                'action': self,
+                'owner': self.owner,
+                'source': self.owner.cell,
+            }
+
+    @context.setter
+    def context(self, value):
+        self._context = value
+
+    def setup(self, setup_dict=None):
+        setup_dict = setup_dict or {}
+        print(self.setup_fields, setup_dict)
+        for setup_struct in self.setup_fields:
+            print(setup_struct['name'], setup_dict)
+            if setup_struct['name'] in setup_dict:
+                value = setup_dict[setup_struct['name']]
+            else:
+                cursor_params = setup_struct['cursor_params']
+                value = yield [setup_struct['cursor']] + [cursor_params]
+            setattr(self, setup_struct['name'], value)
+
+    def clear(self):
+        for setup_struct in self.setup_fields:
+            field_name = setup_struct['name']
+            setattr(self, field_name, None)
+
+    def apply(self):
+        self.owner.stats.action_points -= self.cost
+        for effect_struct in self.effects:
+            effect = effect_struct['effect'].get()
+            cells = effect_struct['area'].get(self.context)
+            effect.apply(cells, self.context)
+
+    def check(self):
+        if self._check:
+            res = self._check.get(self.context)
+        else:
+            res = True
+        return res and self.owner.stats.action_points >= self.cost
+
+    def pre_check(self):
+        return self.check()
+
+    def append_to_bar_effect(self):
+        pass
+
+    def remove_from_bar_effect(self):
+        pass
+
+    def dump(self):
+        fields = {}
+        for setup_field in self.setup_fields:
+            name = setup_field['name']
+            fields[name] = getattr(self, name)
+        s = dict_merge(
+            {
+                'name': self.name,
+                'owner': self.owner,
+                'speed': self.action_speed,
+            },
+            fields
+        )
+        return s
+
+    def copy(self):
+        kwargs = {ss['name']: getattr(self, ss['name']) for ss in self.setup_fields}
+        return self.__class__(self.owner, **kwargs)
+
+    def __repr__(self):
+        return "{} of {}".format(self.name, self.owner)
+
+
+def action_constructor(loader, node):
+    u_s = loader.construct_mapping(node)
+    name = u_s.pop("name")
+    return Reference(name, u_s, ACTIONS)
+
+
+def new_action_constructor(loader, node):
+    a_s = loader.construct_mapping(node)
+
+    @bind_widget("NewAction")
+    class NewAction(Action):
+        name = a_s['name']
+        action_type = getattr(type_, a_s['action_type'])
+        action_speed = getattr(SPEED, a_s['speed'])
+        cost = a_s['cost']
+        setup_fields = a_s['setup']
+        effects = a_s['effects']
+        widget = a_s['widget']
+        _check = a_s.get('check')
+
+    return NewAction
+
+NEW_ACTION_TAG = "!new_action"
+ACTION_TAG = "!action"
 
 
 @bind_widget("ActionBar")
@@ -26,6 +179,9 @@ class ActionBar:
         self.owner = owner
         self.actions = []
 
+    def __iter__(self):
+        return iter(self.actions)
+
     def append_action(self, action):
         self.actions.append(action(self.owner))
 
@@ -33,7 +189,6 @@ class ActionBar:
         for i, action in enumerate(self.actions):
             if action.name == action_to_remove.name:
                 action_index = i
-                print("HOORAY FOR", i)
                 break
         else:
             return
@@ -44,7 +199,6 @@ class ActionBar:
 
     def load(self, struct):
         self.actions = [self.registry[action_name](self.owner) for action_name in struct]
-        print(self.actions)
 
 
 @bind_widget("CurrentActionBar")
@@ -66,12 +220,6 @@ class CurrentActionBar:
 
     def remove_action(self, action_index):
         self.actions.clear()
-        # try:
-        #     action = self.actions.pop(action_index)
-        # except IndexError:
-        #     action = self.actions.pop(0)
-        # finally:
-        # action.remove_from_bar_effect()
 
     def check_slots(self, action):
         action_type = action.action_type
@@ -112,7 +260,8 @@ class CurrentActionBar:
             self.remove_action(0)
 
     def dump(self):
-        return [ActionTag(action) for action in self.actions]
+        # return [ActionTag(action) for action in self.actions]
+        return [action for action in self.actions]
 
     def load(self, struct):
         self.clear()

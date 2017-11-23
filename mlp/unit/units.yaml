@@ -79,12 +79,13 @@
   name: Dummy
   resources:
     health: 100
+    action_points: 4
+    damage: 25
     armor: !res
       name: armor
       type: numeric
       max: 100
       initial: 0
-    damage: 20
     action_points: 4
   actions:
     - Move

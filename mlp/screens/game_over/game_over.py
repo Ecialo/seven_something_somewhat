@@ -2,7 +2,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 import kivy.properties as prop
 
-Builder.load_file('./mlp/screens/lobby/lobby_screen.kv')
+Builder.load_file('./mlp/screens/game_over/game_over.kv')
 
 
 class GameOverScreen(Screen):
@@ -14,3 +14,6 @@ class GameOverScreen(Screen):
         super().__init__(**kwargs)
         self.app = app
         self.winner_name = winner_name or ""
+
+    def receive(self, _):
+        pass

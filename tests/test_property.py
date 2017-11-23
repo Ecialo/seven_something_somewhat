@@ -15,10 +15,10 @@ class TestProperty:
 
     def test_index(self):
         prop = yaml.load(io.StringIO("!prop iterable[0]"))
-        print(prop)
+        # print(prop)
         assert prop.get(self.context) == 1
 
     def test_negative_index(self):
         prop = yaml.load(io.StringIO("!prop iterable[-1]"))
-        print(prop)
+        # print(prop)
         assert prop.get(self.context) == 3

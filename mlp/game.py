@@ -6,7 +6,7 @@ from random import randint
 import blinker
 
 from mlp.commands.command import Place
-from .actions.new_action import SPEED
+from .actions.action import SPEED
 from .bind_widget import bind_widget
 from .grid import Grid
 from .protocol import *
@@ -15,6 +15,7 @@ from .replication_manager import (
     GameObject,
 )
 from .tools import dict_merge
+from .player import Player
 from .unit import (
     Unit,
     PLANNING,
@@ -35,6 +36,8 @@ summon = blinker.signal("summon")
 revoke = blinker.signal("revoke")
 trace = blinker.signal("trace")
 commands = blinker.signal("commands")
+game_over = blinker.signal("game_over")
+next_phase = blinker.signal("next_phase")
 
 
 @bind_widget("TurnOrderIndicator")
@@ -125,31 +128,32 @@ class Game:
             (message_type.GAME, game_message.ACTION_APPEND): self.append_action,
             (message_type.GAME, game_message.ACTION_REMOVE): self.remove_action,
             (message_type.GAME, game_message.COMMAND): self.envoke_commands,
-            # (message_type.GAME, game_message.READY): self.run,
+            (message_type.GAME, game_message.READY): self.setup_and_run,
+            (message_type.GAME, game_message.GAME_OVER): lambda winner: game_over.send(winner=winner),
         }
         self._grid = grid
         self._turn_order_manager = turn_order_manager
-        self.players = players
+        self._players = players
 
         trace.connect(self.add_to_commands)
         summon.connect(self.on_summon)
 
-        # self._grid.summon()
         if players:
             self.switch_state()
-            summon.send(None, unit=players[0].main_unit, cell=self._grid[2, 4])
+            summon.send(None, unit=players[0].main_unit, cell=self._grid[3, 4])
             summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
             self.switch_state()
-        #     players[0].main_unit.place_in(self._grid[3, 4])
-        #     players[-1].main_unit.place_in(self._grid[-1, -1])
         self.winner = None
         for unit in self.units:
-            print("STATE", unit.state)
             unit.clear_presumed()
             unit.update_position()
-            print(unit._presumed_stats.cell)
-            print(unit._stats.cell)
-        # self.switch_state()
+
+    @property
+    def players(self):
+        if self._players is None:
+            return self.registry.categories[Player.__name__]
+        else:
+            return self._players
 
     @property
     def units(self):
@@ -159,27 +163,20 @@ class Game:
         type_pair = tuple(struct['message_type'])
         self.handlers[type_pair](struct['payload'])
 
-    # @staticmethod
     def append_action(self, action_struct):
-        # print("APPEND")
         action = action_struct['action']
         author = action_struct['author']
-        # print(action.target_coord, action.context['action'].target_coord)
         if author == action.owner.stats.owner or author == "overlord":
             action.owner.append_action(action)
         self.clear_presumed()
         self.apply_actions()
-        # self.update_position()
 
-    # @staticmethod
     def remove_action(self, action_struct):
         unit = action_struct['unit']
-        # action_index = action_struct['action_index']
         author = action_struct['author']
         if unit.stats.owner == author or author == "overlord":
             unit.remove_action(None)
         self.clear_presumed()
-        # self.apply_actions()
         self.update_position()
 
     @property
@@ -204,6 +201,12 @@ class Game:
                     break
         return self._turn_order_manager
 
+    def setup_and_run(self, payload):
+        for player in self.players:
+            if player.name == payload['author']:
+                player.is_ready = True
+        self.run()
+
     def run(self):
         """
         1) Начинается ход
@@ -220,13 +223,18 @@ class Game:
             anyone_not_pass = self.apply_actions(True)
             for unit in self.turn_order_manager:
                 unit.current_action_bar.clear()
-            dead_players = {player for player in self.players if player.main_unit.stats.health <= 0}
-            alive_players = set(self.players) - dead_players
-            if len(alive_players) == 1:
-                self.declare_winner(alive_players.pop())
-                return
+            # dead_players = {player for player in self.players if player.main_unit.stats.health <= 0}
+            # alive_players = set(self.players) - dead_players
+            # if len(alive_players) == 1:
+            #     self.declare_winner(alive_players.pop())
+            #     return
+
+            # Проверка на окончание игры
+            alive_players = list(filter(lambda player: player.is_alive, self.players))
+            if len(alive_players) <= 1:
+                game_over.send(winner=alive_players.pop().name)
+
             if not anyone_not_pass:
-                print("all pass")
                 self.action_log[-1].append("--------------")
                 for unit in self.units:
                     unit.launch_triggers(["turn", "end"], unit, unit.context)
@@ -238,6 +246,7 @@ class Game:
                 player.is_ready = False
             result = True
             self.clear_presumed()
+            next_phase.send()   # Тут высылается сигнал о том, что можно высылать клиентам обновление
         self.switch_state()
         return result
 
@@ -287,8 +296,9 @@ class Game:
         #     logger.debug("{} real stats {}".format(unit, unit.stats.resources))
         return anyone_not_pass
 
-    def declare_winner(self, player):
-        self.winner = player
+    # @staticmethod
+    # def declare_winner(player):
+    #     game_over.send(None, player=player)
 
     def switch_state(self):
         self.state = int(not self.state)
@@ -326,4 +336,5 @@ class Game:
         print("ENVOKE COMMANDS")
         new_commands = deque(new_commands)
         print(new_commands)
+        # print("ENVOKE COMMANDS")
         commands.send(commands=new_commands)
