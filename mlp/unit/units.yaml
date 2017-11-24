@@ -84,7 +84,7 @@
     armor: !res
       name: armor
       type: numeric
-      max: 100
+      max: 50
       initial: 0
     action_points: 4
     endurance: 4

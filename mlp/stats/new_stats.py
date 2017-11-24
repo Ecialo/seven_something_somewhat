@@ -87,9 +87,18 @@ class Stats:
         super().__setattr__(key, value)
 
     def __getattribute__(self, item):
+        item = item.split("__", 1)
+        prefix = None
+        if len(item) == 2:
+            prefix, item = item
+        else:
+            item = item[0]
         item = super().__getattribute__(item)
         if isinstance(item, Resource):
-            return item.value
+            if prefix is not None:
+                return getattr(item, prefix)
+            else:
+                return item.value
         else:
             return item
 

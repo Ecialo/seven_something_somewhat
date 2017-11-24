@@ -140,6 +140,14 @@
     amount: 15
   check: !prop victim.health
   result: 95
+
+- effects:
+  - !eff
+    name: Damage
+    extra_tags: ["melee"]
+    amount: !prop victim.max__armor
+  check: !prop victim.health
+  result: 50
   
 - effects:
   - !eff
