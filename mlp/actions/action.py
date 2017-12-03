@@ -92,6 +92,12 @@ class Action(metaclass=ActionMeta):
                 value = yield [setup_struct['cursor']] + [cursor_params]
             setattr(self, setup_struct['name'], value)
 
+    def instant_setup(self, **fields):
+        for setup_struct in self.setup_fields:
+            value = fields[setup_struct['name']]
+            setattr(self, setup_struct['name'], value)
+        return self
+
     def clear(self):
         for setup_struct in self.setup_fields:
             field_name = setup_struct['name']

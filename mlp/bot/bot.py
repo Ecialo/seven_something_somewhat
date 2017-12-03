@@ -4,6 +4,7 @@ from tornado import (
     iostream,
     queues
 )
+import blinker
 
 from ..game import Game
 from ..loader import load
@@ -21,6 +22,9 @@ from ..serialization import (
 from .strategy.fixed_tactic_strategy import FixedTacticStrategy
 from .tactic.random_walk_tactic import RandomWalkTactic
 # from .tactic.pass_tactic import PassTactic
+
+presume = blinker.signal("presume")
+forget = blinker.signal("forget")
 
 
 class Bot:

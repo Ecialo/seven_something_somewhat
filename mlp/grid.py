@@ -77,6 +77,9 @@ class Grid(GameObject):
         cell.take()
         unit.cell = None
 
+    def distance(self, cell_a, cell_b):
+        pass
+
     def create_cells(self):
         pass
 
