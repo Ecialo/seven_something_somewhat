@@ -87,7 +87,7 @@
       max: 50
       initial: 0
     action_points: 4
-    endurance: 4
+    endurance: 2
   actions:
     - Move
   widget:
