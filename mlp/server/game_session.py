@@ -63,7 +63,7 @@ class GameSession:
         players = [
             {
                 'name': name,
-                'unit': 'Muzik',
+                'unit': 'Muzik' if name != 'bot' else "Dog",
             }
             for name in self.users
         ]

@@ -6,6 +6,7 @@ from ..bind_widget import bind_widget
 from ..protocol import Enum
 from .property.reference import Reference
 from ..tools import dict_merge
+from ..cursor import GeometrySelectCursor
 
 logger = logging.getLogger(__name__)
 handler = logging.FileHandler(
@@ -47,6 +48,7 @@ class Action(metaclass=ActionMeta):
 
     widget = None
     _check = None
+    _tags = None
 
     def __init__(self, owner, speed=None, **kwargs):
         self.owner = owner
@@ -79,6 +81,15 @@ class Action(metaclass=ActionMeta):
     @context.setter
     def context(self, value):
         self._context = value
+
+    @property
+    def tags(self):
+        return self._tags
+
+    def cursors(self):
+        for setup_struct in self.setup_fields:
+            if setup_struct['cursor'] == 'geometry':
+                yield setup_struct['name'], GeometrySelectCursor(self, *setup_struct['cursor_params'])
 
     def setup(self, setup_dict=None):
         setup_dict = setup_dict or {}
@@ -168,6 +179,7 @@ def new_action_constructor(loader, node):
         effects = a_s['effects']
         widget = a_s['widget']
         _check = a_s.get('check')
+        _tags = a_s.get('tags', [])
 
     return NewAction
 

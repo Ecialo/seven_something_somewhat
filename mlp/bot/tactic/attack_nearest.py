@@ -17,7 +17,7 @@ class AttackNearest(Tactic):
             key=lambda un: grid.distance(un.cell, unit.cell)
         )
 
-        for action in self.random_agression(unit):
+        for action in self.random_aggression(unit):
             params = self.search_in_aoe(action, closest_enemy_unit)
             if params is not None:
                 result_actions.append(remote_action_append(action.copy().instanst_setup(**params)))

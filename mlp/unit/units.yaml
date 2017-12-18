@@ -44,7 +44,7 @@
     action_points: 5
   actions:
     - Move
-    - Attack
+    - OldAttack
   widget:
     sprite: './data/direwolf.png'
     scale: 2.0

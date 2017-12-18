@@ -23,7 +23,7 @@ from ..actions.action import (
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
 from ..actions.base.effect import AbstractEffect
-from ..stats import (
+from ..stats.new_stats import (
     MajorStats,
     Stats,
 )

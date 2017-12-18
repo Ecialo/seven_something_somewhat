@@ -28,8 +28,18 @@
   name: OldAttack
   action_type: STANDARD
   speed: NORMAL
+  tags: ["aggression"]
   cost: 1
-  setup: []
+  setup:
+    - name: lololo
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Adjacent
+          center: !prop source
   effects:
     - effect: !eff
         name: Damage
@@ -39,7 +49,6 @@
         name: Melee
         radius: 1
         center: !prop source
-  check: !expr [!prop owner.unit_state, "==", "sword"]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
