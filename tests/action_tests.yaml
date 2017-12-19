@@ -367,8 +367,8 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', 10]
-      
-# Endurance check
+
+## Endurance check
 - A:
     unit: Dummy
     cell: !cell [2, 2]
@@ -397,9 +397,9 @@
       check: !prop B.stats.health
       result: !prop B.stats.max__health
 
-      
+
 # Cleave tests
- 
+
 #Direct hit
 - A:
     unit: Dummy
@@ -423,7 +423,7 @@
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', !prop B.stats.damage]
 
-# Adjacent hit 1      
+# Adjacent hit 1
 - A:
     unit: Dummy
     cell: !cell [2, 2]
@@ -445,8 +445,8 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', !prop B.stats.damage]
-      
-# Adjacent hit 2      
+
+# Adjacent hit 2
 - A:
     unit: Dummy
     cell: !cell [2, 2]
@@ -469,8 +469,8 @@
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', !prop B.stats.damage]
 
-      
-#Empowered Cleave      
+
+#Empowered Cleave
 - A:
     unit: Dummy
     cell: !cell [2, 2]
@@ -491,7 +491,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop B.stats.damage, '*', 1.4, ')']
-      
+
 # Lunge tests
 #Into nothing
 - A:
@@ -538,7 +538,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 0.6, ')']
-      
+
 #Step + hit
 - A:
     unit: Dummy
@@ -549,7 +549,7 @@
   actions_A:
     - action_name: Lunge
       args:
-        target: !cell [3, 2]
+        target: !cell [4, 1]
   actions_B: []
   checks:
     - cell: !cell [3, 2]
@@ -561,7 +561,7 @@
     - cell: !cell [4, 1]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 0.6, ')']
-      
+
 #the tip
 - A:
     unit: Dummy
@@ -572,7 +572,7 @@
   actions_A:
     - action_name: Lunge
       args:
-        target: !cell [2, 2]
+        target: !cell [4, 1]
   actions_B: []
   checks:
     - cell: !cell [2, 2]

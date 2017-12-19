@@ -54,11 +54,13 @@ class TestAction:
         for actions_struct in test['actions_A']:
             action_class = ACTIONS[actions_struct['action_name']]
             action = action_class(unit_A, **actions_struct['args'])
-            action.apply()
+            if action.pre_check():
+                action.apply()
         for actions_struct in test['actions_B']:
             action_class = ACTIONS[actions_struct['action_name']]
             action = action_class(unit_B, **actions_struct['args'])
-            action.apply()
+            if action.pre_check():
+                action.apply()
         context = {
             'A': unit_A,
             'B': unit_B,

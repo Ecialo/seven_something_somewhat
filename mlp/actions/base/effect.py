@@ -76,6 +76,7 @@ class UnitEffect(AbstractEffect):
         self.log(source)
 
     def apply(self, cells, context):
+        logging.debug("Effect {} cells {}".format(self, cells))
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
