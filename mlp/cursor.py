@@ -20,9 +20,10 @@ class GeometrySelectCursor:
         context.update(self._context)
         return context
 
-    def search_in_aoe(self, target):
+    def search_in_aoe(self, extractor):
+        result = {}
         for cell in self.available_cells.get(self.context):
             self._context['selected'] = cell
             cells = self.shape.get(self.context)
-            if target.cell in cells:
-                return cell
+            result[cell] = extractor(cells)
+        return result

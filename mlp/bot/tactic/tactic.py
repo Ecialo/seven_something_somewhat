@@ -12,19 +12,10 @@ class Tactic:
         pass
 
     @staticmethod
-    def random_aggression(unit):
+    def random_actions_by_tag(unit, tag):
         a = []
         for action in unit.stats.action_bar:
-            if "aggression" in action.tags:
-                a.append(action)
-        shuffle(a)
-        return a
-
-    @staticmethod
-    def random_movement(unit):
-        a = []
-        for action in unit.stats.action_bar:
-            if "aggression" in action.tags:
+            if tag in action.tags:
                 a.append(action)
         shuffle(a)
         return a

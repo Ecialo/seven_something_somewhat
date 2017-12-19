@@ -5,6 +5,7 @@ from typing import (
     List,
     Dict,
     Any,
+    Callable,
 )
 
 from ..cursor import GeometrySelectCursor
@@ -16,6 +17,12 @@ class Action:
 
     def cursors(self) -> Iterable[Tuple(str, GeometrySelectCursor)]: ...
     def copy(self) -> Action: ...
+    def instant_setup(self, **kwargs) -> Action: ...
+    def search_in_aoe(
+            self,
+            aggregator: Callable[[Dict[Any, Any]], Any],
+            extractor: Callable,
+    ) -> Dict[str, Any]: ...
 
 class ActionBar:
     pass

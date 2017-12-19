@@ -137,6 +137,11 @@ class Action(metaclass=ActionMeta):
     def remove_from_bar_effect(self):
         pass
 
+    def search_in_aoe(self, aggregator, extractor):
+        for cursor_name, cursor in self.cursors():
+            result = cursor.search_in_aoe(extractor)
+            return {cursor_name: aggregator(result)}
+
     def dump(self):
         fields = {}
         for setup_field in self.setup_fields:
