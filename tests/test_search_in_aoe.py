@@ -6,6 +6,8 @@ from ..mlp.loader import load
 from ..mlp.bot.tactic.approach_and_attack import (
     find_success,
     unit_in_area,
+    find_min,
+    distance_to_cell,
 )
 
 summon = blinker.signal("summon")
@@ -53,3 +55,21 @@ class TestSearchInAOE:
         action.instant_setup(**params)
         action.apply()
         assert unit_B.stats.health == 93
+
+    def test_find_path(self):
+        unit_A = UNITS['Dummy']('A')
+        unit_A.switch_state()
+        summon.send(None, unit=unit_A, cell=self.grid[(2, 2)])
+        for unit in self.units:
+            unit.clear_presumed()
+            unit.update_position()
+        action = ACTIONS['Move'](unit_A)
+        extractor = distance_to_cell(self.grid[(2, 0)])
+        params = action.search_in_aoe(find_min, extractor)
+        # print(params)
+        action.instant_setup(**params)
+        action.apply()
+        for unit in self.units:
+            unit.clear_presumed()
+            unit.update_position()
+        assert unit_A.cell == self.grid[(2, 1)]

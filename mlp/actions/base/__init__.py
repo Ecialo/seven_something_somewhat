@@ -55,9 +55,8 @@ class Move(UnitEffect):
                 path = [path]
             for path_part in path:
                 # next_cell = grid.find_path(target.cell, path_part)[1]
-                path = grid.find_path(target.cell, path_part)
-                print(target.cell, path_part, path)
-                next_cell = path[1]
+                full_path = grid.find_path(target.cell, path_part)
+                next_cell = full_path[1]
 
                 # send command
 

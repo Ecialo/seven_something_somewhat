@@ -4,6 +4,7 @@ from .tactic import Tactic
 from ...grid import HexGrid
 
 MAX_ACTIONS_IN_PHASE = 2
+grid = HexGrid.locate()
 
 
 def unit_in_area(unit):
@@ -21,6 +22,18 @@ def find_success(params_space):
             return param
     else:
         return None
+
+
+def distance_to_cell(cell):
+
+    def extractor(cells):
+        return grid.distance(cell, cells[-1])
+
+    return extractor
+
+
+def find_min(params_space):
+    return min(params_space.items(), key=lambda x: x[1])[0]
 
 
 class WalkTo(Tactic):
