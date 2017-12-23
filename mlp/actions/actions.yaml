@@ -2,6 +2,7 @@
   name: Move
   action_type: MOVE
   speed: NORMAL
+  tags: ['movement']
   cost: 1
   setup:
     - name: path

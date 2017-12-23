@@ -15,7 +15,10 @@ from yaml import (
     MappingNode
 )
 
-from ..replication_manager import GameObject
+from ..replication_manager import (
+    GameObject,
+    Registry
+)
 from ..actions.action import (
     ActionBar,
     CurrentActionBar,
@@ -31,6 +34,7 @@ from ..grid import Cell
 
 PLANNING: int
 ACTION: int
+UNITS: Registry
 
 class Unit(GameObject):
     hooks = ClassVar[List[str]]

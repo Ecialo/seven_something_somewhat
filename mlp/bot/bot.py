@@ -18,9 +18,11 @@ from ..protocol import (
 from ..serialization import (
     mlp_loads,
     make_message,
+    remote_action_append,
 )
 from .strategy.fixed_tactic_strategy import FixedTacticStrategy
 from .tactic.random_walk_tactic import RandomWalkTactic
+from .tactic.approach_and_attack import AttackNearest
 # from .tactic.pass_tactic import PassTactic
 
 presume = blinker.signal("presume")
@@ -43,6 +45,8 @@ class Bot:
             (mt.LOBBY, lm.ACCEPT): lambda _: None
         }
 
+        presume.connect()
+
     @property
     def player(self):
         if not self._player:
@@ -51,6 +55,9 @@ class Bot:
                     self._player = pl
                     break
         return self._player
+
+    def presume(self, action):
+        self.game.receive_message(remote_action_append(action))
 
     async def connect(self, host, port):
         stream = await self.client.connect(host, port)
@@ -112,6 +119,7 @@ def run_bot(port, lock=None):
     if lock:
         lock.acquire()
     loop = ioloop.IOLoop.current()
-    bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
+    # bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
+    bot = Bot(FixedTacticStrategy(AttackNearest()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()

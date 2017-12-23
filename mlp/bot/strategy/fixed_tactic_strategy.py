@@ -3,6 +3,7 @@ from ...protocol import (
     message_type as mt,
     game_message as gm
 )
+from ...serialization import remote_action_append
 
 
 class FixedTacticStrategy(Strategy):
@@ -16,5 +17,6 @@ class FixedTacticStrategy(Strategy):
         for unit in player.units:
             print("TRY UNIT")
             actions += self.tactic.realize(unit)
+        actions = [remote_action_append(action) for action in actions]
         actions.append(((mt.GAME, gm.READY), {}))
         return actions

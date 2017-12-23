@@ -9,11 +9,11 @@ import blinker
 
 from ..replication_manager import (
     GameObject,
+    MetaRegistry,
 )
 from ..stats.new_stats import MajorStats
 from ..grid import (
     Grid,
-    Cell,
 )
 from ..actions.action import *
 from ..tools import dict_merge
