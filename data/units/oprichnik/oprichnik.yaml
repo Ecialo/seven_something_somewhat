@@ -1,0 +1,24 @@
+- !new_unit
+  name: Oprichnik
+  resources:
+    health: 120
+    initiative: 11
+    action_points: 5
+    damage: 25
+    endurance: 4
+    armor: 4
+    coins: 1
+  actions:
+    - Move
+    - Attack
+    - Cleave
+    - EmpoweredCleave
+    - Lunge
+    - EmpoweredLunge
+    - Kick
+    - EmpoweredKick
+    - Parry
+    - EmpoweredParry
+  widget:
+    sprite: './data/sprite.png'
+    scale: 0.33
