@@ -24,7 +24,7 @@ class Tactic:
     def random_actions_by_tag(unit, tag):
         a = []
         for action in unit.stats.action_bar:
-            if tag in action.tags:
+            if tag in action.tags and action.check():
                 a.append(action)
         shuffle(a)
         return a

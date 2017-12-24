@@ -25,7 +25,8 @@ class Action:
     ) -> Dict[str, Any]: ...
 
 class ActionBar:
-    pass
+
+    def __iter__(self) -> Iterable[Action]: ...
 
 class CurrentActionBar:
     pass
