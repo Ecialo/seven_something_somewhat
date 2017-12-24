@@ -1,0 +1,21 @@
+- !new_unit
+  name: Oprichnik
+  resources:
+    health: 120
+    armor: 2
+    action_points: 5
+    initiative: 11
+    coins: 3
+    damage: 15
+  actions:
+    - Move
+    - Slice
+    - Parry
+    - CrossSlash
+    - OrderUpyr
+    - OrderShulikun
+    - OrderScythe
+    - DeathIntervention
+  widget:
+    sprite: './data/sprite.png'
+    scale: 0.33
