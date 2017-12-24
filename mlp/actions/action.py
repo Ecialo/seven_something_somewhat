@@ -38,7 +38,7 @@ class Action(metaclass=ActionMeta):
     hooks = []
 
     name = None
-    cost = 0
+    cost = {}
     action_type = None
     action_speed = None
 
@@ -115,7 +115,10 @@ class Action(metaclass=ActionMeta):
             setattr(self, field_name, None)
 
     def apply(self):
-        self.owner.stats.action_points -= self.cost
+        for resource, cost in self.cost.items():
+            setattr(self.owner.stats, resource, getattr(self.owner.stats, resource) - cost)
+            # res = res and (getattr(self.owner.stats, resource) >= cost)
+        # self.owner.stats.action_points -= self.cost
         for effect_struct in self.effects:
             effect = effect_struct['effect'].get()
             cells = effect_struct['area'].get(self.context)
@@ -126,7 +129,9 @@ class Action(metaclass=ActionMeta):
             res = self._check.get(self.context)
         else:
             res = True
-        return res and self.owner.stats.action_points >= self.cost
+        for resource, cost in self.cost.items():
+            res = res and (getattr(self.owner.stats, resource) >= cost)
+        return res
 
     def pre_check(self):
         return self.check()
@@ -179,7 +184,7 @@ def new_action_constructor(loader, node):
         name = a_s['name']
         action_type = getattr(type_, a_s['action_type'])
         action_speed = getattr(SPEED, a_s['speed'])
-        cost = a_s['cost']
+        cost = {'action_points': a_s['cost']} if isinstance(a_s['cost'], int) else a_s['cost']
         setup_fields = a_s['setup']
         effects = a_s['effects']
         widget = a_s['widget']
