@@ -2,14 +2,23 @@ from random import shuffle
 
 import blinker
 
+from ...replication_manager import GameObjectRegistry
+from ...unit import Unit
+
 presume = blinker.signal("presume")
 forget = blinker.signal("forget")
 
 
 class Tactic:
 
+    registry = GameObjectRegistry()
+
     def realize(self, unit):
         pass
+
+    @property
+    def units(self):
+        return self.registry.categories[Unit.__name__]
 
     @staticmethod
     def random_actions_by_tag(unit, tag):
@@ -31,8 +40,8 @@ class Tactic:
 
     @staticmethod
     def presume(actions):
-        presume.send(actions=actions)
+        presume.send(None, actions=actions)
 
     @staticmethod
     def forget(unit):
-        forget.send(unit=unit)
+        forget.send(None, unit=unit)

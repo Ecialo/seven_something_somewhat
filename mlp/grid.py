@@ -77,7 +77,8 @@ class Grid(GameObject):
         cell.take()
         unit.cell = None
 
-    def distance(self, cell_a, cell_b):
+    @classmethod
+    def distance(cls, cell_a, cell_b):
         pass
 
     def create_cells(self):
@@ -189,9 +190,10 @@ class HexGrid(Grid):
         y = -x - z
         return x, y, z
 
-    def distance(self, cell_a, cell_b):
-        pos_a = self.offsets_to_cube(cell_a.pos)
-        pos_b = self.offsets_to_cube(cell_b.pos)
+    @classmethod
+    def distance(cls, cell_a, cell_b):
+        pos_a = cls.offsets_to_cube(cell_a.pos)
+        pos_b = cls.offsets_to_cube(cell_b.pos)
         return max((abs(a - b) for a, b in zip(pos_a, pos_b)))
 
     @staticmethod

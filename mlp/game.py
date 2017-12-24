@@ -140,7 +140,7 @@ class Game:
 
         if players:
             self.switch_state()
-            summon.send(None, unit=players[0].main_unit, cell=self._grid[3, 4])
+            summon.send(None, unit=players[0].main_unit, cell=self._grid[0, 0])
             summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
             self.switch_state()
         self.winner = None

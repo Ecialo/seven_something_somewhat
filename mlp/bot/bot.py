@@ -17,6 +17,7 @@ from ..protocol import (
 )
 from ..serialization import (
     mlp_loads,
+    make_struct,
     make_message,
     remote_action_append,
 )
@@ -45,7 +46,7 @@ class Bot:
             (mt.LOBBY, lm.ACCEPT): lambda _: None
         }
 
-        presume.connect()
+        presume.connect(self.presume)
 
     @property
     def player(self):
@@ -56,8 +57,16 @@ class Bot:
                     break
         return self._player
 
-    def presume(self, action):
-        self.game.receive_message(remote_action_append(action))
+    def presume(self, _, actions):
+        # print("OLOLO")
+        for action in actions:
+            msg_struct = remote_action_append(action)
+            # print(msg_struct)
+
+            msg_struct[1]["author"] = action.owner.stats.owner
+            self.game.receive_message(
+                make_struct(*msg_struct)
+            )
 
     async def connect(self, host, port):
         stream = await self.client.connect(host, port)

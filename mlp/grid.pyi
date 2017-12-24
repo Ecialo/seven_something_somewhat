@@ -12,7 +12,8 @@ class Cell:
 class Grid(GameObject):
 
     def __getitem__(self, item: Sequence[int]) -> Cell: ...
-    def distance(self, cell_a, cell_b) -> int: ...
+    @classmethod
+    def distance(cls, cell_a, cell_b) -> int: ...
 
 class HexGrid(Grid):
 

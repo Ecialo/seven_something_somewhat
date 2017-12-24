@@ -2,12 +2,17 @@ from typing import (
     List,
     Dict,
     Any,
+    Iterable,
+    ClassVar,
 )
 
 from ...unit import Unit
 from ...actions.action import Action
+from ...replication_manager import GameObjectRegistry
 
 class Tactic:
+
+    registry = ClassVar[GameObjectRegistry]
 
     def realize(self, unit: Unit) -> List[Action]: ...
     @staticmethod
@@ -18,3 +23,5 @@ class Tactic:
     def presume(actions: List[Action]) -> None: ...
     @staticmethod
     def forget(unit: Unit) -> None: ...
+    @property
+    def units(self) -> Iterable[Unit]: ...

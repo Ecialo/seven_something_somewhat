@@ -2,10 +2,8 @@ import blinker
 
 from .tactic import Tactic
 from ...grid import HexGrid
-from ...unit import UNITS
 
 MAX_ACTIONS_IN_PHASE = 2
-grid = HexGrid.locate()
 
 
 def unit_in_area(unit):
@@ -28,7 +26,7 @@ def find_success(params_space):
 def distance_to_cell(cell):
 
     def extractor(cells):
-        return grid.distance(cell, cells[-1])
+        return HexGrid.distance(cell, cells[-1])
 
     return extractor
 
@@ -47,7 +45,7 @@ class WalkTo(Tactic):
         actions = []
         for action in self.random_actions_by_tag(unit, 'movement'):
             params = action.search_in_aoe(find_min, self.extractor)
-            actions.append(params)
+            actions.append(action.instant_setup(**params))
             break
         return actions
 
@@ -91,9 +89,9 @@ class AttackNearest(Tactic):
     def realize(self, unit):
         min_distance = 999
         target = None
-        for other_unit in UNITS:
+        for other_unit in self.units:
             if other_unit.stats.owner != unit.stats.owner:
-                d = grid.distance(unit.cell, other_unit.cell)
+                d = HexGrid.distance(unit.cell, other_unit.cell)
                 if d < min_distance:
                     min_distance = d
                     target = other_unit
