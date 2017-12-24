@@ -19,6 +19,7 @@ from ..actions.action import *
 from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
+from ..bind_widget import bind_widget
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -43,6 +44,7 @@ class Unit(GameObject):
     hooks = []
     actions = []
     resources = {}
+    playable = False
 
     def __init__(self, master_name=None, id_=None):
         super().__init__(id_)
@@ -249,6 +251,7 @@ def new_unit_constructor(loader, node):
         actions = u_s['actions']
         widget = u_s['widget']
         resources = u_s['resources']
+        playable = u_s.get('playable', False)
 
     NewUnit.__name__ = NewUnit.name
     return NewUnit

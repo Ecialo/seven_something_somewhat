@@ -41,8 +41,8 @@ class GameSession:
     def __contains__(self, item):
         return item.name in self.users
 
-    def add_user(self, user):
-        self.users[user.name] = user
+    def add_user(self, user, character):
+        self.users[user.name] = (user, character)
 
     def remove_user(self, user):
         self.users.pop(user.name)
@@ -63,9 +63,9 @@ class GameSession:
         players = [
             {
                 'name': name,
-                'unit': 'Muzik' if name != 'bot' else "Dog",
+                'unit': userdata[-1] if name != 'bot' else "Dog",
             }
-            for name in self.users
+            for name, userdata in self.users.items()
         ]
         self._game_process = mlp.Process(
             target=start_game_server,

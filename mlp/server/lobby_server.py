@@ -104,14 +104,16 @@ class LobbyServer(tcpserver.TCPServer):
             (ALL, ((mt.LOBBY, lm.ONLINE), list(self._users)))
         )
 
-    async def find_session(self, user, opponent):
+    async def find_session(self, user, payload):
+        opponent = payload['opponent']
+        character = payload['character']
         if opponent == "user":
             # session = UserGameSession(self.get_port())
             session = self._free_session
         else:
             session = AIGameSession(self.get_port())
         # session = self._free_session
-        session.add_user(user)
+        session.add_user(user, character)
         if session.is_full():
             self._full_sessions[session.uid] = session
             if self._free_session is session:

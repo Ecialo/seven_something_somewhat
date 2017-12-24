@@ -89,7 +89,6 @@ class MLPClientApp(App):
         msg = msg_struct["text"]
         self.chat.print_message("<{name}>: {msg}".format(name=name, msg=msg))
 
-
     def on_stop(self):
         self.network_manager.loop.stop()
 

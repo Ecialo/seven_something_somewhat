@@ -1,6 +1,7 @@
 #:import sla kivy.adapters.simplelistadapter
 #:import CompositeListItem kivy.uix.listview.CompositeListItem
 #:import label kivy.uix.label
+#:import Spinner kivy.uix.spinner.Spinner
 
 <ControlButton@Widget>:
     size_hint: None, None
@@ -39,24 +40,6 @@
                 text: "VS AI"
                 on_press: root.find_session("ai")
 
-#    RecycleView:
-#        id: game_sessions
-#        pos_hint: {'right': 0.8}
-#        size_hint: 0.2, 0.8
-#        viewclass: 'Label'
-#        RecycleBoxLayout:
-#            orientation: 'vertical'
-#            default_size: None, dp(56)
-#            default_size_hint: 1, None
-#            size_hint_y: None
-#            height: self.minimum_height
-#            canvas:
-#                Color:
-#                    rgba: 0.3, 0.3, 0.3, 1.0
-#                Rectangle:
-#                    pos: self.pos
-#                    size: self.size
-
     RecycleView:
         id: online_users
         pos_hint: {'right': 1.0}
@@ -74,3 +57,9 @@
                 Rectangle:
                     pos: self.pos
                     size: self.size
+    Spinner:
+        id: character
+        pos_hint: {'left': 0.0, 'top': 1.0}
+        size_hint: (None, None)
+        text: 'Character'
+        values: ('Muzik', 'Dog')
