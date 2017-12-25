@@ -1,0 +1,12 @@
+- !new_status
+  name: Sadism
+  on_kill:    # TODO реализовать событие
+    - !eff
+      name: ChangeStat
+      stat_name: coins
+      value: !expr [!prop target.coins, '+', 2]
+  on_apply_debuff:    # TODO реализовать событие
+    - !eff
+      name: ChangeStat
+      stat_name: coins
+      value: !expr [!prop target.coins, '+', 1]

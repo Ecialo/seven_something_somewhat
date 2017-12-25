@@ -1,0 +1,13 @@
+- !new_eff
+  name: Payoff
+  type: meta
+  params:
+    - power
+  effects:
+    - effect: !eff
+        name: Redirect
+        target: !prop incoming_effect_context.source
+      condition: !expr
+        - !prop effect.power
+        - '>='
+        - [!prop incoming_effect.amount, '*', 2]

@@ -16,20 +16,9 @@
     - OrderShulikun
     - OrderScythe
     - DeathIntervention
+  statuses:
+    - !status
+      name: "Sadism"
   widget:
     sprite: './data/sprite.png'
     scale: 0.33
-
-- !new_unit
-  name: Upyr
-  resources:
-    health: 40
-    armor: 0
-    action_points: 4
-    initiative: 8
-    damage: 10
-
-- !new_unit
-  name: Shulikun
-  resources:
-    health: 0
