@@ -65,9 +65,15 @@ class Status(metaclass=StatusMeta):
             self.context['target'].remove_status(self)
 
     def dump(self):
+        params = vars(self).copy()
+        print("PARAMS", params)
+        params['context'] = params['context'].copy()
+        params['context'].pop('status')
+        params['context']['target'] = params['context']['target'].cell
+        params['context']['owner'] = params['context']['owner'].cell
         return {
             "name": self.name,
-            "params": vars(self),
+            "params": params,
         }
 
     def apply(self, event, target, context):
@@ -89,6 +95,11 @@ class Status(metaclass=StatusMeta):
     def copy(self):
         return self.__class__(**vars(self))
 
+    def expand(self):
+        # pass
+        self.context['target'] = self.context['target'].object
+        self.context['owner'] = self.context['owner'].object
+        self.context['status'] = self
 
 class Dot(Status):
     params = ["power"]
@@ -106,6 +117,7 @@ def status_constructor(loader, node):
     name = s_s.pop("name")
     # status = STATUSES[name](**s_s)
     return Reference(name, s_s, STATUSES)
+
 
 STATUS_TAG = "!status"
 

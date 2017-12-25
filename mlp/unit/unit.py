@@ -44,6 +44,7 @@ class Unit(GameObject):
     hooks = []
     actions = []
     resources = {}
+    statuses = []
     playable = False
 
     def __init__(self, master_name=None, id_=None):
@@ -63,6 +64,20 @@ class Unit(GameObject):
             'source': self.cell,
             'owner': self
         }
+        self.switch_state()
+        context = self.context.copy()
+        context['target'] = self
+        print("EARLY CONtEXT", context)
+        # add_status_effect = MetaRegistry()['Effect']['AddStatus']
+        for status_ref in self.statuses:
+            status = status_ref.get().configure(context)
+            print("LATE CONXTEX", status.context)
+            self.add_status(status)
+            print("VERY LATE CONTEXT", status.context)
+            # status.context = None
+            # print(status)
+            # self.add_status(status)
+        self.switch_state()
 
     @property
     def action_bar(self):
@@ -233,6 +248,9 @@ class Unit(GameObject):
         death.send(unit=self)
         revoke.send(unit=self, cell=self.cell)
 
+    def expand(self):
+        self._stats.expand()
+
     def __contains__(self, item):
         if isinstance(item, Status):
             return item.name in self.stats.statuses
@@ -252,6 +270,7 @@ def new_unit_constructor(loader, node):
         widget = u_s['widget']
         resources = u_s['resources']
         playable = u_s.get('playable', False)
+        statuses = u_s.get('statuses', [])
 
     NewUnit.__name__ = NewUnit.name
     return NewUnit

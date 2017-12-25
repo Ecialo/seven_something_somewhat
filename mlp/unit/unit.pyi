@@ -40,6 +40,7 @@ class Unit(GameObject):
     hooks = ClassVar[List[str]]
     actions = ClassVar[List[str]]
     resources = ClassVar[Dict[str, Any]]
+    statuses = ClassVar[List[Reference]]
 
     _stats: MajorStats
     state: int

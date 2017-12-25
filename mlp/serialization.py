@@ -95,7 +95,9 @@ class CreateOrUpdateDecoder:
     registry = GameObjectRegistry()
 
     def __call__(self, decoder, obj_struct, fp, shareable_index=None):
-        return self.registry.load_obj(obj_struct)
+        obj = self.registry.load_obj(obj_struct)
+        obj.expand()
+        return obj
 
 
 def remote_action_append(action):
