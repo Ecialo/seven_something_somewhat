@@ -7,7 +7,7 @@ from typing import (
     Callable,
 )
 from socket import socket as soc
-from threading import Semaphore
+from multiprocessing import Barrier
 
 from tornado import (
     tcpserver,
@@ -66,7 +66,7 @@ def start_game_server(
         port: int,
         socket: soc,
         players: List[Dict[str, str]],
-        lock: Optional[Semaphore],
+        lock: Optional[Barrier],
 ) -> None: ...
 
-async def unlock(lock: Semaphore) -> None: ...
+async def unlock(lock: Barrier) -> None: ...

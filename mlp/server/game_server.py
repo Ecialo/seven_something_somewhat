@@ -38,7 +38,7 @@ next_phase = blinker.signal("next_phase")
 
 async def unlock(lock):
     print("TIME TO UNLOCK")
-    lock.release()
+    lock.wait()
     print("UNLOCKED ^^")
 
 
@@ -77,6 +77,7 @@ class GameServer(tcpserver.TCPServer):
         username = message_struct['payload']
         # await self.refuse_connection(stream)
         if username in self._users:
+            print(username)
             await self.refuse_connection(stream)
         else:
             await self.add_user(username, stream)

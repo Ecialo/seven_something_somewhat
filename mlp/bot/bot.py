@@ -32,12 +32,13 @@ forget = blinker.signal("forget")
 
 class Bot:
 
-    def __init__(self, strategy):
+    def __init__(self, botname, strategy):
         self.client = tcpclient.TCPClient()
         self.queue = queues.Queue()
 
         self.strategy = strategy
         self._player = None
+        self.botname = botname
 
         self.game = Game()
 
@@ -52,7 +53,7 @@ class Bot:
     def player(self):
         if not self._player:
             for pl in self.game.players:
-                if pl.name == "bot":
+                if pl.name == self.botname:
                     self._player = pl
                     break
         return self._player
@@ -119,16 +120,18 @@ class Bot:
 
     async def handshake(self):
         self.queue.put(
-            ((mt.CONTEXT, cm.JOIN), "bot")
+            ((mt.CONTEXT, cm.JOIN), self.botname)
         )
 
 
-def run_bot(port, lock=None):
+def run_bot(port, botname='bot', lock=None):
     load()
-    if lock:
-        lock.acquire()
+    # if lock:
+    #     lock.acquire()
+    lock.wait()
+    print("BOTNAME", botname)
     loop = ioloop.IOLoop.current()
     # bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
-    bot = Bot(FixedTacticStrategy(AttackNearest()))
+    bot = Bot(botname, FixedTacticStrategy(AttackNearest()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()
