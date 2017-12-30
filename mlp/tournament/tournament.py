@@ -10,8 +10,8 @@ process = blinker.signal('process')
 
 
 @process.connect
-def print_content(_, content):
-    print(content)
+def print_content(_, message):
+    print("PRILETELO", message)
 
 
 USTAS = 'Ustas'

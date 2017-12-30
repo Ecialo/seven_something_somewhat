@@ -245,6 +245,7 @@ class Unit(GameObject):
 
     def kill(self):
         self.is_alive = False
+        self.current_action_bar.clear()
         death.send(unit=self)
         revoke.send(unit=self, cell=self.cell)
 

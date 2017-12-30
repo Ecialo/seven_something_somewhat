@@ -29,4 +29,5 @@ class ActionBar:
     def __iter__(self) -> Iterable[Action]: ...
 
 class CurrentActionBar:
-    pass
+
+    def clear(self) -> None: ...
