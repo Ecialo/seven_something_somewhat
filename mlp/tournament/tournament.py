@@ -1,7 +1,14 @@
 import multiprocessing as mlp
 
 import blinker
+from tornado import (
+    ioloop
+)
 
+from ..protocol import (
+    message_type as mt,
+    game_message as gm,
+)
 from ..server.game_session import GameSession
 from ..bot.bot import run_bot
 
@@ -33,6 +40,9 @@ class TournamentGameSession(GameSession):
         # self.users.update(bot1)
         self.users[VITALINE] = [bot2]
         # self.users.update(bot2)
+        self.handlers = {
+            (mt.GAME, gm.GAME_OVER): self.game_over
+        }
 
     def start(self):
         super().start()
@@ -48,6 +58,10 @@ class TournamentGameSession(GameSession):
         )
         self._bot1_process.start()
         self._bot2_process.start()
+
+    def game_over(self, payload):
+        print('WINNER', payload)
+        ioloop.IOLoop.current().spawn_callback(self.shutdown)
 
     async def shutdown(self):
         await super().shutdown()

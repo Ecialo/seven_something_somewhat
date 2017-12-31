@@ -28,11 +28,12 @@ from .tactic.approach_and_attack import AttackNearest
 
 presume = blinker.signal("presume")
 forget = blinker.signal("forget")
-
+game_over = blinker.signal("game_over")
 
 class Bot:
 
     def __init__(self, botname, strategy):
+        self.is_alive = True
         self.client = tcpclient.TCPClient()
         self.queue = queues.Queue()
 
@@ -44,10 +45,12 @@ class Bot:
 
         self.handlers = {
             (mt.CONTEXT, cm.READY): self.next_turn,
-            (mt.LOBBY, lm.ACCEPT): lambda _: None
+            (mt.LOBBY, lm.ACCEPT): lambda _: None,
+            # (mt.GAME, gm.GAME_OVER): self.game_over,
         }
 
         presume.connect(self.presume)
+        game_over.connect(self.game_over)
 
     @property
     def player(self):
@@ -122,6 +125,13 @@ class Bot:
         self.queue.put(
             ((mt.CONTEXT, cm.JOIN), self.botname)
         )
+
+    def game_over(self, _, winner):
+        print("\n\n")
+        print(self.botname, winner)
+        print("\n\n")
+        self.is_alive = False
+        ioloop.IOLoop.current().stop()
 
 
 def run_bot(port, botname='bot', lock=None):
