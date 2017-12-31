@@ -120,7 +120,7 @@ class AIGameSession(GameSession):
     def __init__(self, port):
         super().__init__(port)
         self._bot_process = None
-        self._lock = mlp.Semaphore(0)
+        self._lock = mlp.Barrier(2)
 
     def start(self):
         # Добавить бота
