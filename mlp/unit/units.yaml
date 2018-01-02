@@ -94,3 +94,15 @@
   actions:
     - Move
   widget:
+
+- !new_unit
+  name: Agent
+  resources:
+    health: 100
+    action_points: 4
+    armor: 0
+    damage: 15
+    dog: 3
+    ammo: 5
+    grenade: 1
+    potion: 1
