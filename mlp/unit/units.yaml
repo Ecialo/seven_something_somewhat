@@ -52,7 +52,7 @@
   widget:
     sprite: './data/direwolf.png'
     scale: 2.0
-    
+
 - !new_unit
   name: Fighter_sword
   resources:
@@ -81,6 +81,9 @@
 
 - !new_unit
   name: Dummy
+  ai:
+    melee: 1
+    ranged: [1, 3]
   resources:
     health: 100
     action_points: 4
