@@ -97,6 +97,9 @@
 
 - !new_unit
   name: Agent
+  ai:
+    melee: 2
+    ranged: [1, 5]
   resources:
     health: 100
     action_points: 4
@@ -106,3 +109,5 @@
     ammo: 5
     grenade: 1
     potion: 1
+  actions: []
+  widget:
