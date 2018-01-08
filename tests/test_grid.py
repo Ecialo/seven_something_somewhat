@@ -94,3 +94,9 @@ class TestGrid:
             grid[4, 2],
             grid[4, 1],
         }
+
+    def test_find_path(self):
+        grid = self.grid
+        path = grid.find_path((0, 0), (0, 0))
+        print(path)
+        assert path == [(0, 0), (0, 0)]

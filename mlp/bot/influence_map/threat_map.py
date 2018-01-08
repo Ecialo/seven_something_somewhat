@@ -15,10 +15,14 @@ def threat_signal(melee=None, ranged=None):
         0: melee_power,
         1: melee_power,
         2: 0.5*melee_power,
+        3: 0.25*melee_power,
+        4: 0.1*melee_power,
     }
     step = ranged_power/ranged_distance
     ranged_signal = {i: step*i for i in range(ranged_distance + 1)}
     ranged_signal[ranged_distance + 1] = ranged_power*0.5
+    ranged_signal[ranged_distance + 2] = ranged_power*0.25
+    ranged_signal[ranged_distance + 3] = ranged_power*0.1
     return {k: max(melee_signal.get(k, 0.0), ranged_signal[k]) for k in ranged_signal}
 
 

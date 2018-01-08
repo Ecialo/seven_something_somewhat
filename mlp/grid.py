@@ -48,6 +48,14 @@ class Cell:
     def __repr__(self):
         return "{} at {}".format(self.__class__.__name__, self.pos)
 
+    def __eq__(self, other):
+        if isinstance(other, Cell):
+            other = other.pos
+        return self.pos == other
+
+    def __hash__(self):
+        return hash(self.pos)
+
 
 class Grid(GameObject):
 
@@ -288,6 +296,8 @@ class HexGrid(Grid):
     def _find_path(self, fcell, tcell):
         paths = [[fcell]]
         already = set()
+        if fcell == tcell:
+            return [fcell, tcell]
         while True:
             new_paths = []
             for path in paths:
