@@ -48,7 +48,7 @@
   checks:
     - cell: !cell [1, 0]
       check: !prop B.stats.health
-      result: 75
+      result: !expr [!prop B.stats.max__health, '-', !prop A.stats.damage]
 
 # Move tests
 
@@ -585,3 +585,126 @@
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 0.6, ')']
 
+# Emp Lunge
+
+#point blank
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: EmpoweredLunge
+      args:
+        move: !cell [3, 2]
+        hit: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop B.stats.health
+      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
+      
+#whacky maneuver
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: EmpoweredLunge
+      args:
+        move: !cell [4, 3]
+        hit: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [4, 3]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop B.stats.health
+      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
+      
+#big distance
+- A:
+    unit: Dummy
+    cell: !cell [0, 4]
+  B:
+    unit: Dummy
+    cell: !cell [4, 1]
+  actions_A:
+    - action_name: EmpoweredLunge
+      args:
+        move: !cell [2, 2]
+        hit: !cell [4, 1]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [4, 1]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [4, 1]
+      check: !prop B.stats.health
+      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
+      
+# Parry tests 
+
+#normal parry
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Parry
+      args: {}
+  actions_B:
+    - action_name: Attack
+      args: {}
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop A.stats.health
+      result: !prop A.stats.max__health
+      
+#parry break
+# - A:
+    # unit: Dummy
+    # cell: !cell [2, 2]
+  # B:
+    # unit: Dummy
+    # cell: !cell [3, 2]
+  # actions_A:
+    # - action_name: Parry
+      # args: {}
+  # actions_B:
+    # - action_name: EmpoweredCleave
+      # args: {}
+  # checks:
+    # - cell: !cell [2, 2]
+      # check: !prop cell.object
+      # result: !prop A
+    # - cell: !cell [3, 2]
+      # check: !prop cell.object
+      # result: !prop B
+    # - cell: !cell [3, 2]
+      # check: !prop A.stats.health
+      # result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', '1.4', ')']

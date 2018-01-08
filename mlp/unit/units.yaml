@@ -80,7 +80,7 @@
   resources:
     health: 100
     action_points: 4
-    damage: 25
+    damage: 30
     armor: !res
       name: armor
       type: numeric
