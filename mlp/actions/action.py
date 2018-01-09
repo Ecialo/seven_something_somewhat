@@ -8,13 +8,13 @@ from .property.reference import Reference
 from ..tools import dict_merge
 from ..cursor import GeometrySelectCursor
 
-logger = logging.getLogger(__name__)
-handler = logging.FileHandler(
-    './game_logs/actions_sequence{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
-    'w',
-)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger(__name__)
+# handler = logging.FileHandler(
+#     './game_logs/actions_sequence{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
+#     'w',
+# )
+# logger.addHandler(handler)
+# logger.setLevel(logging.DEBUG)
 
 ACTIONS = MetaRegistry()["Action"]
 ActionMeta = MetaRegistry().make_registered_metaclass("Action")
@@ -276,9 +276,9 @@ class CurrentActionBar:
         any_action = bool(self.actions)
         for action in (action for action in self.actions if action.action_speed == speed):
             if action.pre_check():
-                logger.debug("Action {}, Owner {}, Owner State {}, Speed {}, Actual Speed {}".format(
-                    action, action.owner, action.owner.state, speed, action.action_speed
-                ))
+                # logger.debug("Action {}, Owner {}, Owner State {}, Speed {}, Actual Speed {}".format(
+                #     action, action.owner, action.owner.state, speed, action.action_speed
+                # ))
                 action.apply()
         # self.clear()
         return any_action

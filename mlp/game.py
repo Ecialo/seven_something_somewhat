@@ -24,13 +24,13 @@ from .unit import (
 
 LAST = -1
 
-logger = logging.getLogger(__name__)
-handler = logging.FileHandler(
-    './game_logs/apply_actions{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
-    'w',
-)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger(__name__)
+# handler = logging.FileHandler(
+#     './game_logs/apply_actions{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
+#     'w',
+# )
+# logger.addHandler(handler)
+# logger.setLevel(logging.DEBUG)
 
 summon = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -252,40 +252,40 @@ class Game:
 
     def apply_actions(self, log=False):
         anyone_not_pass = False
-        logger.debug("START APPLING ACTIONS")
+        # logger.debug("START APPLING ACTIONS")
         for unit in self.units:
             unit.launch_triggers(["phase", "start"], unit, unit.context)
         if log:
             self.action_log.append([])
         for unit in self.turn_order_manager:
-            logger.debug("APPLY FAST FOR {} in state {}".format(unit, unit.state))
+            # logger.debug("APPLY FAST FOR {} in state {}".format(unit, unit.state))
             # print(unit)
             unit_is_not_pass = unit.apply_actions(speed=SPEED.FAST)
-            for unit_ in self.units:
-                logger.debug("{} real stats {}".format(unit_, unit_._stats))
-                logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
+            # for unit_ in self.units:
+            #     logger.debug("{} real stats {}".format(unit_, unit_._stats))
+            #     logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
             if log:
                 self.action_log[-1].extend(unit.action_log)
             unit.action_log.clear()
             anyone_not_pass = anyone_not_pass or unit_is_not_pass
         for unit in self.turn_order_manager:
-            logger.debug("APPLY NORMAL FOR {} in state {}".format(unit, unit.state))
+            # logger.debug("APPLY NORMAL FOR {} in state {}".format(unit, unit.state))
             # print(unit)
             unit_is_not_pass = unit.apply_actions()
-            for unit_ in self.units:
-                logger.debug("{} real stats {}".format(unit_, unit_._stats))
-                logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
+            # for unit_ in self.units:
+            #     logger.debug("{} real stats {}".format(unit_, unit_._stats))
+            #     logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
             if log:
                 self.action_log[-1].extend(unit.action_log)
             unit.action_log.clear()
             anyone_not_pass = anyone_not_pass or unit_is_not_pass
         for unit in self.turn_order_manager:
             # print(unit)
-            logger.debug("APPLY SLOW FOR {} in state {}".format(unit, unit.state))
+            # logger.debug("APPLY SLOW FOR {} in state {}".format(unit, unit.state))
             unit_is_not_pass = unit.apply_actions(speed=SPEED.SLOW)
-            for unit_ in self.units:
-                logger.debug("{} real stats {}".format(unit_, unit_._stats))
-                logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
+            # for unit_ in self.units:
+            #     logger.debug("{} real stats {}".format(unit_, unit_._stats))
+            #     logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
             if log:
                 self.action_log[-1].extend(unit.action_log)
             unit.action_log.clear()
@@ -303,9 +303,9 @@ class Game:
     def switch_state(self):
         self.state = int(not self.state)
         for unit in self.units:
-            logger.debug("{} OLD STATS {}".format(unit, unit.stats))
+            # logger.debug("{} OLD STATS {}".format(unit, unit.stats))
             unit.switch_state()
-            logger.debug("{} NEW STATS {}".format(unit, unit.stats))
+            # logger.debug("{} NEW STATS {}".format(unit, unit.stats))
             # unit.clear_presumed()
 
     def update_position(self):

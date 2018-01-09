@@ -43,6 +43,7 @@ class TournamentGameSession(GameSession):
         self.handlers = {
             (mt.GAME, gm.GAME_OVER): self.game_over
         }
+        process.connect(self.process)
 
     def start(self):
         super().start()
@@ -65,7 +66,13 @@ class TournamentGameSession(GameSession):
 
     async def shutdown(self):
         await super().shutdown()
-        if self._bot1_process.is_alive():
-            self._bot1_process.terminate()
-        if self._bot2_process.is_alive():
-            self._bot2_process.terminate()
+        print("STOP")
+        ioloop.IOLoop.current().stop()
+        # if self._bot1_process.is_alive():
+        #     self._bot1_process.terminate()
+        # if self._bot2_process.is_alive():
+        #     self._bot2_process.terminate()
+
+    # @process.connect
+    def process(self, _, message):
+        ioloop.IOLoop.current().spawn_callback(self.handlers[tuple(message['message_type'])], message['payload'])

@@ -145,3 +145,4 @@ def run_bot(port, botname='bot', lock=None):
     bot = Bot(botname, FixedTacticStrategy(AttackNearest()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()
+    print("{botname} process stop".format(botname=botname))

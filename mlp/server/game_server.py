@@ -167,9 +167,9 @@ class GameServer(tcpserver.TCPServer):
         await self.replay_handler.dump_replay()
         print("DONE DUMP")
         self.is_alive = False
-        await self.lobby_stream.write(make_message(
-            (mt.GAME, gm.GAME_OVER)
-        ))
+        # await self.lobby_stream.write(make_message(
+        #     (mt.GAME, gm.GAME_OVER)
+        # ))
         await self.queue.join()
         ioloop.IOLoop.current().stop()
 
@@ -181,6 +181,10 @@ class GameServer(tcpserver.TCPServer):
         await self.queue.put((
             ALL,
             ((mt.GAME, gm.GAME_OVER), winner)
+        ))
+        await self.lobby_stream.write(make_message(
+            (mt.GAME, gm.GAME_OVER),
+            winner,
         ))
         print("SHUTDOWN")
         await self.shutdown()
@@ -212,3 +216,4 @@ def start_game_server(session_name, port, socket, players, lock=None):
     server.bind(port)
     server.start()
     ioloop.IOLoop.current().start()
+    print("GAME SERVER STOP")

@@ -9,7 +9,9 @@ from typing import (
 )
 
 from ..cursor import GeometrySelectCursor
+from ..protocol import Enum
 
+SPEED: Enum
 
 class Action:
 
@@ -30,4 +32,7 @@ class ActionBar:
 
 class CurrentActionBar:
 
+    actions: List[Action]
+
     def clear(self) -> None: ...
+    def remove_action(self, action_index: int) -> None: ...

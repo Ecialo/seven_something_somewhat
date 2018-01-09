@@ -18,7 +18,7 @@ from ..serialization import (
     mlp_loads,
     make_message,
 )
-from ..bot import (
+from ..bot.bot import (
     run_bot,
 )
 
@@ -100,8 +100,8 @@ class GameSession:
         self.users.clear()
         self.is_alive = False
         # await self._stream.write()
-        if self._game_process.is_alive():
-            self._game_process.terminate()
+        # if self._game_process.is_alive():
+        #     self._game_process.terminate()
 
     async def send_terminate_signal(self):
         await self._stream.write(make_message(

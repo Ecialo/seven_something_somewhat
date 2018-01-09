@@ -13,6 +13,7 @@ def main():
     tour = TournamentGameSession(bot1, bot2)
     loop.spawn_callback(tour.start)
     loop.start()
+    print("END")
 
 
 main()
