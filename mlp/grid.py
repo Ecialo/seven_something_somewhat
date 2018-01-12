@@ -283,13 +283,17 @@ class HexGrid(Grid):
 
         if isinstance(from_pos_or_cell, tuple):
             fcell = self[from_pos_or_cell]
-        else:
+        elif isinstance(from_pos_or_cell, Cell):
             fcell = from_pos_or_cell
+        else:
+            raise TypeError
 
         if isinstance(to_pos_or_cell, tuple):
             tcell = self[to_pos_or_cell]
-        else:
+        elif isinstance(to_pos_or_cell, Cell):
             tcell = to_pos_or_cell
+        else:
+            raise TypeError
 
         return self._find_path(fcell, tcell)
 
@@ -304,7 +308,7 @@ class HexGrid(Grid):
                 last_cell = path[-1]
                 for cell in (cell for cell in last_cell.adjacent if cell not in already):
                     already.add(cell)
-                    if cell is tcell:
+                    if cell == tcell:
                         return path + [cell]
                     else:
                         new_paths.append(path + [cell])

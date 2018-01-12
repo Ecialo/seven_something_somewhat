@@ -89,7 +89,7 @@ class TestSearchInAOE:
 
     def test_threat_signal(self):
         # signal = UNITS['Dummy'].signal
-        signal = threat_signal(**{'melee': 1, "ranged":[1, 3]})
+        signal = threat_signal(**{'melee': 1, "ranged": [1, 3]})
         # melee 1, ranged 1, 3
         test_signal = {
             0: 1.0,
@@ -98,8 +98,6 @@ class TestSearchInAOE:
             3: 0.99999,
             4: 0.5,
         }
-        # print(signal)
-        # print([abs(signal[r] - test_signal[r]) for r in test_signal])
         assert all(
             [abs(signal[r] - test_signal[r]) < 0.001 for r in test_signal]
         )

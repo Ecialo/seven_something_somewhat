@@ -5,13 +5,16 @@ from typing import (
     Set,
     Optional,
     List,
+    Any,
 )
 
 from .replication_manager import GameObject
 
 
 class Cell:
-    pass
+
+    pos: Tuple[int, int]
+    object: Any
 
 
 class HexCell(Cell):

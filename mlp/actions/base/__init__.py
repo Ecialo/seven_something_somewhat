@@ -47,15 +47,19 @@ class Move(UnitEffect):
     # def _apply(self, source_action, target):
 
     def _apply(self, target, context):
+        # print(self.path)
         # print("CONTEXT", context['action'].target_coord)
         with self.configure(context) as c:
             path = c.path
+            # print(path)
             grid = target.cell.grid
             if not isinstance(path, Iterable):
                 path = [path]
             for path_part in path:
+                print("PARTPATH", path_part)
                 # next_cell = grid.find_path(target.cell, path_part)[1]
                 full_path = grid.find_path(target.cell, path_part)
+                print("FULLPATH", full_path)
                 next_cell = full_path[1]
 
                 # send command
