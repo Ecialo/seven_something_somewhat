@@ -23,11 +23,11 @@ class ReplayHandler:
         ioloop.IOLoop.current().spawn_callback(self.write_step)
 
     async def write_step(self):
-        print("start logger")
+        # print("start logger")
         while self.is_alive:
             res = await self.queue.get()
             state_payload, command_payload = res
-            print("WORK")
+            # print("WORK")
             # self.replay.writelines([mlp_dumps(state_payload), mlp_dumps(command_payload)])
             # self.replay.writelines([mlp_dumps(state_payload), mlp_dumps(command_payload)])
             # self.replay.write(mlp_dumps(state_payload) + b'\n')
@@ -39,10 +39,10 @@ class ReplayHandler:
             self.queue.task_done()
 
     async def dump_replay(self):
-        print("AWAIT queue")
-        print(self.queue)
+        # print("AWAIT queue")
+        # print(self.queue)
         await self.queue.join()
-        print("DONE")
+        # print("DONE")
         # self.replay.close()
         with open(self.replay_path, 'wb') as replay:
             mlp_dump(self.replay, replay)

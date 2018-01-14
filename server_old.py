@@ -92,10 +92,10 @@ class User:
             else:
                 message_struct = mlp_loads(msg)
 
-                print(self.name)
-                print("get")
-                print(message_struct)
-                print("")
+                # print(self.name)
+                # print("get")
+                # print(message_struct)
+                # print("")
 
                 type_pair = tuple(message_struct['message_type'])
                 # print(self.name, "rec", message_struct)
@@ -110,16 +110,16 @@ class User:
     async def send_message(self):
         while self.is_alive:
             message = await self.message_queue.get()
-            print(self.name)
-            print("send")
-            print(mlp_loads(message))
-            print("")
+            # print(self.name)
+            # print("send")
+            # print(mlp_loads(message))
+            # print("")
             # print(self.name, message)
             # print message, isinstance(message, bytes), type(message)
             await self.stream.write(message + SEPARATOR)
             status = self.stream.get_fd_error()
-            if status:
-                print(str(status))
+            # if status:
+            #     print(str(status))
             self.message_queue.task_done()
 
     async def disconnect(self):
@@ -127,7 +127,7 @@ class User:
         await self.server.remove_user(self)
 
     async def broadcast_chat(self, msg_struct):
-        print("broadcast", msg_struct)
+        # print("broadcast", msg_struct)
         msg_struct["user"] = self.name
         await self.emmit_message(
             {ALL: {
@@ -145,10 +145,10 @@ class User:
         # await self.server.break_preparations()
 
     async def load_inital_data(self, msg_struct):
-        print(self.name)
-        print("load inital data")
-        print(msg_struct)
-        print("")
+        # print(self.name)
+        # print("load inital data")
+        # print(msg_struct)
+        # print("")
         self.inital_data = msg_struct
         self.inital_data_loaded.notify_all()
 
@@ -187,7 +187,7 @@ class MLPServer(tcpserver.TCPServer):
         yield self.add_user(user)
 
     async def add_user(self, user):
-        print(user.name)
+        # print(user.name)
         self.users[user.name] = user
         loop = ioloop.IOLoop.current()
         loop.spawn_callback(user.await_messages)
@@ -217,12 +217,12 @@ class MLPServer(tcpserver.TCPServer):
             rec_messages = await self.queue.get()
             if ALL in rec_messages:
                 message = rec_messages[ALL]
-                print("SEND TO ALL")
-                print("ALL users")
-                print([user.name for user in self.users.values()])
-                print("message")
-                print(message)
-                print()
+                # print("SEND TO ALL")
+                # print("ALL users")
+                # print([user.name for user in self.users.values()])
+                # print("message")
+                # print(message)
+                # print()
                 await gen.multi([user.enqueue_message(mlp_dumps(message)) for user in self.users.values()])
             else:
                 # print(rec_messages)
@@ -265,13 +265,13 @@ class MLPServer(tcpserver.TCPServer):
             "payload": {}
         }
         # Оповестить о начале
-        print("notify")
+        # print("notify")
         await self.enqueue_messages({ALL: start_game})
-        print("wait data")
+        # print("wait data")
         # Получить стартовые даннные
         await gen.multi([u.inital_data_loaded.wait() for u in self.users.values() if u.is_ready])
         # Создать игру
-        print("MAKE GAME")
+        # print("MAKE GAME")
         registry = GameObjectRegistry()
         registry.purge()
         grid = GrassGrid((5, 5))
@@ -314,7 +314,7 @@ class MLPServer(tcpserver.TCPServer):
     async def run_game(self):
         if self.game.run():
             for m in self.game.action_log[-1]:
-                print(m)
+                # print(m)
                 message = {
                     "message_type": (message_type.CHAT, chat_message.BROADCAST),
                     "payload": {

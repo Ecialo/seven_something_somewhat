@@ -30,6 +30,7 @@ presume = blinker.signal("presume")
 forget = blinker.signal("forget")
 game_over = blinker.signal("game_over")
 
+
 class Bot:
 
     def __init__(self, botname, strategy):
@@ -79,6 +80,9 @@ class Bot:
         loop.spawn_callback(self.receiver, stream)
         loop.spawn_callback(self.consumer, stream)
 
+    async def connect_to_logger(self):
+        pass
+
     async def receiver(self, stream):
         while True:
             try:
@@ -89,7 +93,7 @@ class Bot:
             else:
                 message_struct = mlp_loads(msg)
                 message_struct["message_type"] = tuple(message_struct["message_type"])
-                print(message_struct["message_type"])
+                # print(message_struct["message_type"])
                 ioloop.IOLoop.current().spawn_callback(self.process_message, message_struct)
 
     async def consumer(self, stream):
@@ -116,8 +120,8 @@ class Bot:
 
     async def next_turn(self, _):
         actions = self.strategy.make_decisions(player=self.player)
-        print("\n\nACTIONS")
-        print(actions)
+        # print("\n\nACTIONS")
+        # print(actions)
         for action in actions:
             await self.queue.put(action)
 
@@ -127,22 +131,22 @@ class Bot:
         )
 
     def game_over(self, _, winner):
-        print("\n\n")
-        print(self.botname, winner)
-        print("\n\n")
+        # print("\n\n")
+        # print(self.botname, winner)
+        # print("\n\n")
         self.is_alive = False
         ioloop.IOLoop.current().stop()
 
 
-def run_bot(port, botname='bot', lock=None):
+def run_bot(port, botname='bot', strategy=None, lock=None):
     load()
     # if lock:
     #     lock.acquire()
     lock.wait()
-    print("BOTNAME", botname)
+    # print("BOTNAME", botname)
     loop = ioloop.IOLoop.current()
     # bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
     bot = Bot(botname, FixedTacticStrategy(AttackNearest()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()
-    print("{botname} process stop".format(botname=botname))
+    # print("{botname} process stop".format(botname=botname))

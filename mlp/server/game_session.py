@@ -1,6 +1,8 @@
+from datetime import datetime as dt
 import uuid
 import multiprocessing as mlp
 import socket
+import random as rnd
 
 import blinker
 from tornado import (
@@ -33,6 +35,7 @@ class GameSession:
         self.users = {}
         self.port = port
         self.uid = str(uuid.uuid1())
+        self.session_name = None
         self._game_process = None
         self._lock = None
         self._stream = None
@@ -67,11 +70,16 @@ class GameSession:
             }
             for name, userdata in self.users.items()
         ]
+        session_name_parts = list(self.users.keys())
+        session_name_parts.append(dt.now().strftime("%Y%m%d%H%M%S"))
+        session_name_parts.append(str(rnd.randint(0, 100)))
+        self.session_name = "_".join(session_name_parts)
+
         self._game_process = mlp.Process(
             target=start_game_server,
             name="GameServer {}".format(self.uid),
             args=(
-                self.uid,
+                self.session_name,
                 self.port,
                 csock,
                 players,

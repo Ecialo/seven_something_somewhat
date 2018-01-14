@@ -56,10 +56,10 @@ class Move(UnitEffect):
             if not isinstance(path, Iterable):
                 path = [path]
             for path_part in path:
-                print("PARTPATH", path_part)
+                # print("PARTPATH", path_part)
                 # next_cell = grid.find_path(target.cell, path_part)[1]
                 full_path = grid.find_path(target.cell, path_part)
-                print("FULLPATH", full_path)
+                # print("FULLPATH", full_path)
                 next_cell = full_path[1]
 
                 # send command

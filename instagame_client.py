@@ -72,8 +72,8 @@ class InstagameApp(App):
         # print("watch")
         for message in self.network_manager.dump():
             message_struct = self.network_manager.decode(message)
-            print("INCOMING MESSAGE")
-            print(message_struct)
+            # print("INCOMING MESSAGE")
+            # print(message_struct)
             if message_struct['message_type'][0] == mt.GAME:
                 self.receive_game_message(message_struct)
             elif tuple(message_struct['message_type']) == (mt.LOBBY, lm.GAME_OVER):
@@ -89,7 +89,7 @@ class InstagameApp(App):
         self.screen_manager.get_screen("game").game.receive_message(message_struct)
 
     def game_over(self, winner_name):
-        print(winner_name)
+        # print(winner_name)
         self.screen_manager.get_screen("game_over").winner_name = winner_name
         self.screen_manager.current = "game_over"
 

@@ -18,7 +18,8 @@ process = blinker.signal('process')
 
 @process.connect
 def print_content(_, message):
-    print("PRILETELO", message)
+    pass
+    # print("PRILETELO", message)
 
 
 USTAS = 'Ustas'
@@ -36,9 +37,9 @@ class TournamentGameSession(GameSession):
         self._bot1_process = None
         self._bot2_process = None
         self._lock = mlp.Barrier(3)
-        self.users[USTAS] = [bot1]
+        self.users[USTAS] = bot1
         # self.users.update(bot1)
-        self.users[VITALINE] = [bot2]
+        self.users[VITALINE] = bot2
         # self.users.update(bot2)
         self.handlers = {
             (mt.GAME, gm.GAME_OVER): self.game_over
@@ -50,23 +51,23 @@ class TournamentGameSession(GameSession):
         self._bot1_process = mlp.Process(
             target=run_bot,
             name='Bot Vitaline',
-            args=(self.port, VITALINE, self._lock)
+            args=(self.port, VITALINE, None, self._lock)
         )
         self._bot2_process = mlp.Process(
             target=run_bot,
             name='Bot Ustas',
-            args=(self.port, USTAS, self._lock)
+            args=(self.port, USTAS, None, self._lock)
         )
         self._bot1_process.start()
         self._bot2_process.start()
 
     def game_over(self, payload):
-        print('WINNER', payload)
+        # print('WINNER', payload)
         ioloop.IOLoop.current().spawn_callback(self.shutdown)
 
     async def shutdown(self):
         await super().shutdown()
-        print("STOP")
+        # print("STOP")
         ioloop.IOLoop.current().stop()
         # if self._bot1_process.is_alive():
         #     self._bot1_process.terminate()

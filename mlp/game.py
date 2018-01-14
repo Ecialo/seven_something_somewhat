@@ -70,8 +70,8 @@ class TurnOrderManager(GameObject):
 
     # @on_summon_event.connect_via('Unit')
     def append_unit(self, _, unit, cell=None):
-        print("ON SUMMON")
-        print(unit)
+        # print("ON SUMMON")
+        # print(unit)
         self._current_turn_order.append(
             (LAST, unit.stats.initiative, unit,)
         )
@@ -92,13 +92,13 @@ class TurnOrderManager(GameObject):
         self._current_turn_order = sorted(cur_turn_order, reverse=True)
 
     def dump(self):
-        print("CURRENT TURN ORDER")
+        # print("CURRENT TURN ORDER")
         # print(self._current_turn_order)
         msg = dict_merge(
             super().dump(),
             {'current_turn_order': self._current_turn_order},
         )
-        print(msg)
+        # print(msg)
         return msg
         # return {
         #     **super().dump(),
@@ -106,8 +106,8 @@ class TurnOrderManager(GameObject):
         # }
 
     def load(self, struct):
-        print("LOAD TURN ORDER")
-        print(struct)
+        # print("LOAD TURN ORDER")
+        # print(struct)
         super().load(struct)
         self._current_turn_order = sorted([tuple(r) for r in struct['current_turn_order']])
 
@@ -325,7 +325,7 @@ class Game:
 
     # @summon.connect
     def on_summon(self, _, unit, cell):
-        print("SUMMONED", unit)
+        # print("SUMMONED", unit)
         trace.send(command=Place(
             unit=unit,
             place=cell,
@@ -333,8 +333,8 @@ class Game:
         ))
 
     def envoke_commands(self, new_commands):
-        print("ENVOKE COMMANDS")
+        # print("ENVOKE COMMANDS")
         new_commands = deque(new_commands)
-        print(new_commands)
+        # print(new_commands)
         # print("ENVOKE COMMANDS")
         commands.send(commands=new_commands)

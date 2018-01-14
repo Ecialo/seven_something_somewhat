@@ -8,9 +8,9 @@ def threat_signal(melee=None, ranged=None):
     # assert ranged == [1, 3]
     melee_power = melee or 0.0
     ranged_power, ranged_distance = ranged or [0.0, 1]
-    print("SIGNAL")
+    # print("SIGNAL")
     melee_power = float(melee_power)
-    print(melee_power, ranged_power, ranged_distance)
+    # print(melee_power, ranged_power, ranged_distance)
     melee_signal = {
         0: melee_power,
         1: melee_power,

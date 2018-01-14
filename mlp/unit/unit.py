@@ -66,13 +66,13 @@ class Unit(GameObject):
         self.switch_state()
         context = self.context.copy()
         context['target'] = self
-        print("EARLY CONtEXT", context)
+        # print("EARLY CONtEXT", context)
         # add_status_effect = MetaRegistry()['Effect']['AddStatus']
         for status_ref in self.statuses:
             status = status_ref.get().configure(context)
-            print("LATE CONXTEX", status.context)
+            # print("LATE CONXTEX", status.context)
             self.add_status(status)
-            print("VERY LATE CONTEXT", status.context)
+            # print("VERY LATE CONTEXT", status.context)
             # status.context = None
             # print(status)
             # self.add_status(status)

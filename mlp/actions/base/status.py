@@ -101,6 +101,7 @@ class Status(metaclass=StatusMeta):
         self.context['owner'] = self.context['owner'].object
         self.context['status'] = self
 
+
 class Dot(Status):
     params = ["power"]
     _tags = ["dot"]
@@ -126,7 +127,7 @@ def new_status_constructor(loader, node):
     s_s = loader.construct_mapping(node)
 
     subtype = s_s.pop('subtype', None)
-    print(subtype)
+    # print(subtype)
     if subtype:
         status_type = STATUSES[subtype]
     else:
