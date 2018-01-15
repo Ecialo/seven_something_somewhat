@@ -1,10 +1,12 @@
-import sys
 import argparse
+import multiprocessing as mlp
 
 from tornado import (
-    ioloop
+    ioloop,
+    tcpclient,
 )
 
+from ..protocol import SEPARATOR
 from .tournament import TournamentGameSession
 from .episode_logger import run_episode_logger
 
@@ -22,7 +24,12 @@ DEFAULT_STRATEGY = "AttackNearest"
 #     print("END")
 
 
-# main()
+async def terminate_logger():
+    client = tcpclient.TCPClient()
+    io = await client.connect("localhost", 66613)
+    await io.write(SEPARATOR)
+    ioloop.IOLoop.current().stop()
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -33,7 +40,12 @@ def main():
     parser.add_argument("--times", type=int, default=1)
     args = parser.parse_args()
 
-    run_episode_logger()
+    logger_process = mlp.Process(
+        target=run_episode_logger,
+        name="EpisodeLogger"
+    )
+    logger_process.start()
+
     loop = ioloop.IOLoop.current()
     for i in range(args.times):
         print("Launch {} tournament".format(i))
@@ -43,6 +55,8 @@ def main():
         )
         loop.spawn_callback(tour.start)
         loop.start()
+    loop.spawn_callback(terminate_logger)
+    loop.start()
     print("DONE")
 
 main()

@@ -42,7 +42,7 @@
 - !new_unit
   name: Dog
   resources:
-    health: 15
+    health: 100
     armor: 0
     initiative: 4
     action_points: 1

@@ -5,6 +5,7 @@ from tornado import (
     queues
 )
 import blinker
+import cbor2
 
 from ..game import Game
 from ..loader import load
@@ -33,14 +34,16 @@ game_over = blinker.signal("game_over")
 
 class Bot:
 
-    def __init__(self, botname, strategy):
+    def __init__(self, botname, session_name, strategy):
         self.is_alive = True
         self.client = tcpclient.TCPClient()
         self.queue = queues.Queue()
+        self.logger_stream = None
 
         self.strategy = strategy
         self._player = None
         self.botname = botname
+        self.session_name = session_name
 
         self.game = Game()
 
@@ -81,7 +84,12 @@ class Bot:
         loop.spawn_callback(self.consumer, stream)
 
     async def connect_to_logger(self):
-        pass
+        try:
+            stream = await self.client.connect("localhost", 66613)
+        except iostream.StreamClosedError:
+            pass
+        else:
+            self.logger_stream = stream
 
     async def receiver(self, stream):
         while True:
@@ -108,6 +116,7 @@ class Bot:
 
     async def start(self, host, port):
         await self.connect(host, port)
+        await self.connect_to_logger()
         await self.handshake()
 
     async def process_message(self, message_struct):
@@ -134,11 +143,17 @@ class Bot:
         # print("\n\n")
         # print(self.botname, winner)
         # print("\n\n")
+        ioloop.IOLoop.current().spawn_callback(self._game_over, winner)
+
+    async def _game_over(self, winner):
+        await self.queue.join()
+        record = ((self.session_name, self.botname), winner)
+        await self.logger_stream.write(cbor2.dumps(record) + SEPARATOR)
         self.is_alive = False
         ioloop.IOLoop.current().stop()
 
 
-def run_bot(port, botname='bot', strategy=None, lock=None):
+def run_bot(port, botname, session_name, strategy=None, lock=None):
     load()
     # if lock:
     #     lock.acquire()
@@ -146,7 +161,7 @@ def run_bot(port, botname='bot', strategy=None, lock=None):
     # print("BOTNAME", botname)
     loop = ioloop.IOLoop.current()
     # bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
-    bot = Bot(botname, FixedTacticStrategy(AttackNearest()))
+    bot = Bot(botname, session_name, FixedTacticStrategy(AttackNearest()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()
     # print("{botname} process stop".format(botname=botname))
