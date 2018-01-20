@@ -51,12 +51,12 @@ class TournamentGameSession(GameSession):
         self._bot1_process = mlp.Process(
             target=run_bot,
             name='Bot Vitaline',
-            args=(self.port, VITALINE, self.session_name, None, self._lock)
+            args=(self.port, VITALINE, self.session_name, self.users[VITALINE][0], self._lock)
         )
         self._bot2_process = mlp.Process(
             target=run_bot,
             name='Bot Ustas',
-            args=(self.port, USTAS, self.session_name, None, self._lock)
+            args=(self.port, USTAS, self.session_name, self.users[USTAS][0], self._lock)
         )
         self._bot1_process.start()
         self._bot2_process.start()

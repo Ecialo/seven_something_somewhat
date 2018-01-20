@@ -86,7 +86,7 @@ class ApproachAndAttack(Tactic):
 
 class AttackNearest(Tactic):
 
-    def realize(self, unit):
+    def realize(self, unit, _):
         min_distance = 999
         target = None
         for other_unit in self.units:

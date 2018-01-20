@@ -13,7 +13,7 @@ from .episode_logger import run_episode_logger
 
 DEFAULT_UNIT = "Dog"
 # DEFAULT_STRATEGY = "Random"
-DEFAULT_STRATEGY = "AttackNearest"
+DEFAULT_STRATEGY = "RandomTacticStrategy"
 
 # def main():
 #     bot1, bot2 = sys.argv[1], sys.argv[2]

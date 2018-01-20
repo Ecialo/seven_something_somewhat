@@ -22,7 +22,8 @@ from ..serialization import (
     make_message,
     remote_action_append,
 )
-from .strategy.fixed_tactic_strategy import FixedTacticStrategy
+# from .strategy.fixed_tactic_strategy import FixedTacticStrategy
+from .strategy import ALL_STRATEGIES
 from .tactic.random_walk_tactic import RandomWalkTactic
 from .tactic.approach_and_attack import AttackNearest
 # from .tactic.pass_tactic import PassTactic
@@ -128,9 +129,10 @@ class Bot:
                 await cor
 
     async def next_turn(self, _):
-        actions = self.strategy.make_decisions(player=self.player)
+        # print("STEP")
+        tactic, actions = self.strategy.make_decisions(player=self.player)
         # print("\n\nACTIONS")
-        # print(actions)
+        print(self.botname, tactic)
         for action in actions:
             await self.queue.put(action)
 
@@ -161,7 +163,7 @@ def run_bot(port, botname, session_name, strategy=None, lock=None):
     # print("BOTNAME", botname)
     loop = ioloop.IOLoop.current()
     # bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
-    bot = Bot(botname, session_name, FixedTacticStrategy(AttackNearest()))
+    bot = Bot(botname, session_name, ALL_STRATEGIES[strategy]())
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()
     # print("{botname} process stop".format(botname=botname))
