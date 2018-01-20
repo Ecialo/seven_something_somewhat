@@ -5,7 +5,7 @@
       name: health
       type: numeric
       max: 100
-      initial: 30
+      initial: 35
     armor: 0
     initiative: 3
     action_points: 5
@@ -101,9 +101,10 @@
 - !new_unit
   name: Agent
   ai:
-    melee: 2
-    ranged: [1, 5]
+    melee: 1
+    ranged: [2, 5]
   resources:
+    initiative: 10
     health: 100
     action_points: 4
     armor: 0
@@ -112,5 +113,11 @@
     ammo: 5
     grenade: 1
     potion: 1
-  actions: []
+  actions:
+    - OldAttack
+    - AgentShoot
+    - Move
+#    - AgentSidestep
   widget:
+    sprite: './data/duelist.png'
+    scale: 2.0

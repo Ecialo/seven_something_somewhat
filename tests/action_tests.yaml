@@ -82,3 +82,19 @@
     - cell: !cell [0, 0]
       check: !prop cell.object
       result: !prop A
+
+- A:
+    unit: Agent
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [0, 1]
+  actions_A:
+    - action_name: AgentShoot
+      args:
+        hit: !cell [0, 1]
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !expr ["Reloading", "in", !prop cell.object]
+      result: true

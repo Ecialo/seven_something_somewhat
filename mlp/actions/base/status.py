@@ -66,7 +66,7 @@ class Status(metaclass=StatusMeta):
 
     def dump(self):
         params = vars(self).copy()
-        print("PARAMS", params)
+        # print("PARAMS", params)
         params['context'] = params['context'].copy()
         params['context'].pop('status')
         params['context']['target'] = params['context']['target'].cell
@@ -97,6 +97,8 @@ class Status(metaclass=StatusMeta):
 
     def expand(self):
         # pass
+        # print(self.name)
+        # print(self.context)
         self.context['target'] = self.context['target'].object
         self.context['owner'] = self.context['owner'].object
         self.context['status'] = self

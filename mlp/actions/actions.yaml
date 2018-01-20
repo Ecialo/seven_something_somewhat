@@ -637,3 +637,45 @@
 #        action_name: Ricochet
 #        setup:
 #          times: 2
+
+
+
+- !new_action
+  name: AgentShoot
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 1
+  setup:
+    - name: hit
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Circle
+          center: !prop source
+          radius: 5
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 5
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 30
+      area: !area
+        name: Ray
+        source: !prop owner.cell
+        target: !prop action.hit
+        length: 5
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: Reloading
+          duration: 2
+      area: !prop owner.cell
+  check: !expr ["Reloading", "not in", !prop owner]
+  widget:
+    icon: './data/gunshot.png'
+    pressed_icon: './data/gunshot(1).png'
+
