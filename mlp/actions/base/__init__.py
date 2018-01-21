@@ -2,10 +2,6 @@ from collections.abc import Iterable
 
 import blinker
 
-from ...commands.command import (
-    Place,
-    Revoke,
-)
 from ...commands import command as com
 from .effect import (
     UnitEffect,
@@ -86,6 +82,10 @@ class Damage(UnitEffect):
     def _apply(self, target, context):
         with self.configure(context) as c:
             target.stats.health -= max(1, c.amount - target.stats.armor)
+            trace.send(command=com.Damage(
+                unit=target,
+                amount=max(1, c.amount - target.stats.armor)
+            ))
             if target.stats.health <= 0:
                 trace.send(command=com.Revoke(target, target.cell))
                 target.kill()
