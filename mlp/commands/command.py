@@ -1,4 +1,5 @@
-from ..replication_manager import MetaRegistry
+from importlib import import_module
+
 from ..replication_manager import MetaRegistry
 from ..grid import Grid
 from ..tools import rsum
@@ -121,4 +122,40 @@ class Move(Command):
             "name": self.name,
             "unit": self.unit,
             "path": self.path,
+        }
+
+
+class Damage(Command):
+
+    _widget = None
+    name = 'damage'
+
+    def __init__(self, unit=None, amount=None):
+        self.unit = unit
+        self.amount = amount
+
+    def execute(self, rest_commands):
+        self._execute()
+        c = save_pop(rest_commands)
+        if c:
+            c.execute(rest_commands)
+
+    def _execute(self):
+
+        unit = self.unit.make_widget()
+        widget = self.make_widget(self.amount)
+        unit.add_effect(widget)
+        widget.run()
+
+    @classmethod
+    def make_widget(cls, amount):
+        if not cls._widget:
+            cls._widget = import_module('..widgets.effect.damage', 'mlp.commands').Damage
+        return cls._widget(amount)
+
+    def dump(self):
+        return {
+            'name': self.name,
+            'unit': self.unit,
+            'amount': self.amount
         }
