@@ -117,7 +117,8 @@
     - OldAttack
     - AgentShoot
     - Move
-#    - AgentSidestep
+    - OldParry
+    - AgentSidestep
   widget:
     sprite: './data/duelist.png'
     scale: 2.0

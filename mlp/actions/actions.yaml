@@ -29,8 +29,10 @@
   name: OldAttack
   action_type: STANDARD
   speed: NORMAL
-  tags: ["aggression"]
+  tags: ['melee', "aggression"]
   cost: 1
+  signal:
+    melee: 1
   setup:
     - name: lololo
       cursor: geometry
@@ -134,6 +136,7 @@
   speed: FAST
   cost: 1
   setup: []
+  tags: ['melee', 'defense']
   effects:
     - effect: !eff
         name: AddStatus
@@ -645,6 +648,9 @@
   action_type: STANDARD
   speed: NORMAL
   cost: 1
+  tags: ['ranged', 'aggression']
+  signal:
+    ranged: [2, 5]
   setup:
     - name: hit
       cursor: geometry
@@ -679,3 +685,29 @@
     icon: './data/gunshot.png'
     pressed_icon: './data/gunshot(1).png'
 
+- !new_action
+  name: AgentSidestep
+  action_type: MOVE
+  speed: FAST
+  tags: ['movement', 'defense']
+  cost: 2
+  setup:
+    - name: path
+#      cursor: adjacent_cell
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Cell
+          cell: !prop selected
+  effects:
+    - effect: !eff
+        name: Move
+        extra_tags: ["plan"]
+        path: !prop action.path
+      area: !prop source
+  widget:
+    icon: './data/run2.png'
+    pressed_icon: './data/run.png'
