@@ -190,6 +190,7 @@ def new_action_constructor(loader, node):
         widget = a_s['widget']
         _check = a_s.get('check')
         _tags = a_s.get('tags', [])
+        signal = a_s.get('signal', {})
 
     return NewAction
 

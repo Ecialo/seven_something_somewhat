@@ -25,6 +25,7 @@ class Action:
             aggregator: Callable[[Dict[Any, Any]], Any],
             extractor: Callable,
     ) -> Dict[str, Any]: ...
+    def check(self) -> bool: ...
 
 class ActionBar:
 

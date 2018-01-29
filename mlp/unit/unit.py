@@ -261,7 +261,11 @@ class Unit(GameObject):
 
     @property
     def signal(self):
-        return threat_signal(**self.raw_signal)
+        signals = []
+        for action in self.action_bar:
+            if action.check():
+                signals.append(action.signal)
+        # return threat_signal(**self.raw_signal)
 
 
 def new_unit_constructor(loader, node):
@@ -277,7 +281,7 @@ def new_unit_constructor(loader, node):
         resources = u_s['resources']
         playable = u_s.get('playable', False)
         statuses = u_s.get('statuses', [])
-        raw_signal = u_s.get('ai', {})
+        # raw_signal = u_s.get('ai', {})
         # signal = threat_signal(**raw_signal)
         # signal = u_s.get('ai', {})
 
