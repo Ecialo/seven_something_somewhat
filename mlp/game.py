@@ -68,16 +68,12 @@ class TurnOrderManager(GameObject):
             unit,
         )
 
-    # @on_summon_event.connect_via('Unit')
     def append_unit(self, _, unit, cell=None):
-        # print("ON SUMMON")
-        # print(unit)
         self._current_turn_order.append(
             (LAST, unit.stats.initiative, unit,)
         )
         self._current_turn_order = self._current_turn_order[::]
 
-    # @on_revoke_event.connect_via('Unit')
     def remove_unit(self, _, unit, cell):
         i_2_del = None
         for i, o_u in enumerate(self._current_turn_order):
@@ -92,24 +88,24 @@ class TurnOrderManager(GameObject):
         self._current_turn_order = sorted(cur_turn_order, reverse=True)
 
     def dump(self):
-        # print("CURRENT TURN ORDER")
-        # print(self._current_turn_order)
         msg = dict_merge(
             super().dump(),
             {'current_turn_order': self._current_turn_order},
         )
-        # print(msg)
         return msg
-        # return {
-        #     **super().dump(),
-        #     'current_turn_order': list(enumerate((RefTag(u) for u in self)))
-        # }
 
     def load(self, struct):
-        # print("LOAD TURN ORDER")
-        # print(struct)
         super().load(struct)
         self._current_turn_order = sorted([tuple(r) for r in struct['current_turn_order']])
+
+    def __len__(self):
+        return len(self._current_turn_order)
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self._current_turn_order[item]
+        else:
+            return self._current_turn_order.index(item)
 
 
 @bind_widget('RemoteGame')
