@@ -57,6 +57,50 @@ class TestGrid:
         cell = yaml.load(io.StringIO("!cell [0, 0]"))
         assert isinstance(cell, HexCell)
 
+    def test_ring_r0(self):
+        grid = self.grid
+        cells = grid.get_ring((2, 2), 0, 0)
+        assert cells == {grid[2, 2]}
+
+    def test_ring_r1(self):
+        grid = self.grid
+        cells = grid.get_ring((2, 2), 1, 1)
+        assert cells == {
+            grid[2, 3],
+            grid[1, 3],
+            grid[1, 2],
+            grid[2, 1],
+            grid[3, 2],
+            grid[3, 3],
+        }
+
+    def test_ring_r2(self):
+        grid = self.grid
+        cells = grid.get_ring((2, 2), 2, 2)
+        assert cells == {
+            grid[2, 4],
+            grid[3, 4],
+            grid[1, 4],
+
+            grid[0, 3],
+            grid[0, 2],
+            grid[0, 1],
+
+            grid[1, 1],
+            grid[2, 0],
+            grid[3, 1],
+
+            grid[4, 3],
+            grid[4, 2],
+            grid[4, 1],
+        }
+
+    def test_find_path(self):
+        grid = self.grid
+        path = grid.find_path((0, 0), (0, 0))
+        print(path)
+        assert path == [(0, 0), (0, 0)]
+
     def test_line_area(self):
         grid = self.grid
         cells = grid.get_line(grid[2, 4], grid[0, 0])

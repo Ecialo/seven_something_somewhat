@@ -73,7 +73,7 @@ class ActionDecoder:
     registry = MetaRegistry()["Action"]
 
     def __call__(self, decoder, action_struct, fp, shareable_index=None):
-        print("\n\nACTION STRUCT")
+        # print("\n\nACTION STRUCT")
         # print(action_struct, self.registry.actions)
         # action = action_struct['action']
         action_name = action_struct.pop('name')
@@ -174,7 +174,7 @@ class CommandDecoder:
     registry = MetaRegistry()["Command"]
 
     def __call__(self, decoder, command_struct, fp, shareable_index=None):
-        print("\n\nACTION STRUCT")
+        # print("\n\nACTION STRUCT")
         # print(action_struct, self.registry.actions)
         # action = action_struct['action']
         command_name = command_struct.pop('name')

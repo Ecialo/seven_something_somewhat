@@ -5,7 +5,7 @@
       name: health
       type: numeric
       max: 100
-      initial: 30
+      initial: 35
     armor: 0
     initiative: 3
     action_points: 5
@@ -42,7 +42,7 @@
 - !new_unit
   name: Dog
   resources:
-    health: 15
+    health: 100
     armor: 0
     initiative: 4
     action_points: 1
@@ -52,7 +52,7 @@
   widget:
     sprite: './data/direwolf.png'
     scale: 2.0
-    
+
 - !new_unit
   name: Fighter_sword
   resources:
@@ -118,6 +118,9 @@
 
 - !new_unit
   name: Dummy
+  ai:
+    melee: 1
+    ranged: [1, 3]
   resources:
     health: 100
     action_points: 4
@@ -132,3 +135,28 @@
   actions:
     - Move
   widget:
+
+- !new_unit
+  name: Agent
+  ai:
+    melee: 1
+    ranged: [2, 5]
+  resources:
+    initiative: 10
+    health: 100
+    action_points: 4
+    armor: 0
+    damage: 15
+    dog: 3
+    ammo: 5
+    grenade: 1
+    potion: 1
+  actions:
+    - OldAttack
+    - AgentShoot
+    - Move
+    - OldParry
+    - AgentSidestep
+  widget:
+    sprite: './data/duelist.png'
+    scale: 2.0

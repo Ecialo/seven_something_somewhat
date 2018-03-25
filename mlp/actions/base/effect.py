@@ -16,13 +16,13 @@ from ...replication_manager import MetaRegistry
 from collections.abc import Iterable
 from contextlib import contextmanager
 
-logger = logging.getLogger(__name__)
-handler = logging.FileHandler(
-    './game_logs/apply_effects{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
-    'w',
-)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger(__name__)
+# handler = logging.FileHandler(
+#     './game_logs/apply_effects{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
+#     'w',
+# )
+# logger.addHandler(handler)
+# logger.setLevel(logging.DEBUG)
 
 PLANNING = 0
 EFFECTS = MetaRegistry()['Effect']
@@ -40,9 +40,10 @@ class AbstractEffect(metaclass=EffectMeta):
         self.extra_tags = kwargs.get('extra_tags', [])
 
     def log(self, source):
-        logger.debug(
-            "Effect {} with context".format(self.name)
-        )
+        pass
+        # logger.debug(
+        #     "Effect {} with context".format(self.name)
+        # )
 
     @property
     def tags(self):

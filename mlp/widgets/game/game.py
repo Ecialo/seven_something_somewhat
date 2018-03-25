@@ -88,7 +88,7 @@ class RemoteGame(floatlayout.FloatLayout):
         self.cursor.update()
 
     def receive_message(self, message_struct):
-        print(message_struct)
+        # print(message_struct)
         self.game.receive_message(message_struct)
 
     def watcher(self, _):
@@ -97,12 +97,13 @@ class RemoteGame(floatlayout.FloatLayout):
             self.receive_message(message_struct)
 
     def process_commands(self, _, commands):
-        print(commands)
+        # print(commands)
         try:
             command = commands.popleft()
         except IndexError:
-            print("FAIL")
+            pass
+            # print("FAIL")
         else:
-            print("SUCCESS")
+            # print("SUCCESS")
             command.execute(commands)
 

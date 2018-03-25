@@ -6,7 +6,7 @@ from ...serialization import remote_action_append
 
 class RandomWalkTactic(Tactic):
 
-    def realize(self, unit):
+    def realize(self, unit, influence_map=None):
         req_action = None
         for action in unit.action_bar:
             if action.name == "Move":

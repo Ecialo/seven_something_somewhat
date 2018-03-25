@@ -99,11 +99,11 @@ class MLPClientApp(App):
         # print("watch")
         for message in self.network_manager.dump():
             message_struct = mlp_loads(message)
-            print(message_struct)
+            # print(message_struct)
             # message_struct = message
             message_struct['message_type'] = type_pair = tuple(message_struct['message_type'])
 
-            print("receive", message_struct)
+            # print("receive", message_struct)
             if type_pair[0] == pr.message_type.GAME:
                 self.screen_manager.get_screen("game").game.receive_message(message_struct)
             else:
@@ -173,9 +173,9 @@ class MLPClientApp(App):
             "message_type": (pr.message_type.LOBBY, pr.lobby_message.START_GAME),
             "payload": pl.dump()
         }
-        print("Start game with")
-        print(start_game)
-        print()
+        # print("Start game with")
+        # print(start_game)
+        # print()
         self.network_manager.send(start_game)
         self.screen_manager.current = "game"
 

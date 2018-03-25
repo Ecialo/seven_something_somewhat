@@ -13,7 +13,7 @@ class Tactic:
 
     registry = GameObjectRegistry()
 
-    def realize(self, unit):
+    def realize(self, unit, influence_map=None):
         pass
 
     @property

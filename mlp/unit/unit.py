@@ -3,9 +3,7 @@ from itertools import (
     combinations,
 )
 
-
 import blinker
-
 
 from ..replication_manager import (
     GameObject,
@@ -20,6 +18,7 @@ from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
 from ..bind_widget import bind_widget
+from ..bot.influence_map.threat_map import threat_signal
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -67,13 +66,13 @@ class Unit(GameObject):
         self.switch_state()
         context = self.context.copy()
         context['target'] = self
-        print("EARLY CONtEXT", context)
+        # print("EARLY CONtEXT", context)
         # add_status_effect = MetaRegistry()['Effect']['AddStatus']
         for status_ref in self.statuses:
             status = status_ref.get().configure(context)
-            print("LATE CONXTEX", status.context)
+            # print("LATE CONXTEX", status.context)
             self.add_status(status)
-            print("VERY LATE CONTEXT", status.context)
+            # print("VERY LATE CONTEXT", status.context)
             # status.context = None
             # print(status)
             # self.add_status(status)
@@ -260,9 +259,19 @@ class Unit(GameObject):
         else:
             raise TypeError("Wrong status type")
 
+    @property
+    def signal(self):
+        signals = []
+        for action in self.action_bar:
+            if action.check():
+                signals.append(action.signal)
+        # return threat_signal(**self.raw_signal)
+
 
 def new_unit_constructor(loader, node):
     u_s = loader.construct_mapping(node)
+    # raw_signal = u_s['ai']
+    # assert raw_signal == {'melee': 1, 'ranged': [1, 3]}
 
     @bind_widget('Unit')
     class NewUnit(Unit):
@@ -272,8 +281,12 @@ def new_unit_constructor(loader, node):
         resources = u_s['resources']
         playable = u_s.get('playable', False)
         statuses = u_s.get('statuses', [])
+        # raw_signal = u_s.get('ai', {})
+        # signal = threat_signal(**raw_signal)
+        # signal = u_s.get('ai', {})
 
     NewUnit.__name__ = NewUnit.name
+    # NewUnit.signal = threat_signal(**raw_signal)
     return NewUnit
 
 NEW_UNIT_TAG = "!new_unit"
