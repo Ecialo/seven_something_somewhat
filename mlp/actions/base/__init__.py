@@ -3,10 +3,6 @@ from collections.abc import Iterable
 
 import blinker
 
-from ...commands.command import (
-    Place,
-    Revoke,
-)
 from ...commands import command as com
 from .effect import (
     UnitEffect,
@@ -56,9 +52,8 @@ class Move(UnitEffect):
                 path = [path]
             for path_part in path:
                 # next_cell = grid.find_path(target.cell, path_part)[1]
-                path = grid.find_path(target.cell, path_part)
-                print(target.cell, path_part, path)
-                next_cell = path[1]
+                full_path = grid.find_path(target.cell, path_part)
+                next_cell = full_path[1]
 
                 # send command
 
@@ -89,6 +84,10 @@ class Damage(UnitEffect):
         with self.configure(context) as c:
             logging.debug("DAMAGE {} for {}".format(target, max(1, c.amount - target.stats.armor)))
             target.stats.health -= max(1, c.amount - target.stats.armor)
+            trace.send(command=com.Damage(
+                unit=target,
+                amount=max(1, c.amount - target.stats.armor)
+            ))
             if target.stats.health <= 0:
                 trace.send(command=com.Revoke(target, target.cell))
                 target.kill()

@@ -251,6 +251,7 @@ class GeometryLastSelectCursor(GeometrySelectCursor):
         self.game.remove_cursor()
         self.requester.select_result = self.selected_cells[-1]
 
+
 CURSOR_TABLE = {
     'any_cell': MultiSelectCursor,
     'adjacent_cell': AdjacentSelectCursor,

@@ -1,7 +1,11 @@
 - !new_unit
   name: Muzik
   resources:
-    health: 100
+    health: !res
+      name: health
+      type: numeric
+      max: 100
+      initial: 30
     armor: 0
     initiative: 3
     action_points: 5
@@ -22,15 +26,15 @@
   actions:
     - Move
     - OldAttack
-#    - Kick
     - GetRifle
-#    - GetSword
-#    - Parry
-#    - Shoot
-#    - Reload
     - Regenerate
     - LetDogsOut
     - DogShot
+  statuses: #[]
+    - !status
+      name: Regeneration
+      duration: -1
+      power: 10
   widget:
     sprite: './data/sprite.png'
     scale: 0.33
@@ -41,10 +45,10 @@
     health: 15
     armor: 0
     initiative: 4
-    action_points: 5
+    action_points: 1
   actions:
     - Move
-    - Attack
+    - OldAttack
   widget:
     sprite: './data/direwolf.png'
     scale: 2.0

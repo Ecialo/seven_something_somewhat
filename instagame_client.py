@@ -37,9 +37,19 @@ class InstagameApp(App):
         sm.transition = FadeTransition()
         sm.add_widget(screens.GameScreen(self, game.Game(), self.network_manager, "overlord", name="game"))
         sm.add_widget(screens.GameOverScreen(self, name="game_over"))
-        Muzik = MetaRegistry()['Unit']['Muzik']
-        Fighter = MetaRegistry()['Unit']['Fighter_sword']
-        self.players = [player.Player('Ustas', Fighter('Ustas')), player.Player('Vitaline', Muzik('Vitaline'))]
+        # Muzik = MetaRegistry()['Unit']['Muzik']
+        # Fighter = MetaRegistry()['Unit']['Fighter_sword']
+        # self.players = [player.Player('Ustas', Fighter('Ustas')), player.Player('Vitaline', Muzik('Vitaline'))]
+        self.players = [
+            {
+                'name':'Ustas',
+                'unit': 'Fighter_sword'
+            },
+            {
+                'name': 'Vitaline',
+                'unit': 'Muzik'
+            },
+        ]
         self.screen_manager = sm
         # self.handlers = {
         #     (pr.message_type.GAME, pr.game_message.UPDATE): self.receive_game_message,
@@ -53,7 +63,7 @@ class InstagameApp(App):
             "game",
             (
                 (mt.CONTEXT, cm.JOIN),
-                {"players": [pl.dump() for pl in self.players]}
+                {"players": self.players}
             )
         )
         return self.screen_manager

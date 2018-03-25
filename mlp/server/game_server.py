@@ -38,7 +38,7 @@ next_phase = blinker.signal("next_phase")
 
 async def unlock(lock):
     print("TIME TO UNLOCK")
-    lock.release()
+    lock.wait()
     print("UNLOCKED ^^")
 
 
@@ -77,6 +77,7 @@ class GameServer(tcpserver.TCPServer):
         username = message_struct['payload']
         # await self.refuse_connection(stream)
         if username in self._users:
+            print(username)
             await self.refuse_connection(stream)
         else:
             await self.add_user(username, stream)
@@ -132,6 +133,7 @@ class GameServer(tcpserver.TCPServer):
         ))
         self.game.commands.clear()
         self.game.registry.collect()
+        # if self.is_alive:
         await self.queue.put((
             ALL,
             ((mt.CONTEXT, cm.READY), None)
@@ -151,7 +153,8 @@ class GameServer(tcpserver.TCPServer):
         ioloop.IOLoop.current().spawn_callback(self.check_status)
 
     def next_phase(self, _):
-        ioloop.IOLoop.current().spawn_callback(self.send_update)
+        if self.is_alive:
+            ioloop.IOLoop.current().spawn_callback(self.send_update)
 
     async def check_status(self):
         if len(self._users) == 0:
@@ -167,6 +170,8 @@ class GameServer(tcpserver.TCPServer):
         await self.lobby_stream.write(make_message(
             (mt.GAME, gm.GAME_OVER)
         ))
+        await self.queue.join()
+        ioloop.IOLoop.current().stop()
 
     def process_game_over(self, _, winner):
         ioloop.IOLoop.current().spawn_callback(self._process_game_over, winner)

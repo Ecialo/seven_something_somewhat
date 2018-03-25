@@ -4,6 +4,7 @@ from tornado import (
     iostream,
     queues
 )
+import blinker
 
 from ..game import Game
 from ..loader import load
@@ -16,37 +17,60 @@ from ..protocol import (
 )
 from ..serialization import (
     mlp_loads,
+    make_struct,
     make_message,
+    remote_action_append,
 )
 from .strategy.fixed_tactic_strategy import FixedTacticStrategy
 from .tactic.random_walk_tactic import RandomWalkTactic
+from .tactic.approach_and_attack import AttackNearest
 # from .tactic.pass_tactic import PassTactic
 
+presume = blinker.signal("presume")
+forget = blinker.signal("forget")
+game_over = blinker.signal("game_over")
 
 class Bot:
 
-    def __init__(self, strategy):
+    def __init__(self, botname, strategy):
+        self.is_alive = True
         self.client = tcpclient.TCPClient()
         self.queue = queues.Queue()
 
         self.strategy = strategy
         self._player = None
+        self.botname = botname
 
         self.game = Game()
 
         self.handlers = {
             (mt.CONTEXT, cm.READY): self.next_turn,
-            (mt.LOBBY, lm.ACCEPT): lambda _: None
+            (mt.LOBBY, lm.ACCEPT): lambda _: None,
+            # (mt.GAME, gm.GAME_OVER): self.game_over,
         }
+
+        presume.connect(self.presume)
+        game_over.connect(self.game_over)
 
     @property
     def player(self):
         if not self._player:
             for pl in self.game.players:
-                if pl.name == "bot":
+                if pl.name == self.botname:
                     self._player = pl
                     break
         return self._player
+
+    def presume(self, _, actions):
+        # print("OLOLO")
+        for action in actions:
+            msg_struct = remote_action_append(action)
+            # print(msg_struct)
+
+            msg_struct[1]["author"] = action.owner.stats.owner
+            self.game.receive_message(
+                make_struct(*msg_struct)
+            )
 
     async def connect(self, host, port):
         stream = await self.client.connect(host, port)
@@ -99,15 +123,25 @@ class Bot:
 
     async def handshake(self):
         self.queue.put(
-            ((mt.CONTEXT, cm.JOIN), "bot")
+            ((mt.CONTEXT, cm.JOIN), self.botname)
         )
 
+    def game_over(self, _, winner):
+        print("\n\n")
+        print(self.botname, winner)
+        print("\n\n")
+        self.is_alive = False
+        ioloop.IOLoop.current().stop()
 
-def run_bot(port, lock=None):
+
+def run_bot(port, botname='bot', lock=None):
     load()
-    if lock:
-        lock.acquire()
+    # if lock:
+    #     lock.acquire()
+    lock.wait()
+    print("BOTNAME", botname)
     loop = ioloop.IOLoop.current()
-    bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
+    # bot = Bot(FixedTacticStrategy(RandomWalkTactic()))
+    bot = Bot(botname, FixedTacticStrategy(AttackNearest()))
     loop.spawn_callback(bot.start, "localhost", port)
     loop.start()

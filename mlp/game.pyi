@@ -5,6 +5,7 @@ from typing import (
     Optional,
     Any,
     Tuple,
+    Callable,
 )
 
 from .replication_manager import (
@@ -12,6 +13,7 @@ from .replication_manager import (
     GameObject,
 )
 from .unit import Unit
+from .protocol import Message
 from .grid import (
     Grid,
     Cell,
@@ -34,6 +36,7 @@ class Game:
     players: Optional[List[Player]]
     state: int
     commands: List[Command]
+    handlers: Dict[Tuple[int, int], Callable]
 
     def __init__(
             self,
@@ -56,3 +59,4 @@ class Game:
     def clear_presumed(self) -> None: ...
     def add_to_commands(self, _: Any, command: Command) -> None: ...
     def on_summon(self,  _: Any, unit: Unit, cell: Cell) -> None: ...
+    def receive_message(self, struct: Message) -> None: ...

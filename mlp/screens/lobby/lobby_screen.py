@@ -40,14 +40,21 @@ class LobbyScreen(Screen):
         pass
 
     def find_session(self, opponent):
-        nm = self.nm
-        nm.send(
-            "lobby",
-            (
-                (mt.LOBBY, lm.FIND_SESSION),
-                opponent,
+        character = self.ids.character.text
+        if character != "Character":
+            nm = self.nm
+            nm.send(
+                "lobby",
+                (
+                    (mt.LOBBY, lm.FIND_SESSION),
+                    {
+                        "opponent": opponent,
+                        "character": character,
+                    }
+                )
             )
-        )
+        else:
+            self.app.notify("Choose character")
 
     def join_session(self, port):
         print("Connect to {} {}".format(self.host, port))

@@ -113,6 +113,10 @@ class Stats:
     def __repr__(self):
         return "Stats with resources {}".format(self.resources)
 
+    def expand(self):
+        for status in self.statuses.values():
+            status.expand()
+
 
 @bind_widget("Stats")
 class MajorStats(Stats):
@@ -139,3 +143,7 @@ class MajorStats(Stats):
 
     def __repr__(self):
         return "Major stats with resources {}".format(self.resources)
+
+    def expand(self):
+        super().expand()
+        self.presumed.expand()

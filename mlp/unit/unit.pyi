@@ -15,7 +15,10 @@ from yaml import (
     MappingNode
 )
 
-from ..replication_manager import GameObject
+from ..replication_manager import (
+    GameObject,
+    Registry
+)
 from ..actions.action import (
     ActionBar,
     CurrentActionBar,
@@ -23,7 +26,7 @@ from ..actions.action import (
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
 from ..actions.base.effect import AbstractEffect
-from ..stats import (
+from ..stats.new_stats import (
     MajorStats,
     Stats,
 )
@@ -31,11 +34,13 @@ from ..grid import Cell
 
 PLANNING: int
 ACTION: int
+UNITS: Registry
 
 class Unit(GameObject):
     hooks = ClassVar[List[str]]
     actions = ClassVar[List[str]]
     resources = ClassVar[Dict[str, Any]]
+    statuses = ClassVar[List[Reference]]
 
     _stats: MajorStats
     state: int
@@ -71,6 +76,8 @@ class Unit(GameObject):
     def change_owner(self, new_owner: str) -> None: ...
     def kill(self) -> None: ...
     def __contains__(self, item: Union[Status, str]) -> bool: ...
+    @classmethod
+    def locate(cls) -> List[Unit]: ...
 
 def new_unit_constructor(loader: Loader, node: MappingNode) -> type: ...
 def unit_constructor(loader: Loader, node: MappingNode) -> Reference: ...

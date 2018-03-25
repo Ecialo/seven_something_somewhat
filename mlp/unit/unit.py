@@ -9,16 +9,17 @@ import blinker
 
 from ..replication_manager import (
     GameObject,
+    MetaRegistry,
 )
 from ..stats.new_stats import MajorStats
 from ..grid import (
     Grid,
-    Cell,
 )
 from ..actions.action import *
 from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
+from ..bind_widget import bind_widget
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -33,6 +34,7 @@ class UnitsRegistry:
     def __getitem__(self, item):
         return self.meta_registry['Unit'][item]
 
+
 UNITS = UnitsRegistry()
 
 
@@ -42,6 +44,8 @@ class Unit(GameObject):
     hooks = []
     actions = []
     resources = {}
+    statuses = []
+    playable = False
 
     def __init__(self, master_name=None, id_=None):
         super().__init__(id_)
@@ -60,6 +64,20 @@ class Unit(GameObject):
             'source': self.cell,
             'owner': self
         }
+        self.switch_state()
+        context = self.context.copy()
+        context['target'] = self
+        print("EARLY CONtEXT", context)
+        # add_status_effect = MetaRegistry()['Effect']['AddStatus']
+        for status_ref in self.statuses:
+            status = status_ref.get().configure(context)
+            print("LATE CONXTEX", status.context)
+            self.add_status(status)
+            print("VERY LATE CONTEXT", status.context)
+            # status.context = None
+            # print(status)
+            # self.add_status(status)
+        self.switch_state()
 
     @property
     def action_bar(self):
@@ -227,8 +245,12 @@ class Unit(GameObject):
 
     def kill(self):
         self.is_alive = False
+        self.current_action_bar.clear()
         death.send(unit=self)
         revoke.send(unit=self, cell=self.cell)
+
+    def expand(self):
+        self._stats.expand()
 
     def __contains__(self, item):
         if isinstance(item, Status):
@@ -248,6 +270,8 @@ def new_unit_constructor(loader, node):
         actions = u_s['actions']
         widget = u_s['widget']
         resources = u_s['resources']
+        playable = u_s.get('playable', False)
+        statuses = u_s.get('statuses', [])
 
     NewUnit.__name__ = NewUnit.name
     return NewUnit
