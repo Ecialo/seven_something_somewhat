@@ -9,6 +9,8 @@ from functools import (
 )
 from operator import add
 
+from math import copysign
+
 import blinker
 
 from .replication_manager import GameObject
@@ -216,7 +218,7 @@ class HexGrid(Grid):
     @staticmethod
     def round_cube(pos):
         # x, y, z = pos
-        rx, ry, rz = rpos = tuple(int(p) for p in pos)
+        rx, ry, rz = rpos = tuple(int(p + copysign(0.5, p)) for p in pos)
         dx, dy, dz = (abs(p - rp) for p, rp in zip(pos, rpos))
         if dx > dy and dx > dz:
             rx = -ry - rz

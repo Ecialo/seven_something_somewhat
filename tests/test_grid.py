@@ -104,4 +104,14 @@ class TestGrid:
     def test_line_area(self):
         grid = self.grid
         cells = grid.get_line(grid[2, 4], grid[0, 0])
-        assert cells == {grid[2, 4], grid[2, 3], grid[1, 3], grid[0, 1], grid[0, 1], grid[0, 0]}
+        assert cells == [grid[2, 4], grid[2, 3], grid[1, 3], grid[1, 2], grid[0, 1], grid[0, 0]]
+        
+    def test_line_small(self):
+        grid = self.grid
+        cells = grid.get_line(grid[0, 0], grid[1, 2])
+        assert cells == [grid[0, 0], grid[1, 1], grid[1, 2]] or cells == [grid[0, 0], grid[0, 1], grid[1, 2]]
+        
+    def test_rounding(self):
+        grid = self.grid
+        rounded = grid.round_cube((0.5, -1, 0.5))
+        assert rounded == (1, -1, 0)
