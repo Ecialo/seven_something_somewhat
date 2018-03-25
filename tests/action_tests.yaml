@@ -686,25 +686,25 @@
       result: !prop A.stats.max__health
       
 #parry break
-# - A:
-    # unit: Dummy
-    # cell: !cell [2, 2]
-  # B:
-    # unit: Dummy
-    # cell: !cell [3, 2]
-  # actions_A:
-    # - action_name: Parry
-      # args: {}
-  # actions_B:
-    # - action_name: EmpoweredCleave
-      # args: {}
-  # checks:
-    # - cell: !cell [2, 2]
-      # check: !prop cell.object
-      # result: !prop A
-    # - cell: !cell [3, 2]
-      # check: !prop cell.object
-      # result: !prop B
-    # - cell: !cell [3, 2]
-      # check: !prop A.stats.health
-      # result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', '1.4', ')']
+- A:
+    unit: Dummy
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Parry
+      args: {}
+  actions_B:
+    - action_name: EmpoweredCleave
+      args: {}
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop A.stats.health
+      result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', 1.4, ')']

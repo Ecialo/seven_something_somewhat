@@ -30,7 +30,7 @@ class Attribute(Property):
         donor = context[self.donor]
         for p in self.path:
             donor = getattr(donor, p)
-        return donor
+        return donor if not isinstance(donor, Property) else donor.get(context)
 
     def __repr__(self):
         return "{1}.{0}".format(
@@ -73,8 +73,8 @@ class Oper(Property):
     def get(self, context):
         left = self.left.get(context)
         right = self.right.get(context)
-        # print(left, self.left)
-        # print(right, self.right)
+        print(left, self.left)
+        print(right, self.right)
         return self.oper(self.left.get(context), self.right.get(context))
 
 
