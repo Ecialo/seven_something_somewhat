@@ -707,4 +707,4 @@
       # result: !prop B
     # - cell: !cell [3, 2]
       # check: !prop A.stats.health
-      # result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', '1.4', ')']
+      # result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', 1.4, ')']

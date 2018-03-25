@@ -56,3 +56,8 @@ class TestGrid:
     def test_cell_type(self):
         cell = yaml.load(io.StringIO("!cell [0, 0]"))
         assert isinstance(cell, HexCell)
+
+    def test_line_area(self):
+        grid = self.grid
+        cells = grid.get_line(grid[2, 4], grid[0, 0])
+        assert cells == {grid[2, 4], grid[2, 3], grid[1, 3], grid[0, 1], grid[0, 1], grid[0, 0]}

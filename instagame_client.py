@@ -47,7 +47,7 @@ class InstagameApp(App):
             },
             {
                 'name': 'Vitaline',
-                'unit': 'Muzik'
+                'unit': 'Fighter_rifle'
             },
         ]
         self.screen_manager = sm
