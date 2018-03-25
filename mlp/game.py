@@ -98,6 +98,13 @@ class TurnOrderManager(GameObject):
         super().load(struct)
         self._current_turn_order = sorted([tuple(r) for r in struct['current_turn_order']])
 
+    def get_actions_by_order(self):
+        for cur_speed in [SPEED.FAST, SPEED.NORMAL, SPEED.SLOW]:
+            for unit in self:
+                for action in unit.current_action_bar:
+                    if action.action_speed == cur_speed:
+                        yield action
+
     def __len__(self):
         return len(self._current_turn_order)
 
