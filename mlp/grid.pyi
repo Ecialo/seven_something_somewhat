@@ -8,6 +8,8 @@ from typing import (
     Any,
 )
 
+import yaml
+
 from .replication_manager import GameObject
 
 
@@ -37,4 +39,13 @@ class HexGrid(Grid):
     @classmethod
     def locate(cls) -> HexGrid: ...
     def get_area(self, pos_or_cell: Union[Tuple[int, int], Cell], r: int) -> Set[Cell]: ...
-    def get_ring(self, pos_or_cell: Union[Tuple[int, int], Cell], r: int, inner_r: Optional[int] = None) -> Set[Cell]: ...
+    def get_ring(
+            self,
+            pos_or_cell: Union[Tuple[int, int], Cell],
+            r: int, inner_r: Optional[int] = None
+    ) -> Set[Cell]: ...
+
+
+CELL_TAG: str
+
+def cell_constructor(loader: yaml.Loader, node: yaml.Node) -> Cell: ...

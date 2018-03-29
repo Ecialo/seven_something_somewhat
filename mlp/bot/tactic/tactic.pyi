@@ -2,7 +2,6 @@ from typing import (
     List,
     Dict,
     Any,
-    Iterable,
     ClassVar,
     Optional,
 )
@@ -27,4 +26,4 @@ class Tactic:
     @staticmethod
     def forget(unit: Unit) -> None: ...
     @property
-    def units(self) -> Iterable[Unit]: ...
+    def units(self) -> List[Unit]: ...

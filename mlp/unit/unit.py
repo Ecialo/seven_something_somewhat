@@ -13,12 +13,14 @@ from ..stats.new_stats import MajorStats
 from ..grid import (
     Grid,
 )
+from .behavior.behavior import ManualBehavior, RandomTacticBehavior
 from ..actions.action import *
 from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
 from ..bind_widget import bind_widget
 from ..bot.influence_map.threat_map import threat_signal
+from ..bot.tactic import ALL_MAJOR_TACTIC
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -39,7 +41,7 @@ UNITS = UnitsRegistry()
 
 class Unit(GameObject):
 
-    # name = "Unit"
+    behavior = None
     hooks = []
     actions = []
     resources = {}
@@ -267,11 +269,23 @@ class Unit(GameObject):
                 signals.append(action.signal)
         # return threat_signal(**self.raw_signal)
 
+    def behave(self):
+        self.behavior.apply_to(self)
+
 
 def new_unit_constructor(loader, node):
     u_s = loader.construct_mapping(node)
-    # raw_signal = u_s['ai']
-    # assert raw_signal == {'melee': 1, 'ranged': [1, 3]}
+
+    behavior = u_s.get('behavior', ManualBehavior())
+    # print(behavior)
+    if isinstance(behavior, dict):
+        # print(behavior)
+        tactics = [ALL_MAJOR_TACTIC[tactic_name] for tactic_name in behavior['tactics']]
+        class_behavior = RandomTacticBehavior(tactics)
+        # class_behavior = behavior
+    else:
+        # pass
+        class_behavior = behavior
 
     @bind_widget('Unit')
     class NewUnit(Unit):
@@ -281,13 +295,12 @@ def new_unit_constructor(loader, node):
         resources = u_s['resources']
         playable = u_s.get('playable', False)
         statuses = u_s.get('statuses', [])
-        # raw_signal = u_s.get('ai', {})
-        # signal = threat_signal(**raw_signal)
-        # signal = u_s.get('ai', {})
+        behavior = class_behavior
+        # behavior = None
 
     NewUnit.__name__ = NewUnit.name
-    # NewUnit.signal = threat_signal(**raw_signal)
     return NewUnit
+
 
 NEW_UNIT_TAG = "!new_unit"
 
@@ -297,5 +310,6 @@ def unit_constructor(loader, node):
     name = u_s.pop("name")
     # return UNITS[name](**u_s)
     return Reference(name, u_s, UNITS)
+
 
 UNIT_TAG = "!unit"

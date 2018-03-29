@@ -43,6 +43,10 @@ from .grid import (
     cell_constructor,
     CELL_TAG,
 )
+from .unit.behavior import (
+    behavior_constructor,
+    BEHAVIOR_TAG,
+)
 from .player import Player
 
 yaml.add_constructor(NEW_ACTION_TAG, new_action_constructor)
@@ -64,6 +68,8 @@ yaml.add_constructor(NEW_UNIT_TAG, new_unit_constructor)
 yaml.add_constructor(RESOURCE_TAG, resource_constructor)
 
 yaml.add_constructor(CELL_TAG, cell_constructor)
+
+yaml.add_constructor(BEHAVIOR_TAG, behavior_constructor)
 
 
 def load(paths=None):
