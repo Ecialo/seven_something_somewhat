@@ -12,7 +12,7 @@ from ..mlp.bot.tactic.approach_and_attack import (
 
 summon = blinker.signal("summon")
 revoke = blinker.signal("revoke")
-
+collect_garbage = blinker.signal('collect')
 load()
 
 ACTIONS = MetaRegistry()["Action"]
@@ -30,7 +30,9 @@ class TestSearchInAOE:
     def tearDown(self):
         summon.disconnect(self.track_units)
         for unit in self.units:
-            revoke.send(unit=unit, cell=unit.cell)
+            unit.kill()
+            # revoke.send(unit=unit, cell=unit.cell)
+        collect_garbage.send()
 
     def track_units(self, _, unit, cell):
         self.units.append(unit)

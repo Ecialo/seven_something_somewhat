@@ -8,6 +8,7 @@ from typing import (
     Callable,
 )
 
+from ..unit import Unit
 from ..cursor import GeometrySelectCursor
 from ..protocol import Enum
 
@@ -34,6 +35,8 @@ class ActionBar:
 class CurrentActionBar:
 
     actions: List[Action]
+
+    def __init__(self, owner: Unit) -> None: ...
 
     def clear(self) -> None: ...
     def remove_action(self, action_index: int) -> None: ...

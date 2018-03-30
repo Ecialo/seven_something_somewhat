@@ -10,6 +10,7 @@ UNITS = MetaRegistry()["Unit"]
 
 summon = blinker.signal('summon')
 revoke = blinker.signal('revoke')
+collect_garbage = blinker.signal('collect')
 
 
 class TestBehavior:
@@ -23,7 +24,9 @@ class TestBehavior:
     def tearDown(self):
         summon.disconnect(self.track_units)
         for unit in self.units:
-            revoke.send(unit=unit, cell=unit.cell)
+            unit.kill()
+        collect_garbage.send()
+            # revoke.send(unit=unit, cell=unit.cell)
 
     def track_units(self, _, unit, cell):
         # print(unit)
@@ -36,12 +39,12 @@ class TestBehavior:
         unit_B = UNITS['Dog']("B")
         unit_B.switch_state()
         summon.send(None, unit=unit_A, cell=self.grid[(0, 0)])
-        summon.send(None, unit=unit_B, cell=self.grid[(1, 1)])
+        summon.send(None, unit=unit_B, cell=self.grid[(2, 0)])
         #
         for unit in self.units:
             unit.clear_presumed()
             unit.update_position()
-
-        actions = unit_A.behave()
-        print(actions)
-        assert False
+        unit_A.behave()
+        actions = unit_A.current_action_bar.actions
+        # print(actions)
+        assert len(actions) > 0

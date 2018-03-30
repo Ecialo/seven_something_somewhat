@@ -3,7 +3,9 @@ from collections import defaultdict
 import blinker
 from cbor2.types import CBORTag
 
-# revoke_event = blinker.signal("revoke")
+collect_garbage = blinker.signal('collect')
+purge = blinker.signal('purge')
+# revoke = blinker.signal("revoke")
 # import json
 
 MAX_OBJECTS = 10**6
@@ -27,6 +29,8 @@ class GameObjectRegistry(Singleton):
         self.game_objects = {}
         self.game_classes = {}
         self.categories = defaultdict(list)
+        collect_garbage.connect(self.collect)
+        purge.connect(self.purge)
 
     def __setitem__(self, key, value):
         if key not in self.game_objects:
@@ -41,7 +45,10 @@ class GameObjectRegistry(Singleton):
         return self.game_objects[item]
 
     def __delitem__(self, key):
+        # print(self.game_objects)
         v = self.game_objects.pop(key)
+        v.is_deleted = True
+        # print(key, v)
         for category_name, category in self.categories.items():
             if v in category:
                 # # print(category_name)
@@ -91,7 +98,7 @@ class GameObjectRegistry(Singleton):
             obj.load(obj_struct)
         return obj
 
-    def purge(self):
+    def purge(self, *_, **__):
         for k in list(self.game_objects.keys()):
             del self[k]
 
@@ -106,13 +113,21 @@ class GameObjectRegistry(Singleton):
     def remote_call(self, struct):
         struct['method'](*struct['args'], **struct['kwargs'])
 
-    def collect(self):
+    def collect(self, *_, **__):
+        self._collect()
+
+    def _collect(self):
         to_remove = []
-        for obj in self.game_objects:
+        for obj in self.game_objects.values():
+            # print(obj, getattr(obj, 'is_alive', None))
             if hasattr(obj, 'is_alive') and not obj.is_alive:
+                # print(obj)
                 to_remove.append(obj)
         for obj in to_remove:
-            del obj
+            # print(obj)
+            # del obj
+            obj.delete()
+        # print(self.game_objects)
 
 
 class GameObjectMeta(type):
@@ -143,6 +158,7 @@ class GameObject(metaclass=GameObjectMeta):
 
     def __init__(self, id_=None):
         id_ = id_ or self.registry.make_id()
+        self.is_deleted = False
         self.id_ = id_
         self.registry[id_] = self
 
@@ -157,7 +173,12 @@ class GameObject(metaclass=GameObjectMeta):
         pass
 
     def __del__(self):
-        del self.registry[self.id_]
+        if not self.is_deleted:
+            del self.registry[self.id_]
+
+    def delete(self):
+        if not self.is_deleted:
+            del self.registry[self.id_]
 
     def expand(self):
         pass

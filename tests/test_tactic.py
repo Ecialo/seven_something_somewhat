@@ -12,7 +12,7 @@ UNITS = MetaRegistry()["Unit"]
 
 summon = blinker.signal('summon')
 revoke = blinker.signal('revoke')
-
+collect_garbage = blinker.signal('collect')
 
 class TestTactic:
 
@@ -25,7 +25,9 @@ class TestTactic:
     def tearDown(self):
         summon.disconnect(self.track_units)
         for unit in self.units:
-            revoke.send(unit=unit, cell=unit.cell)
+            unit.kill()
+            # revoke.send(unit=unit, cell=unit.cell)
+        collect_garbage.send()
 
     def track_units(self, _, unit, cell):
         self.units.append(unit)
