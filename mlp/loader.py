@@ -83,6 +83,7 @@ def load(paths=None):
         # './mlp/actions/actions.yaml',
         './mlp/actions/',
         './mlp/unit/units.yaml',
+        './data/units/'
     ]
     for resource_path in paths:
         if resource_path.endswith('.yaml'):

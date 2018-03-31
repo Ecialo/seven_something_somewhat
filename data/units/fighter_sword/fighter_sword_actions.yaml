@@ -1,0 +1,236 @@
+- !new_action
+  name: Cleave
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 2
+  setup: 
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          radius: 2
+          inner_radius: 1
+        - !area
+          name: CardinalWave
+          length: 1
+          source: !prop source
+          target: !prop selected
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 1]
+        extra_tags: ["melee"]
+      area: !area
+        name: CardinalWave
+        length: 1
+        source: !prop owner.cell
+        target: !prop action.target
+  widget:
+    icon: './data/units/fighter_sword/cleave.png'
+    pressed_icon: './data/units/fighter_sword/cleave_pressed.png'   
+    
+- !new_action
+  name: EmpoweredCleave
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 2
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 1.4]
+        extra_tags: ["melee"]
+      area: !area
+        name: Adjacent
+        center: !prop owner.cell
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/units/fighter_sword/emp_cleave.png'
+    pressed_icon: './data/units/fighter_sword/emp_cleave_pressed.png' 
+
+- !new_action
+  name: Lunge
+  action_type: STANDARD
+  speed: FAST
+  cost: 2
+  setup: 
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 3
+  effects:
+    - effect: !eff
+        name: Move
+        path: !area
+          name: Ray
+          source: !prop owner.cell
+          target: !prop action.target
+          length: 1
+        extra_tags: ["plan"]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 0.6]
+        extra_tags: ["melee"]
+      area: !area
+        name: Ray
+        source: !prop owner.cell
+        target: !prop action.target
+        length: 2
+  widget:
+    icon: './data/units/fighter_sword/lunge.png'
+    pressed_icon: './data/units/fighter_sword/lunge_pressed.png'   
+    
+- !new_action
+  name: EmpoweredLunge
+  action_type: FULL
+  speed: NORMAL
+  cost: 2
+  setup: 
+    # - name: target
+      # cursor: geometry_last
+      # cursor_params:
+        # - !area
+          # name: Circle
+          # center: !prop source
+          # radius: 5
+        # -
+          # - name: startup
+            # area: !area
+              # name: Ray
+              # source: !prop source
+              # target: !prop selected
+              # length: 3
+              # widget: [0, 1, 0]
+          # - name: some_shit
+            # area: !area
+              # name: Ray
+              # source: !prop startup[-1]
+              # target: !prop selected
+              # length: 2
+              # widget: [0, 0, 1]
+    - name: move
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          radius: 3
+          inner_radius: 1
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 3
+          widget: [0, 0, 1]
+    - name: hit
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Circle
+          center: !prop action.move
+          radius: 2
+        - !area
+          name: Ray
+          source: !prop action.move
+          target: !prop selected
+          length: 2
+  effects:
+    - effect: !eff
+        name: Move
+        extra_tags: ["plan"]
+        path: !area
+          name: Ray
+          source: !prop owner.cell
+          target: !prop action.move
+          length: 3
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: Damage
+        amount: !expr [!prop owner.damage, "*", 1]
+        extra_tags: ["melee"]
+      area: !area
+        name: Ray
+        source: !prop owner.cell
+        target: !prop action.hit
+        length: 2
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/units/fighter_sword/emp_lunge.png'
+    pressed_icon: './data/units/fighter_sword/emp_lunge_pressed.png' 
+    
+- !new_action
+  name: Parry
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: Parry
+      area: !area
+        name: Cell
+        cell: !prop source
+  widget:
+    icon: './data/units/fighter_sword/sword-clash(1).png'
+    pressed_icon: './data/units/fighter_sword/sword-clash.png'
+    
+- !new_action
+  name: EmpoweredParry
+  action_type: FULL
+  speed: FAST
+  cost: 2
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: TotalParry
+      area: !area
+        name: Cell
+        cell: !prop source
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/units/fighter_sword/empowered_parry.png'
+    pressed_icon: './data/units/fighter_sword/empowered_parry_pressed.png'

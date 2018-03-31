@@ -245,6 +245,18 @@ class HexGrid(Grid):
                 result.append(self[(col, row)])
             else:
                 break
+        if len(result) == 1:
+            alternative_result = []
+            for i in range(length+1):
+                x, y, z = self.cube_inter(s_cube_pos, t_cube_pos, step*i)
+                col, row = self.cube_to_offsets(self.round_cube((x, y + 0.000001, z)))
+                width, height = self.size
+                if col < width and col >= 0 and row < height and row >= 0:
+                    alternative_result.append(self[(col, row)])
+                else:
+                    break
+            if len(alternative_result) > 1:
+                return alternative_result
         return result
 
     def _get_generations(self, pos_or_cell, r):

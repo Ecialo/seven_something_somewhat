@@ -232,6 +232,68 @@ class CardinalWave(Area):
             if right is not None:
                 result.append(right)
         return center_line + result
+        
+class Cone60(Area):
+
+    def __init__(self, source, target, length):
+        self.source = source
+        self.target = target
+        self.length = length
+        
+    def _get(self,context):
+        grid = self.grid
+        distance = grid.distance(self.source.get(context), self.target.get(context))
+        if distance == 0:
+            return [self.source.get(context)]
+        cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
+        target_x, target_y, target_z = grid.offsets_to_cube(cardinal_target.pos)
+        source_x, source_y, source_z = grid.offsets_to_cube(self.source.get(context).pos)
+        left_x, left_y, left_z = (source_x + source_y - target_y - target_x, source_y + source_z - target_z - target_y, source_z + source_x - target_x - target_z)
+        right_x, right_y, right_z = (source_x + source_z - target_z - target_x, source_y + source_x - target_x - target_y, source_z + source_y - target_y - target_z)
+        
+        dist_to_left = max((abs(target_x - left_x), abs(target_y - left_y), abs(target_z - left_z))) 
+        dist_to_right = max((abs(target_x - right_x), abs(target_y - right_y), abs(target_z - right_z)))
+        
+        cell0 = [source_x, source_y, source_z]
+        cell1 = [target_x, target_y, target_z]
+        cell2 = list(grid.cube_to_offsets((left_x, left_y, left_z)))
+        if dist_to_left > dist_to_right:
+            cell2 = list(grid.cube_to_offsets((right_x, right_y, right_z)))
+        
+        delta1 = [b - a for a,b in zip(cell0, cell1)]
+        delta2 = [b - a for a,b in zip(cell0, cell2)]
+        delta_inner = [b - a for a,b in zip(cell1, cell2)]
+        cells = [grid.cube_to_offsets(cell0)]
+        for i in range(1, self.length):
+            cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
+            cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
+            for j in range(1, i - 1):
+                cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
+        
+        result = []
+        for cell in cells:
+            col, row = cell
+            width, height = grid.size
+            if col < width and col >= 0 and row < height and row >= 0:
+                result.append(grid[(col, row)])
+        
+        return result
+        
+class Cone60Enemy(Area):
+
+    def __init__(self, source, target, length):
+        self.source = source
+        self.target = target
+        self.length = length
+        
+    def _get(self,context):
+        #same shit and then
+        
+        shuffle(cells)
+        for cell in cells:
+            if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
+                return [cell]
+        return []
 
 
 def area_constructor(loader, node):

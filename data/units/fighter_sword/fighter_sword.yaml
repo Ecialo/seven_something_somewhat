@@ -1,0 +1,25 @@
+- !new_unit
+  name: Fighter_sword
+  resources:
+    health: 125
+    initiative: 10
+    action_points: 4
+    damage: 25
+    endurance: 4
+    armor: 4
+    health_pots: 3
+    speed_pots: 2
+  actions:
+    - Move
+    - Attack
+    - Cleave
+    - EmpoweredCleave
+    - Lunge
+    - EmpoweredLunge
+    - Kick
+    - EmpoweredKick
+    - Parry
+    - EmpoweredParry
+  widget:
+    sprite: './data/units/fighter_sword/sprite.png'
+    scale: 0.33

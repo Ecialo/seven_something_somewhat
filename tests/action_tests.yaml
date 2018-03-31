@@ -783,4 +783,100 @@
       check: !prop A.stats.loaded
       result: "nothing"
       
-#Shoot tests
+#Load then shoot
+- A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: LoadBullet
+      args: {}
+    - action_name: ShootBullet
+      args:
+        target: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+      result: true
+      
+#Shoot wihout loading
+- A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: ShootBullet
+      args:
+        target: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
+      result: true
+      
+#Shoot all bullets (unstable)
+- A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: LoadBullet
+      args: {}
+    - action_name: ShootBullet
+      args:
+        target: !cell [3, 2]
+    - action_name: LoadBullet
+      args: {}
+    - action_name: ShootBullet
+      args:
+        target: !cell [3, 2]
+    - action_name: LoadBullet
+      args: {}
+    - action_name: ShootBullet
+      args:
+        target: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 70, ")"]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 2, ")"]
+      result: true

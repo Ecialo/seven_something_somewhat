@@ -1,0 +1,107 @@
+- !new_action
+  name: LoadBullet
+  action_type: FULL
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "bullet"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: ShootBullet
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.bullets, ">", 0]
+  widget:
+    icon: './data/units/fighter_rifle/bullet.png'
+    pressed_icon: './data/units/fighter_rifle/bullet_pressed.png'
+
+- !new_action
+  name: ShootBullet
+  action_type: STANDARD
+  speed: SLOW
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          inner_radius: 1
+          radius: 5
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 5
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 35
+      area: !area
+        name: Ray
+        source: !prop source
+        target: !prop action.target
+        length: 5
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "nothing"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: bullets
+        value: !expr [!prop owner.bullets, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: ShootBullet
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.loaded, "==", "bullet"]
+  widget:
+    icon: './data/units/fighter_rifle/gunshot.png'
+    pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
+    
+- !new_action
+  name: ReadyBullet
+  action_type: STANDARD
+  speed: SLOW
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          inner_radius: 1
+          radius: 3
+        - !area
+          name: Cone60
+          source: !prop source
+          target: !prop selected
+          length: 3
+  effects: []
+  widget:
+    icon: './data/units/fighter_rifle/gunshot.png'
+    pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
+          

@@ -43,7 +43,7 @@ class InstagameApp(App):
         self.players = [
             {
                 'name':'Ustas',
-                'unit': 'Agent'
+                'unit': 'Fighter_sword'
             },
             {
                 'name': 'Vitaline',

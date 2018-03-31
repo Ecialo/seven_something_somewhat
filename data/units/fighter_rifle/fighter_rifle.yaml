@@ -1,0 +1,34 @@
+- !new_unit
+  name: Fighter_rifle
+  resources:
+    health: 125
+    initiative: 12
+    action_points: 5
+    damage: 10
+    endurance: 4
+    armor: 0
+    bullets: 2 
+    buckshots: 2
+    jacans: 2
+    loaded: !res
+      name: loaded
+      type: option
+      initial: "nothing"
+      options: 
+        - "nothing"
+        - "bullet"
+        - "buckshot"
+        - "jacan"
+  actions:
+    - Move
+    - Attack
+    - Kick
+    - EmpoweredKick
+    - LoadBullet
+    - ReadyBullet
+    #- EmpoweredShoot
+    #- Reload 
+    #- Empowered Reload
+  widget:
+    sprite: './data/units/fighter_rifle/sprite.png'
+    scale: 0.33
