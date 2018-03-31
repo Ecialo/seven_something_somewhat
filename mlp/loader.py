@@ -1,4 +1,8 @@
+import os
+from os import path
+
 import yaml
+
 from .actions.action import (
     new_action_constructor,
     action_constructor,
@@ -74,11 +78,23 @@ yaml.add_constructor(BEHAVIOR_TAG, behavior_constructor)
 
 def load(paths=None):
     paths = paths or [
-        './mlp/actions/base/effects.yaml',
-        './mlp/actions/base/statuses.yaml',
-        './mlp/actions/actions.yaml',
+        # './mlp/actions/base/effects.yaml',
+        # './mlp/actions/base/statuses.yaml',
+        # './mlp/actions/actions.yaml',
+        './mlp/actions/',
         './mlp/unit/units.yaml',
     ]
-    for path in paths:
-        with open(path) as a:
-            yaml.load(a)
+    for resource_path in paths:
+        if resource_path.endswith('.yaml'):
+            load_resource(resource_path)
+        elif resource_path.endswith('/'):
+            for root, _, files in os.walk(resource_path):
+                for file in files:
+                    if file.endswith('.yaml'):
+                        subresource_path = path.join(root, file)
+                        load_resource(subresource_path)
+
+
+def load_resource(resource_path):
+    with open(resource_path) as a:
+        yaml.load(a)
