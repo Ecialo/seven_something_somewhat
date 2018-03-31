@@ -136,6 +136,20 @@
       initial: 0
     action_points: 4
     endurance: 2
+    loaded: !res
+      name: loaded
+      type: option
+      initial: "nothing"
+      options: 
+        - "nothing"
+        - "bullet"
+        - "buckshot"
+        - "jacan"
+    bullets: !res
+      name: bullets
+      type: numeric
+      max: 2
+      initial: 0
   actions:
     - Move
   widget:
