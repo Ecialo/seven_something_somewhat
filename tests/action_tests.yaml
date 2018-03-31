@@ -1,4 +1,5 @@
-- A:
+- name: position_check
+  A:
     unit: Dummy
     cell: !cell [0, 0]
   B:
