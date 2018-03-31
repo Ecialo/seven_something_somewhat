@@ -176,8 +176,8 @@ class LineSelectCursor(RequestCursor):
         self.source_cell = source_cell.get(self.context)
         self.selected_cells = []
         self.length = length
-        print("LENGTH")
-        print(self.length)
+        # print("LENGTH")
+        # print(self.length)
 
     def select(self, cell):
         self.deactivate()

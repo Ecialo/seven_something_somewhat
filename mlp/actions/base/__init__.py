@@ -2,10 +2,6 @@ from collections.abc import Iterable
 
 import blinker
 
-from ...commands.command import (
-    Place,
-    Revoke,
-)
 from ...commands import command as com
 from .effect import (
     UnitEffect,
@@ -31,6 +27,7 @@ class ActionsRegistry:
     def __getitem__(self, item):
         return self.meta_registry['Action'][item]
 
+
 ACTIONS = ActionsRegistry()
 
 
@@ -47,15 +44,19 @@ class Move(UnitEffect):
     # def _apply(self, source_action, target):
 
     def _apply(self, target, context):
+        # print(self.path)
         # print("CONTEXT", context['action'].target_coord)
         with self.configure(context) as c:
             path = c.path
+            # print(path)
             grid = target.cell.grid
             if not isinstance(path, Iterable):
                 path = [path]
             for path_part in path:
+                # print("PARTPATH", path_part)
                 # next_cell = grid.find_path(target.cell, path_part)[1]
                 full_path = grid.find_path(target.cell, path_part)
+                # print("FULLPATH", full_path)
                 next_cell = full_path[1]
 
                 # send command
@@ -86,6 +87,10 @@ class Damage(UnitEffect):
     def _apply(self, target, context):
         with self.configure(context) as c:
             target.stats.health -= max(1, c.amount - target.stats.armor)
+            trace.send(command=com.Damage(
+                unit=target,
+                amount=max(1, c.amount - target.stats.armor)
+            ))
             if target.stats.health <= 0:
                 trace.send(command=com.Revoke(target, target.cell))
                 target.kill()

@@ -8,8 +8,14 @@ from typing import (
     Callable,
 )
 
-from ..cursor import GeometrySelectCursor
+import yaml
 
+from ..unit import Unit
+from ..cursor import GeometrySelectCursor
+from ..protocol import Enum
+from .property.reference import Reference
+
+SPEED: Enum
 
 class Action:
 
@@ -23,10 +29,23 @@ class Action:
             aggregator: Callable[[Dict[Any, Any]], Any],
             extractor: Callable,
     ) -> Dict[str, Any]: ...
+    def check(self) -> bool: ...
 
 class ActionBar:
 
     def __iter__(self) -> Iterable[Action]: ...
 
 class CurrentActionBar:
-    pass
+
+    actions: List[Action]
+
+    def __init__(self, owner: Unit) -> None: ...
+
+    def clear(self) -> None: ...
+    def remove_action(self, action_index: int) -> None: ...
+
+def new_action_constructor(loader: yaml.Loader, node: yaml.Node) -> type: ...
+NEW_ACTION_TAG: str
+
+def action_constructor(loader: yaml.Loader, node: yaml.Node) -> Reference: ...
+ACTION_TAG: str

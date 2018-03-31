@@ -3,9 +3,7 @@ from itertools import (
     combinations,
 )
 
-
 import blinker
-
 
 from ..replication_manager import (
     GameObject,
@@ -15,11 +13,14 @@ from ..stats.new_stats import MajorStats
 from ..grid import (
     Grid,
 )
+from .behavior.behavior import ManualBehavior, RandomTacticBehavior
 from ..actions.action import *
 from ..tools import dict_merge
 from ..actions.property.reference import Reference
 from ..actions.base.status import Status
 from ..bind_widget import bind_widget
+from ..bot.influence_map.threat_map import threat_signal
+from ..bot.tactic import ALL_MAJOR_TACTIC
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -40,7 +41,7 @@ UNITS = UnitsRegistry()
 
 class Unit(GameObject):
 
-    # name = "Unit"
+    behavior = None
     hooks = []
     actions = []
     resources = {}
@@ -67,13 +68,13 @@ class Unit(GameObject):
         self.switch_state()
         context = self.context.copy()
         context['target'] = self
-        print("EARLY CONtEXT", context)
+        # print("EARLY CONtEXT", context)
         # add_status_effect = MetaRegistry()['Effect']['AddStatus']
         for status_ref in self.statuses:
             status = status_ref.get().configure(context)
-            print("LATE CONXTEX", status.context)
+            # print("LATE CONXTEX", status.context)
             self.add_status(status)
-            print("VERY LATE CONTEXT", status.context)
+            # print("VERY LATE CONTEXT", status.context)
             # status.context = None
             # print(status)
             # self.add_status(status)
@@ -245,6 +246,7 @@ class Unit(GameObject):
 
     def kill(self):
         self.is_alive = False
+        self.current_action_bar.clear()
         death.send(unit=self)
         revoke.send(unit=self, cell=self.cell)
 
@@ -259,9 +261,31 @@ class Unit(GameObject):
         else:
             raise TypeError("Wrong status type")
 
+    @property
+    def signal(self):
+        signals = []
+        for action in self.action_bar:
+            if action.check():
+                signals.append(action.signal)
+        # return threat_signal(**self.raw_signal)
+
+    def behave(self):
+        self.behavior.apply_to(self)
+
 
 def new_unit_constructor(loader, node):
     u_s = loader.construct_mapping(node)
+
+    behavior = u_s.get('behavior', ManualBehavior())
+    # print(behavior)
+    if isinstance(behavior, dict):
+        # print(behavior)
+        tactics = [ALL_MAJOR_TACTIC[tactic_name] for tactic_name in behavior['tactics']]
+        class_behavior = RandomTacticBehavior(tactics)
+        # class_behavior = behavior
+    else:
+        # pass
+        class_behavior = behavior
 
     @bind_widget('Unit')
     class NewUnit(Unit):
@@ -271,9 +295,12 @@ def new_unit_constructor(loader, node):
         resources = u_s['resources']
         playable = u_s.get('playable', False)
         statuses = u_s.get('statuses', [])
+        behavior = class_behavior
+        # behavior = None
 
     NewUnit.__name__ = NewUnit.name
     return NewUnit
+
 
 NEW_UNIT_TAG = "!new_unit"
 
@@ -283,5 +310,6 @@ def unit_constructor(loader, node):
     name = u_s.pop("name")
     # return UNITS[name](**u_s)
     return Reference(name, u_s, UNITS)
+
 
 UNIT_TAG = "!unit"

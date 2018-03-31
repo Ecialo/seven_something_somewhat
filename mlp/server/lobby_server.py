@@ -57,7 +57,7 @@ class LobbyServer(tcpserver.TCPServer):
         self.port_pool.append(port)
 
     async def handle_stream(self, stream, address):
-        print("Incoming connection")
+        # print("Incoming connection")
         ioloop.IOLoop.current().spawn_callback(self.handshake, stream)
 
     async def handshake(self, stream):
@@ -71,7 +71,7 @@ class LobbyServer(tcpserver.TCPServer):
 
     @staticmethod
     async def refuse_connection(stream):
-        print("Refuse")
+        # print("Refuse")
         await stream.write(make_message(
             (mt.LOBBY, lm.REFUSE)
         ))
@@ -92,7 +92,7 @@ class LobbyServer(tcpserver.TCPServer):
         ioloop.IOLoop.current().spawn_callback(self.handlers[message_type], user, message['payload'])
 
     def remove_user(self, user):
-        print("Remove", user)
+        # print("Remove", user)
         self._users.pop(user.name)
         for game_session in self._full_sessions.values():
             if user in game_session:
@@ -131,7 +131,7 @@ class LobbyServer(tcpserver.TCPServer):
         await session.shutdown()
         self.return_port(session.port)
         self._full_sessions.pop(session.uid)
-        print(self._full_sessions)
+        # print(self._full_sessions)
 
     async def send_message(self):
         while True:

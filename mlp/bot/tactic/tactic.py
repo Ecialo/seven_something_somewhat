@@ -3,7 +3,6 @@ from random import shuffle
 import blinker
 
 from ...replication_manager import GameObjectRegistry
-from ...unit import Unit
 
 presume = blinker.signal("presume")
 forget = blinker.signal("forget")
@@ -13,12 +12,12 @@ class Tactic:
 
     registry = GameObjectRegistry()
 
-    def realize(self, unit):
+    def realize(self, unit, influence_map=None):
         pass
 
     @property
     def units(self):
-        return self.registry.categories[Unit.__name__]
+        return self.registry.categories["Unit"]#.__name__]
 
     @staticmethod
     def random_actions_by_tag(unit, tag):

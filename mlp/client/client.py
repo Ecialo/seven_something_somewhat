@@ -58,7 +58,7 @@ class MLPClientApp(App):
     def watch_network(self, _):
         for message in self.network_manager.dump():
             message_struct = mlp_loads(message)
-            print(message_struct)
+            # print(message_struct)
             message_struct['message_type'] = tuple(message_struct['message_type'])
             self.screen_manager.current_screen.receive(message_struct)
 

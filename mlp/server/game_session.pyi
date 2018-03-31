@@ -15,6 +15,7 @@ class GameSession:
 
     _stream: iostream.IOStream
     uid: str
+    session_name: str
     users: Dict[str, Optional[User]]
     port: int
     _game_process: mlp.Process

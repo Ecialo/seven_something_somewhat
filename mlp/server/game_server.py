@@ -37,9 +37,9 @@ next_phase = blinker.signal("next_phase")
 
 
 async def unlock(lock):
-    print("TIME TO UNLOCK")
-    lock.release()
-    print("UNLOCKED ^^")
+    # print("TIME TO UNLOCK")
+    lock.wait()
+    # print("UNLOCKED ^^")
 
 
 class GameServer(tcpserver.TCPServer):
@@ -77,6 +77,7 @@ class GameServer(tcpserver.TCPServer):
         username = message_struct['payload']
         # await self.refuse_connection(stream)
         if username in self._users:
+            # print(username)
             await self.refuse_connection(stream)
         else:
             await self.add_user(username, stream)
@@ -86,7 +87,7 @@ class GameServer(tcpserver.TCPServer):
 
     @staticmethod
     async def refuse_connection(stream):
-        print("Refuse")
+        # print("Refuse")
         await stream.write(make_message(
             (mt.LOBBY, lm.REFUSE)
         ))
@@ -99,10 +100,10 @@ class GameServer(tcpserver.TCPServer):
         self._users[username] = User(username, stream)
 
     async def start_game(self):
-        print("start_game")
+        # print("start_game")
         grid = HexGrid((5, 5))
         turn_order_manager = TurnOrderManager()
-        print(self.players)
+        # print(self.players)
         players = [Player.make_from_skel(player) for player in self.players]
         self.game = Game(grid=grid, players=players, turn_order_manager=turn_order_manager)
         self.game.turn_order_manager.rearrange()
@@ -118,7 +119,7 @@ class GameServer(tcpserver.TCPServer):
             self.queue.task_done()
 
     async def send_update(self):
-        print("send_update")
+        # print("send_update")
         state_payload = [CreateOrUpdateTag(o) for o in self.game.registry.dump()]
         command_payload = self.game.commands[::]
         await self.replay_handler.queue.put((state_payload, command_payload))  # Здесь пишутся реплеи
@@ -132,14 +133,15 @@ class GameServer(tcpserver.TCPServer):
         ))
         self.game.commands.clear()
         self.game.registry.collect()
+        # if self.is_alive:
         await self.queue.put((
             ALL,
             ((mt.CONTEXT, cm.READY), None)
         ))
 
     def process_message(self, user, message):
-        print("MESSAGE")
-        print(message)
+        # print("MESSAGE")
+        # print(message)
         message_type = tuple(message["message_type"])
         if message_type[0] == mt.GAME:
             ioloop.IOLoop.current().spawn_callback(self.process_with_game, message)
@@ -151,33 +153,40 @@ class GameServer(tcpserver.TCPServer):
         ioloop.IOLoop.current().spawn_callback(self.check_status)
 
     def next_phase(self, _):
-        ioloop.IOLoop.current().spawn_callback(self.send_update)
+        if self.is_alive:
+            ioloop.IOLoop.current().spawn_callback(self.send_update)
 
     async def check_status(self):
         if len(self._users) == 0:
             await self.shutdown()
 
     async def shutdown(self):
-        print("SHUTDOWN")
+        # print("SHUTDOWN")
         await self.queue.join()
-        print("DONE QUEUE")
+        # print("DONE QUEUE")
         await self.replay_handler.dump_replay()
-        print("DONE DUMP")
+        # print("DONE DUMP")
         self.is_alive = False
-        await self.lobby_stream.write(make_message(
-            (mt.GAME, gm.GAME_OVER)
-        ))
+        # await self.lobby_stream.write(make_message(
+        #     (mt.GAME, gm.GAME_OVER)
+        # ))
+        await self.queue.join()
+        ioloop.IOLoop.current().stop()
 
     def process_game_over(self, _, winner):
         ioloop.IOLoop.current().spawn_callback(self._process_game_over, winner)
 
     async def _process_game_over(self, winner):
-        print("PROCESS GAMEOVER", winner)
+        print("WINNER", winner)
         await self.queue.put((
             ALL,
             ((mt.GAME, gm.GAME_OVER), winner)
         ))
-        print("SHUTDOWN")
+        await self.lobby_stream.write(make_message(
+            (mt.GAME, gm.GAME_OVER),
+            winner,
+        ))
+        # print("SHUTDOWN")
         await self.shutdown()
 
     async def process_with_game(self, message):
@@ -202,8 +211,9 @@ def start_game_server(session_name, port, socket, players, lock=None):
     if lock:
         ioloop.IOLoop.current().spawn_callback(unlock, lock)
     load()
-    print("START SERVER AT PORT {}".format(port))
+    # print("START SERVER AT PORT {}".format(port))
     server = GameServer(session_name, players, iostream.IOStream(socket))
     server.bind(port)
     server.start()
     ioloop.IOLoop.current().start()
+    # print("GAME SERVER STOP")

@@ -1,10 +1,13 @@
 import yaml
 
+import blinker
+
 from ..mlp.grid import Cell
 from ..mlp.unit import UNITS
 from ..mlp.loader import load
 from ..mlp.grid import HexGrid
 
+collect_garbage = blinker.signal('collect')
 DUMMY = 'Dummy'
 A = 'A'
 B = 'B'
@@ -31,6 +34,11 @@ class TestEffect:
             'source': self.source,
             'victim': self.victim,
         }
+
+    def tearDown(self):
+        self.author.kill()
+        self.victim.kill()
+        collect_garbage.send()
 
     def test_effects(self):
         with open(self.tests_path) as tests_file:

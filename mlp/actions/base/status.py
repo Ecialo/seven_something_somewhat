@@ -66,7 +66,7 @@ class Status(metaclass=StatusMeta):
 
     def dump(self):
         params = vars(self).copy()
-        print("PARAMS", params)
+        # print("PARAMS", params)
         params['context'] = params['context'].copy()
         params['context'].pop('status')
         params['context']['target'] = params['context']['target'].cell
@@ -97,9 +97,12 @@ class Status(metaclass=StatusMeta):
 
     def expand(self):
         # pass
+        # print(self.name)
+        # print(self.context)
         self.context['target'] = self.context['target'].object
         self.context['owner'] = self.context['owner'].object
         self.context['status'] = self
+
 
 class Dot(Status):
     params = ["power"]
@@ -126,7 +129,7 @@ def new_status_constructor(loader, node):
     s_s = loader.construct_mapping(node)
 
     subtype = s_s.pop('subtype', None)
-    print(subtype)
+    # print(subtype)
     if subtype:
         status_type = STATUSES[subtype]
     else:

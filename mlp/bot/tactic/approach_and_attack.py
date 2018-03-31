@@ -86,11 +86,13 @@ class ApproachAndAttack(Tactic):
 
 class AttackNearest(Tactic):
 
-    def realize(self, unit):
+    def realize(self, unit, _=None):
         min_distance = 999
         target = None
         for other_unit in self.units:
             if other_unit.stats.owner != unit.stats.owner:
+                print(unit)
+                print(other_unit)
                 d = HexGrid.distance(unit.cell, other_unit.cell)
                 if d < min_distance:
                     min_distance = d

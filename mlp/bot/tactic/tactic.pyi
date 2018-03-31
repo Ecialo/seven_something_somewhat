@@ -2,9 +2,11 @@ from typing import (
     List,
     Dict,
     Any,
-    Iterable,
     ClassVar,
+    Optional,
 )
+
+import numpy as np
 
 from ...unit import Unit
 from ...actions.action import Action
@@ -14,7 +16,7 @@ class Tactic:
 
     registry = ClassVar[GameObjectRegistry]
 
-    def realize(self, unit: Unit) -> List[Action]: ...
+    def realize(self, unit: Unit, influence_map: Optional[np.ndarray]=None) -> List[Action]: ...
     @staticmethod
     def search_in_aoe(action: Action, unit: Unit) -> Dict[str, Any]: ...
     @staticmethod
@@ -24,4 +26,4 @@ class Tactic:
     @staticmethod
     def forget(unit: Unit) -> None: ...
     @property
-    def units(self) -> Iterable[Unit]: ...
+    def units(self) -> List[Unit]: ...

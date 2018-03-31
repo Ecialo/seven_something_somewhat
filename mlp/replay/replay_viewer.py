@@ -64,7 +64,7 @@ class InstagameApp(App):
         self.screen_manager.get_screen("game").game.receive_message(message_struct)
 
     def game_over(self, winner_name):
-        print(winner_name)
+        # print(winner_name)
         self.screen_manager.get_screen("game_over").winner_name = winner_name
         self.screen_manager.current = "game_over"
 
@@ -83,7 +83,7 @@ class InstagameApp(App):
                 (mt.GAME, gm.COMMAND), com
             )
             self.receive_game_message(com)
-            print(st)
+            # print(st)
             # self.screen_manager.current_screen.game.registry.load(st)
             # self.screen_manager.current_screen.game.envoke_commands(com)
             # print(st, com)

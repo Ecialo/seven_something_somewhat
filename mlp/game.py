@@ -24,13 +24,13 @@ from .unit import (
 
 LAST = -1
 
-logger = logging.getLogger(__name__)
-handler = logging.FileHandler(
-    './game_logs/apply_actions{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
-    'w',
-)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger(__name__)
+# handler = logging.FileHandler(
+#     './game_logs/apply_actions{}.log'.format("_server" if os.environ.get("IS_SERVER") else ""),
+#     'w',
+# )
+# logger.addHandler(handler)
+# logger.setLevel(logging.DEBUG)
 
 summon = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -68,16 +68,12 @@ class TurnOrderManager(GameObject):
             unit,
         )
 
-    # @on_summon_event.connect_via('Unit')
     def append_unit(self, _, unit, cell=None):
-        print("ON SUMMON")
-        print(unit)
         self._current_turn_order.append(
             (LAST, unit.stats.initiative, unit,)
         )
         self._current_turn_order = self._current_turn_order[::]
 
-    # @on_revoke_event.connect_via('Unit')
     def remove_unit(self, _, unit, cell):
         i_2_del = None
         for i, o_u in enumerate(self._current_turn_order):
@@ -92,24 +88,24 @@ class TurnOrderManager(GameObject):
         self._current_turn_order = sorted(cur_turn_order, reverse=True)
 
     def dump(self):
-        print("CURRENT TURN ORDER")
-        # print(self._current_turn_order)
         msg = dict_merge(
             super().dump(),
             {'current_turn_order': self._current_turn_order},
         )
-        print(msg)
         return msg
-        # return {
-        #     **super().dump(),
-        #     'current_turn_order': list(enumerate((RefTag(u) for u in self)))
-        # }
 
     def load(self, struct):
-        print("LOAD TURN ORDER")
-        print(struct)
         super().load(struct)
         self._current_turn_order = sorted([tuple(r) for r in struct['current_turn_order']])
+
+    def __len__(self):
+        return len(self._current_turn_order)
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self._current_turn_order[item]
+        else:
+            return self._current_turn_order.index(item)
 
 
 @bind_widget('RemoteGame')
@@ -140,7 +136,7 @@ class Game:
 
         if players:
             self.switch_state()
-            summon.send(None, unit=players[0].main_unit, cell=self._grid[0, 0])
+            summon.send(None, unit=players[0].main_unit, cell=self._grid[4, 3])
             summon.send(None, unit=players[-1].main_unit, cell=self._grid[4, 4])
             self.switch_state()
         self.winner = None
@@ -218,6 +214,8 @@ class Game:
         :return:
         """
         result = False
+        for unit in self.turn_order_manager:
+            unit.behave()
         self.switch_state()
         if all((player.is_ready for player in self.players)):
             anyone_not_pass = self.apply_actions(True)
@@ -252,40 +250,40 @@ class Game:
 
     def apply_actions(self, log=False):
         anyone_not_pass = False
-        logger.debug("START APPLING ACTIONS")
+        # logger.debug("START APPLING ACTIONS")
         for unit in self.units:
             unit.launch_triggers(["phase", "start"], unit, unit.context)
         if log:
             self.action_log.append([])
         for unit in self.turn_order_manager:
-            logger.debug("APPLY FAST FOR {} in state {}".format(unit, unit.state))
+            # logger.debug("APPLY FAST FOR {} in state {}".format(unit, unit.state))
             # print(unit)
             unit_is_not_pass = unit.apply_actions(speed=SPEED.FAST)
-            for unit_ in self.units:
-                logger.debug("{} real stats {}".format(unit_, unit_._stats))
-                logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
+            # for unit_ in self.units:
+            #     logger.debug("{} real stats {}".format(unit_, unit_._stats))
+            #     logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
             if log:
                 self.action_log[-1].extend(unit.action_log)
             unit.action_log.clear()
             anyone_not_pass = anyone_not_pass or unit_is_not_pass
         for unit in self.turn_order_manager:
-            logger.debug("APPLY NORMAL FOR {} in state {}".format(unit, unit.state))
+            # logger.debug("APPLY NORMAL FOR {} in state {}".format(unit, unit.state))
             # print(unit)
             unit_is_not_pass = unit.apply_actions()
-            for unit_ in self.units:
-                logger.debug("{} real stats {}".format(unit_, unit_._stats))
-                logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
+            # for unit_ in self.units:
+            #     logger.debug("{} real stats {}".format(unit_, unit_._stats))
+            #     logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
             if log:
                 self.action_log[-1].extend(unit.action_log)
             unit.action_log.clear()
             anyone_not_pass = anyone_not_pass or unit_is_not_pass
         for unit in self.turn_order_manager:
             # print(unit)
-            logger.debug("APPLY SLOW FOR {} in state {}".format(unit, unit.state))
+            # logger.debug("APPLY SLOW FOR {} in state {}".format(unit, unit.state))
             unit_is_not_pass = unit.apply_actions(speed=SPEED.SLOW)
-            for unit_ in self.units:
-                logger.debug("{} real stats {}".format(unit_, unit_._stats))
-                logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
+            # for unit_ in self.units:
+            #     logger.debug("{} real stats {}".format(unit_, unit_._stats))
+            #     logger.debug("{} presumed stats {}".format(unit_, unit_._stats.presumed))
             if log:
                 self.action_log[-1].extend(unit.action_log)
             unit.action_log.clear()
@@ -303,9 +301,9 @@ class Game:
     def switch_state(self):
         self.state = int(not self.state)
         for unit in self.units:
-            logger.debug("{} OLD STATS {}".format(unit, unit.stats))
+            # logger.debug("{} OLD STATS {}".format(unit, unit.stats))
             unit.switch_state()
-            logger.debug("{} NEW STATS {}".format(unit, unit.stats))
+            # logger.debug("{} NEW STATS {}".format(unit, unit.stats))
             # unit.clear_presumed()
 
     def update_position(self):
@@ -325,7 +323,7 @@ class Game:
 
     # @summon.connect
     def on_summon(self, _, unit, cell):
-        print("SUMMONED", unit)
+        # print("SUMMONED", unit)
         trace.send(command=Place(
             unit=unit,
             place=cell,
@@ -333,8 +331,8 @@ class Game:
         ))
 
     def envoke_commands(self, new_commands):
-        print("ENVOKE COMMANDS")
+        # print("ENVOKE COMMANDS")
         new_commands = deque(new_commands)
-        print(new_commands)
+        # print(new_commands)
         # print("ENVOKE COMMANDS")
         commands.send(commands=new_commands)

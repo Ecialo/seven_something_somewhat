@@ -13,6 +13,8 @@ class Unit(FullImage):
         self.default_scale = unit.widget.get('scale', 1.0)
         self.scale = self.default_scale
         self.current_anchor = None
+        self.unit_effects = []
+        self.bind(pos=self.update_effect_pos)
 
     def on_select(self, game_widget):
         game_widget.stats = self.unit._stats.make_widget(pos_hint={'x': 0.0, 'y': 0.5})
@@ -26,6 +28,19 @@ class Unit(FullImage):
             )
             game_widget.add_widget(game_widget.action_bar)
             game_widget.add_widget(game_widget.current_action_bar)
+
+    def add_effect(self, effect):
+        self.add_widget(effect)
+        effect.update(self.pos)
+        self.unit_effects.append(effect)
+
+    def remove_effect(self, effect):
+        self.unit_effects.remove(effect)
+        self.remove_widget(effect)
+
+    def update_effect_pos(self, _, pos):
+        for effect in self.unit_effects:
+            effect.update(pos)
 
     def connect(self, anchor):
         self.current_anchor = anchor

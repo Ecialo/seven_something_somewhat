@@ -54,7 +54,7 @@ class Action(ImageButton):
         if self.action.pre_check():
             self.setup()
         # self.parent.send_action(self.action)
-            print(self.__class__.__name__, self.ids)
+        #     print(self.__class__.__name__, self.ids)
         # self.texture = texture_pressed
 
     # def on_release(self):
@@ -63,14 +63,14 @@ class Action(ImageButton):
     #     # self.texture = texture_released
 
     def setup(self):
-        print("Start setup")
+        # print("Start setup")
         setup_context = self.action.setup()
         try:
             cursor_data = next(setup_context)
         except StopIteration:
-            print("SEND")
+            # print("SEND")
             self.parent.send_action(self.action.copy())
-            print("SENDED")
+            # print("SENDED")
             self.action.clear()
         else:
         # print(setup_context)
@@ -88,17 +88,17 @@ class Action(ImageButton):
                 cursor_data = self.setup_context.send(select_result)
                 self.make_cursor(*cursor_data)
             except StopIteration:
-                print("SEND")
+                # print("SEND")
                 c_action = self.action.copy()
-                print("Copied")
+                # print("Copied")
                 self.parent.send_action(c_action)
-                print("Sended")
+                # print("Sended")
                 self.setup_context = None
                 self.select_result = None
         elif self.setup_context and select_result is None:
             self.setup_context = None
             self.action.clear()
-        print("Done")
+        # print("Done")
 
     def make_cursor(self, cursor_name, cursor_args=None, cursor_kwargs=None):
         cursor_cls = CURSOR_TABLE[cursor_name]
@@ -123,7 +123,7 @@ class ActionBar(GridLayout):
 
     def update_bar(self):
         self.clear_widgets()
-        print(self.action_bar.actions)
+        # print(self.action_bar.actions)
         for action in self.action_bar.actions:
             self.add_widget(action.make_widget())
 
@@ -157,7 +157,7 @@ class CurrentActionBar(GridLayout):
         self.remove_action_widgets = []
 
     def on_append_action(self, action):
-        print('accept action', action)
+        # print('accept action', action)
         if self.current_action_bar.actions and self.current_action_bar.actions[-1] == action:
             self.remove_action_widgets.append(RemoveActionButton(action))
             self.add_widget(self.remove_action_widgets[-1])

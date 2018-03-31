@@ -39,11 +39,11 @@ class NetworkManager(Thread):
 
     @gen.coroutine
     def _connect(self, host, port, name):
-        print("Connect", name)
+        # print("Connect", name)
         stream = yield self.client.connect(host, port)
-        print("Success")
+        # print("Success")
         self.connections[name] = stream
-        print(self.connections)
+        # print(self.connections)
         self.loop.spawn_callback(self.receiver, stream)
         self.loop.spawn_callback(self.named_consumer(name))
 
