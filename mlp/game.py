@@ -214,6 +214,8 @@ class Game:
         :return:
         """
         result = False
+        for unit in self.turn_order_manager:
+            unit.behave()
         self.switch_state()
         if all((player.is_ready for player in self.players)):
             anyone_not_pass = self.apply_actions(True)

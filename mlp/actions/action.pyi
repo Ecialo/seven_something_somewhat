@@ -8,8 +8,12 @@ from typing import (
     Callable,
 )
 
+import yaml
+
+from ..unit import Unit
 from ..cursor import GeometrySelectCursor
 from ..protocol import Enum
+from .property.reference import Reference
 
 SPEED: Enum
 
@@ -35,5 +39,13 @@ class CurrentActionBar:
 
     actions: List[Action]
 
+    def __init__(self, owner: Unit) -> None: ...
+
     def clear(self) -> None: ...
     def remove_action(self, action_index: int) -> None: ...
+
+def new_action_constructor(loader: yaml.Loader, node: yaml.Node) -> type: ...
+NEW_ACTION_TAG: str
+
+def action_constructor(loader: yaml.Loader, node: yaml.Node) -> Reference: ...
+ACTION_TAG: str

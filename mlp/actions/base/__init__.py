@@ -28,6 +28,7 @@ class ActionsRegistry:
     def __getitem__(self, item):
         return self.meta_registry['Action'][item]
 
+
 ACTIONS = ActionsRegistry()
 
 

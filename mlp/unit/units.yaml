@@ -41,6 +41,10 @@
 
 - !new_unit
   name: Dog
+  behavior: !beh
+    name: RandomTacticBehavior
+    tactics:
+      - AttackNearest
   resources:
     health: 100
     armor: 0

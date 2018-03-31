@@ -328,6 +328,7 @@ def cell_constructor(loader, node):
     hexgrid = HexGrid.locate()
     return hexgrid[coord]
 
+
 CELL_TAG = "!cell"
 
 if __name__ == '__main__':

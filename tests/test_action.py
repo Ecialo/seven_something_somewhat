@@ -8,6 +8,7 @@ from ..mlp.actions.property.property import Property
 
 summon = blinker.signal("summon")
 revoke = blinker.signal("revoke")
+collect_garbage = blinker.signal('collect')
 
 load()
 
@@ -27,7 +28,9 @@ class TestAction:
     def tearDown(self):
         summon.disconnect(self.track_units)
         for unit in self.units:
-            revoke.send(unit=unit, cell=unit.cell)
+            unit.kill()
+        collect_garbage.send()
+            # revoke.send(unit=unit, cell=unit.cell)
 
     def track_units(self, _, unit, cell):
         self.units.append(unit)
