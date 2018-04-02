@@ -84,3 +84,4 @@ class TestAction:
             expression_result = expression.get(check_context)
             result = result.get(context) if isinstance(result, Property) else result
             assert expression_result == result, "{} != {}".format(expression_result, result)
+        self.tearDown()

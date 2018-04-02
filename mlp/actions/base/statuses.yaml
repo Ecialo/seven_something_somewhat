@@ -123,3 +123,9 @@
 - !new_status
   name: Reloading
 #  subtype: Dot
+
+- !new_status
+  name: Bloodlust
+  on_kill:
+    - !eff
+      name: Skushat

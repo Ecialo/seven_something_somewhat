@@ -99,3 +99,19 @@
     - cell: !cell [0, 0]
       check: !expr ["Reloading", "in", !prop cell.object]
       result: true
+
+- name: on_kill_event_test
+  A:
+    unit: EvilDummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [0, 1]
+  actions_A:
+    - action_name: Attack
+      args: {}
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !prop A.stats.health
+      result: 200

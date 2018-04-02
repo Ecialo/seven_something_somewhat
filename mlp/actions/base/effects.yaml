@@ -38,3 +38,13 @@
     - effect: !eff
         name: Discard
       condition: !expr [!prop effect.power, '>=', !prop incoming_effect.amount]
+
+- !new_eff
+  name: Skushat
+  params: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        stat_name: health
+        value: !expr [!prop owner.health, '+', !prop victim.max__health]
+#      condition: !expr [!prop killer, '==', !prop owner]
