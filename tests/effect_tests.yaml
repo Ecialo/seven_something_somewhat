@@ -1,4 +1,5 @@
-- effects:
+- name: test_damage
+  effects:
     - !eff
       name: Damage
       amount: 10

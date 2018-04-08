@@ -18,6 +18,7 @@ from ...replication_manager import MetaRegistry
 
 trace = blinker.signal("trace")
 summon = blinker.signal("summon")
+kill = blinker.signal('kill')
 
 
 class ActionsRegistry:
@@ -93,6 +94,7 @@ class Damage(UnitEffect):
             ))
             if target.stats.health <= 0:
                 trace.send(command=com.Revoke(target, target.cell))
+                kill.send(context['owner'], victim=target)
                 target.kill()
             self.info_message = self.info_message.format(target, c.amount)
             super()._apply(target, context)

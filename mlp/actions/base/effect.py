@@ -89,6 +89,7 @@ class UnitEffect(AbstractEffect):
                 cell.object.launch_triggers(self.tags, effect, effect_context)
                 if not effect.is_canceled:
                     effect._apply(cell.object, effect_context)
+                    context['owner'].launch_triggers(["apply"] + self.tags, effect, effect_context)
 
     def copy(self):
         return self.__class__(**vars(self))
@@ -153,8 +154,11 @@ class CustomUnitEffect(UnitEffect):
     def _apply(self, target, context):
         for e_s in self.effects:
             cond = e_s.get('condition')
+            # print(context)
             if cond is None or cond.get(context):
-                effect = e_s['effect']
+                effect = e_s['effect'].get()
+                # print(context)
+                # print(effect)
                 effect._apply(target, context)     # TODO перепроектировать это
 
 
@@ -179,7 +183,9 @@ class CustomMetaEffect(MetaEffect):
     def _apply(self, effect, context):
         for e_s in self.effects:
             cond = e_s.get('condition')
+            # print(cond)
             if cond is None or cond.get(context):
+                # print('SUCC')
                 effect_ = e_s['effect']
                 effect_ = effect_.get()
                 effect_._apply(effect, context)
@@ -218,6 +224,7 @@ def new_effect_constructor(loader, node):
     else:
         raise ValueError("Effect type might be 'unit' or 'meta'")
     return NewEffect
+
 
 EFFECT_TAG = "!eff"
 NEW_EFFECT_TAG = "!new_eff"

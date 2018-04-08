@@ -1,3 +1,5 @@
+from functools import partial
+
 import yaml
 import blinker
 
@@ -39,9 +41,13 @@ class TestAction:
         with open(self.tests_path) as tests_file:
             tests = yaml.load(tests_file)
         for test in tests:
-            yield self.check, test
+            name = test.get('name')
+            f = partial(self.check, test)
+            f.description = name
+            yield f,
 
     def check(self, test):
+        self.setUp()
         unit_A = UNITS[test['A']['unit']]("A")
         unit_A.switch_state()
         summon.send(None, unit=unit_A, cell=test['A']['cell'])
@@ -78,3 +84,4 @@ class TestAction:
             expression_result = expression.get(check_context)
             result = result.get(context) if isinstance(result, Property) else result
             assert expression_result == result, "{} != {}".format(expression_result, result)
+        self.tearDown()
