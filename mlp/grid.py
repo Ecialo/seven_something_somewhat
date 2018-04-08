@@ -320,6 +320,11 @@ class HexGrid(Grid):
     def __iter__(self):
         return iter(chain(*self._grid))
 
+    @classmethod
+    def get(cls, _=None):
+        grid = cls.locate()
+        return set(grid)
+
 
 def cell_constructor(loader, node):
     coord = tuple(loader.construct_sequence(node))

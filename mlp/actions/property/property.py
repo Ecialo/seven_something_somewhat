@@ -87,6 +87,7 @@ class IndexProperty(Property):
     def get(self, context):
         return self.source.get(context)[self.index]
 
+
 PROPERTY_TABLE = {
 }
 
@@ -108,8 +109,10 @@ def str2prop(property_):
     else:
         return Attribute(property_)
 
+
 def property_constructor(loader, node):
     property_ = loader.construct_scalar(node)
     return str2prop(property_)
+
 
 PROPERTY_TAG = "!prop"
