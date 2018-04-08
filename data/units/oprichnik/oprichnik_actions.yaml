@@ -41,4 +41,37 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedScythe
-  check: !expr ["order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+  check: !expr ["Order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+
+- !new_action
+  name: OrderUpyr
+  action_type: MOVE
+  speed: NORMAL
+  cost:
+    action_points: 1
+    coins: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: OrderedUpyr
+  check: !expr ["Order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+
+- !new_action
+  name: OrderShulikun
+  action_type: MOVE
+  speed: NORMAL
+  cost:
+    action_points: 1
+    coins: 2
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: OrderedShulikun
+  check: !expr ["Order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+

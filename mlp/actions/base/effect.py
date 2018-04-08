@@ -117,6 +117,23 @@ class CellEffect(AbstractEffect):
         return self.__class__(**vars(self))
 
 
+class SimpleEffect(AbstractEffect):
+
+    def _apply(self, context):
+        pass
+
+    def apply(self, _, context):
+        if context['owner'].state is PLANNING and "plan" not in self.tags:
+            return
+        effect_context = context.copy()
+        effect = self.copy()
+        if not effect.is_canceled:
+            effect._apply(effect_context)
+
+    def copy(self):
+        return self.__class__(**vars(self))
+
+
 class MetaEffect(AbstractEffect):
 
     def log(self, source):
