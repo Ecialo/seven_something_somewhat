@@ -35,9 +35,10 @@ class AbstractEffect(metaclass=EffectMeta):
     name = ""
     _tags = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, area=None, **kwargs):
         self.is_canceled = False
         self.extra_tags = kwargs.get('extra_tags', [])
+        self.area = area
 
     def log(self, source):
         pass
@@ -77,6 +78,8 @@ class UnitEffect(AbstractEffect):
         self.log(source)
 
     def apply(self, cells, context):
+        if self.area:
+            cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
@@ -102,6 +105,8 @@ class CellEffect(AbstractEffect):
         self.log(source)
 
     def apply(self, cells, context):
+        if self.area:
+            cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
@@ -112,23 +117,6 @@ class CellEffect(AbstractEffect):
             effect = self.copy()
             if not effect.is_canceled:
                 effect._apply(cell, effect_context)
-
-    def copy(self):
-        return self.__class__(**vars(self))
-
-
-class SimpleEffect(AbstractEffect):
-
-    def _apply(self, context):
-        pass
-
-    def apply(self, _, context):
-        if context['owner'].state is PLANNING and "plan" not in self.tags:
-            return
-        effect_context = context.copy()
-        effect = self.copy()
-        if not effect.is_canceled:
-            effect._apply(effect_context)
 
     def copy(self):
         return self.__class__(**vars(self))

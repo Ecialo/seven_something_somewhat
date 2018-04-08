@@ -40,9 +40,9 @@
       owner: !prop owner.owner
       area: !area
         name: KRandomCells
-          area: !glob arena     # TODO Добавить глобалы
-          k: 1
-          filter: !expr [!prop cell.object, "==", null]
+        area: !glob arena     # TODO Добавить глобалы
+        k: 1
+        filter: !expr [!prop cell.object, "==", null]
 
 - !new_status
   name: OrderedShulikun
@@ -56,6 +56,6 @@
       owner: !prop owner.owner
       area: !area
         name: KRandomCells
-          area: !glob arena     # TODO Добавить глобалы
-          k: 4
-          filter: !expr [!prop cell.object, "==", null]
+        area: !glob arena     # TODO Добавить глобалы
+        k: 4
+        filter: !expr [!prop cell.object, "==", null]

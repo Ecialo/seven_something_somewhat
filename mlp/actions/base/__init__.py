@@ -4,7 +4,6 @@ import blinker
 
 from ...commands import command as com
 from .effect import (
-    SimpleEffect,
     UnitEffect,
     MetaEffect,
     CellEffect,
@@ -212,25 +211,6 @@ class Summon(CellEffect):
             unit.change_owner(c.owner)
             summon.send(unit=unit, cell=cell)
             super()._apply(cell, context)
-
-
-class SummonAtArea(SimpleEffect):
-
-    def __init__(self, unit, owner, area, **kwargs):
-        super().__init__(**kwargs)
-        self.unit = unit
-        self.owner = owner
-        self.area = area
-
-    def _apply(self, context):
-        with self.configure(context) as c:
-            cells = self.area
-            for cell in cells:
-                unit = c.unit
-                unit.switch_state()
-                unit.change_owner(c.owner)
-                summon.send(unit=unit, cell=cell)
-                super()._apply(cell, context)
 
 
 class AddAction(UnitEffect):
