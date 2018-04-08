@@ -106,7 +106,7 @@
         extra_tags: ["plan"]
         status: !status
           name: ReadyToShoot
-          target: target
+          target: !prop action.target
       area: !area
         name: Cell
         cell: !prop owner.cell
@@ -123,6 +123,6 @@
     - and
     - [!prop owner.loaded, "==", "bullet"]
   widget:
-    icon: './data/units/fighter_rifle/gunshot.png'
-    pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
+    icon: './data/units/fighter_rifle/crosshair.png'
+    pressed_icon: './data/units/fighter_rifle/crosshair_pressed.png'
           

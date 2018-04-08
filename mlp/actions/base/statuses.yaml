@@ -130,8 +130,14 @@
     - target
   on_phase_end:
     - !eff
-    # this needs to take target area find a random enemy in it and shoot(bullet) at it
-      name: DoShit 
+      name: LaunchAction
+      action_name: ShootBullet
+      setup:
+        target: !area
+          name: Cone60Enemy
+          source: !prop status.target[0]
+          target: !prop status.target[-1]
+          length: 5
     - !eff
       name: RemoveStatus
       status: !status
