@@ -111,7 +111,7 @@
     health: !res
       name: health
       type: numeric
-      max: 200
+      max: 250
       initial: 100
     action_points: 4
     damage: 100

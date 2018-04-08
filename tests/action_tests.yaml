@@ -100,7 +100,7 @@
       check: !expr ["Reloading", "in", !prop cell.object]
       result: true
 
-- name: on_kill_event_test
+- name: on_kill_and_on_apply_event_tests
   A:
     unit: EvilDummy
     cell: !cell [0, 0]
@@ -114,4 +114,4 @@
   checks:
     - cell: !cell [0, 0]
       check: !prop A.stats.health
-      result: 200
+      result: 201

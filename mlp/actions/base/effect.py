@@ -89,6 +89,7 @@ class UnitEffect(AbstractEffect):
                 cell.object.launch_triggers(self.tags, effect, effect_context)
                 if not effect.is_canceled:
                     effect._apply(cell.object, effect_context)
+                    context['owner'].launch_triggers(["apply"] + self.tags, effect, effect_context)
 
     def copy(self):
         return self.__class__(**vars(self))

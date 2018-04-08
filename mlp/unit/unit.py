@@ -237,8 +237,13 @@ class Unit(GameObject):
             self.remove_status(status)
 
     def launch_triggers(self, tags, target, target_context):
+        is_on_apply = "apply" in tags
+        if is_on_apply:
+            tags.remove("apply")
         l = len(tags)
         for event in chain(*(combinations(tags, j) for j in range(1, l + 1))):
+            if is_on_apply:
+                event += ("apply", )
             event = frozenset(event)
             for trigger in list(self.stats.triggers[event].values()):
                 trigger.apply(event, target, target_context)

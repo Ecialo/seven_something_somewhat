@@ -129,3 +129,8 @@
   on_kill:
     - !eff
       name: Skushat
+  on_apply_harmful:
+    - !eff
+      name: ChangeStat
+      stat_name: health
+      value: !expr [!prop target.health, "+", 1]
