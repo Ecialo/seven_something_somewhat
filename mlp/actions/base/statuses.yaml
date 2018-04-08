@@ -123,3 +123,16 @@
 - !new_status
   name: Reloading
 #  subtype: Dot
+
+- !new_status
+  name: ReadyToShoot
+  params:
+    - target
+  on_phase_end:
+    - !eff
+    # this needs to take target area find a random enemy in it and shoot(bullet) at it
+      name: DoShit 
+    - !eff
+      name: RemoveStatus
+      status: !status
+        name: ReadyToShoot

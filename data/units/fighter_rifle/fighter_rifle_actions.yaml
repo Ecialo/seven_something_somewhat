@@ -88,19 +88,40 @@
   cost: 1
   setup:
     - name: target
-      cursor: geometry_last
+      cursor: geometry
       cursor_params:
         - !area
           name: Ring
           center: !prop source
           inner_radius: 1
-          radius: 3
+          radius: 5
         - !area
           name: Cone60
           source: !prop source
           target: !prop selected
-          length: 3
-  effects: []
+          length: 5
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: ReadyToShoot
+          target: target
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell 
+  check: !expr
+    - [!prop owner.endurance, ">", 0]
+    - and
+    - [!prop owner.loaded, "==", "bullet"]
   widget:
     icon: './data/units/fighter_rifle/gunshot.png'
     pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
