@@ -1,0 +1,9 @@
+- !new_eff
+  name: Parry
+  type: meta
+  params:
+    - power
+  effects:
+    - effect: !eff
+        name: Discard
+      condition: !expr [!prop effect.power, '>=', !prop incoming_effect.amount]

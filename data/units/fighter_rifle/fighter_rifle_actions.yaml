@@ -106,7 +106,7 @@
         extra_tags: ["plan"]
         status: !status
           name: ReadyToShoot
-          target: !prop action.target
+          shoot_target: !prop action.target
       area: !area
         name: Cell
         cell: !prop owner.cell

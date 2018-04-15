@@ -1,0 +1,18 @@
+- !new_status
+  name: ReadyToShoot
+  params:
+    - shoot_target
+  on_phase_end:
+    - !eff
+      name: LaunchAction
+      action_name: ShootBullet
+      setup:
+        target: !area
+          name: Cone60Enemy
+          source: !prop status.shoot_target[0]
+          target: !prop status.shoot_target[-1]
+          length: 5
+    - !eff
+      name: RemoveStatus
+      status: !status
+        name: ReadyToShoot
