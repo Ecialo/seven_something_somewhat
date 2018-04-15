@@ -1,3 +1,4 @@
+import logging as log
 from random import shuffle
 
 from .property import Property
@@ -100,6 +101,11 @@ class Melee(Area):
     def _get(self, context):
         grid = self.grid
         for cell in grid.get_area(self.center.get(context), self.radius):
+            log.debug("Cell {} CellObj {} Owner {}".format(
+                cell,
+                cell.object.stats.owner if cell.object else None,
+                context['owner'].stats.owner
+            ))
             if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
                 return [cell]
         return []

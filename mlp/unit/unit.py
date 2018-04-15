@@ -2,6 +2,7 @@ from itertools import (
     chain,
     combinations,
 )
+import logging as log
 
 import blinker
 
@@ -237,6 +238,7 @@ class Unit(GameObject):
             self.remove_status(status)
 
     def launch_triggers(self, tags, target, target_context):
+        log.debug("{tags}, {unit}".format(tags=tags, unit=self))
         is_on_apply = "apply" in tags
         if is_on_apply:
             tags.remove("apply")
