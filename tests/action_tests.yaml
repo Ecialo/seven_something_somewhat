@@ -115,3 +115,19 @@
     - cell: !cell [0, 0]
       check: !prop A.stats.health
       result: 201
+- name: check_global
+  A:
+    unit: Dummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [2, 2]
+  actions_A: []
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !expr [!prop A, 'in', !glob arena]
+      result: true
+    - cell: !cell [2, 2]
+      check: !expr [!prop B, 'in', !glob arena]
+      result: true

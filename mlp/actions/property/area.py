@@ -1,54 +1,15 @@
 from random import shuffle
 
 from .property import Property
-from ...grid import HexGrid
+from ...grid import (
+    HexGrid,
+    FixedArea
+)
 from ...tools import dotdict
 from ...replication_manager import MetaRegistry
 
 AREAS = MetaRegistry()['Area']
 AreaMeta = MetaRegistry().make_registered_metaclass("Area")
-
-
-class FixedArea:
-
-    def __init__(self, cells=None, color=None):
-        self.cells = cells or []
-        self.color = color
-        # print(self.color)
-
-    def __getitem__(self, item):
-        return self.cells[item]
-
-    def __iter__(self):
-        return iter(self.cells)
-
-    def __contains__(self, item):
-        return item in self.cells
-
-    def __len__(self):
-        return len(self.cells)
-
-    def select(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            print(w.select_color)
-            w.select_color = self.color or w.default_select_color
-            w.is_selected = True
-
-    def unselect(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            w.is_selected = False
-
-    def highlight(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            w.is_highlighted = True
-
-    def playdown(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            w.is_highlighted = False
 
 
 class Area(Property, metaclass=AreaMeta):

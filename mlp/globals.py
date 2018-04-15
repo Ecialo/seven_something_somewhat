@@ -7,7 +7,7 @@ GLOBALS = {
 
 def global_constructor(loader, node):
     glob = loader.construct_scalar(node)
-    return GLOBALS[glob]
+    return GLOBALS[glob].get()
 
 
 GLOBAL_TAG = "!glob"

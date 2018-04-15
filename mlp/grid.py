@@ -24,6 +24,51 @@ def sum_iterables(iter1, iter2):
     return [add(*x) for x in zip(iter1, iter2)]
 
 
+class FixedArea:
+
+    def __init__(self, cells=None, color=None):
+        self.cells = cells or []
+        self.color = color
+        # print(self.color)
+
+    def __getitem__(self, item):
+        return self.cells[item]
+
+    def __iter__(self):
+        return iter(self.cells)
+
+    def __contains__(self, item):
+        if isinstance(item, Cell):
+            return item in self.cells
+        else:
+            return any((cell.object == item for cell in self.cells))
+
+    def __len__(self):
+        return len(self.cells)
+
+    def select(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            print(w.select_color)
+            w.select_color = self.color or w.default_select_color
+            w.is_selected = True
+
+    def unselect(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            w.is_selected = False
+
+    def highlight(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            w.is_highlighted = True
+
+    def playdown(self):
+        for cell in self.cells:
+            w = cell.make_widget()
+            w.is_highlighted = False
+
+
 class Cell:
 
     # hooks = ['take', 'place']
@@ -323,7 +368,7 @@ class HexGrid(Grid):
     @classmethod
     def get(cls, _=None):
         grid = cls.locate()
-        return set(grid)
+        return FixedArea(set(grid))
 
 
 def cell_constructor(loader, node):
