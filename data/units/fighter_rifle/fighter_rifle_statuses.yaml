@@ -9,8 +9,8 @@
       setup:
         target: !area
           name: Cone60Enemy
-          source: !prop status.shoot_target[0]
-          target: !prop status.shoot_target[-1]
+          source: !prop target.cell
+          target: !prop status.shoot_target
           length: 5
     - !eff
       name: RemoveStatus
