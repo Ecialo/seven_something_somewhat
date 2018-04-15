@@ -60,6 +60,11 @@ class TestAction:
             unit.clear_presumed()
             unit.update_position()
 
+        for unit in self.units:
+            unit.launch_triggers(["turn", "start"], unit, unit.context)
+        for unit in self.units:
+            unit.launch_triggers(["phase", "start"], unit, unit.context)
+
         for actions_struct in test['actions_A']:
             action_class = ACTIONS[actions_struct['action_name']]
             action = action_class(unit_A, **actions_struct['args'])
@@ -68,6 +73,11 @@ class TestAction:
             action_class = ACTIONS[actions_struct['action_name']]
             action = action_class(unit_B, **actions_struct['args'])
             action.apply()
+
+        for unit in self.units:
+            unit.launch_triggers(["phase", "end"], unit, unit.context)
+        for unit in self.units:
+            unit.launch_triggers(["turn", "end"], unit, unit.context)
         context = {
             'A': unit_A,
             'B': unit_B,

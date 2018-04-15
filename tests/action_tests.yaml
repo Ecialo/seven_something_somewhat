@@ -115,3 +115,17 @@
     - cell: !cell [0, 0]
       check: !prop A.stats.health
       result: 201
+
+- name: regen_test
+  A:
+    unit: HealthyDummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [0, 1]
+  actions_A: []
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !prop A.stats.health
+      result: 110
