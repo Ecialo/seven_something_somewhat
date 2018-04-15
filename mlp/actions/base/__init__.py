@@ -255,7 +255,8 @@ class LaunchAction(CellEffect):
         with self.configure(context) as c:
             new_context = {
                 'source': cell,
-                'owner': context['owner']
+                **context,
+                # 'owner': context['owner']
             }
             action = ACTIONS[self.action_name](
                 owner=context['owner'],
