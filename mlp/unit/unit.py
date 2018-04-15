@@ -25,6 +25,7 @@ from ..bot.tactic import ALL_MAJOR_TACTIC
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
 death = blinker.signal("death")
+kill = blinker.signal('kill')
 PLANNING, ACTION = range(2)
 
 
@@ -79,6 +80,8 @@ class Unit(GameObject):
             # print(status)
             # self.add_status(status)
         self.switch_state()
+
+        kill.connect(self.on_kill)
 
     @property
     def action_bar(self):
@@ -234,8 +237,13 @@ class Unit(GameObject):
             self.remove_status(status)
 
     def launch_triggers(self, tags, target, target_context):
+        is_on_apply = "apply" in tags
+        if is_on_apply:
+            tags.remove("apply")
         l = len(tags)
-        for event in chain(*(combinations(tags, j) for j in range(1, l+1))):
+        for event in chain(*(combinations(tags, j) for j in range(1, l + 1))):
+            if is_on_apply:
+                event += ("apply", )
             event = frozenset(event)
             for trigger in list(self.stats.triggers[event].values()):
                 trigger.apply(event, target, target_context)
@@ -245,10 +253,12 @@ class Unit(GameObject):
         self._presumed_stats.owner = new_owner
 
     def kill(self):
-        self.is_alive = False
-        self.current_action_bar.clear()
-        death.send(unit=self)
-        revoke.send(unit=self, cell=self.cell)
+        if self.is_alive:
+            self.is_alive = False
+            kill.disconnect(self.on_kill)
+            self.current_action_bar.clear()
+            death.send(unit=self)
+            revoke.send(unit=self, cell=self.cell)
 
     def expand(self):
         self._stats.expand()
@@ -271,6 +281,14 @@ class Unit(GameObject):
 
     def behave(self):
         self.behavior.apply_to(self)
+
+    def on_kill(self, killer, victim):
+        context = {
+            'target': self,
+            'killer': killer,
+            'victim': victim,
+        }
+        self.launch_triggers(['kill'], self, context)
 
 
 def new_unit_constructor(loader, node):

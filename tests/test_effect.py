@@ -1,5 +1,6 @@
-import yaml
+from functools import partial
 
+import yaml
 import blinker
 
 from ..mlp.grid import Cell
@@ -44,9 +45,13 @@ class TestEffect:
         with open(self.tests_path) as tests_file:
             tests = yaml.load(tests_file)
         for test in tests:
-            yield self.check, [effect.get() for effect in test['effects']], test['check'], test.get('result')
+            name = test.get('name')
+            f = partial(self.check, [effect.get() for effect in test['effects']], test['check'], test.get('result'))
+            f.description = name
+            yield f,
 
     def check(self, effects, expression, result=None):
+        self.setUp()
         for effect in effects:
             effect.apply([self.target], self.context)
         if result:
@@ -56,3 +61,4 @@ class TestEffect:
             )
         else:
             assert expression.get(self.context)
+        self.tearDown()

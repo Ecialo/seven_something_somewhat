@@ -1,3 +1,5 @@
+from functools import partial
+
 import yaml
 import blinker
 
@@ -39,9 +41,13 @@ class TestAction:
         with open(self.tests_path) as tests_file:
             tests = yaml.load(tests_file)
         for test in tests:
-            yield self.check, test
+            name = test.get('name')
+            f = partial(self.check, test)
+            f.description = name
+            yield f,
 
     def check(self, test):
+        self.setUp()
         unit_A = UNITS[test['A']['unit']]("A")
         unit_A.switch_state()
         summon.send(None, unit=unit_A, cell=test['A']['cell'])
@@ -54,6 +60,11 @@ class TestAction:
             unit.clear_presumed()
             unit.update_position()
 
+        for unit in self.units:
+            unit.launch_triggers(["turn", "start"], unit, unit.context)
+        for unit in self.units:
+            unit.launch_triggers(["phase", "start"], unit, unit.context)
+
         for actions_struct in test['actions_A']:
             action_class = ACTIONS[actions_struct['action_name']]
             action = action_class(unit_A, **actions_struct['args'])
@@ -62,8 +73,12 @@ class TestAction:
         for actions_struct in test['actions_B']:
             action_class = ACTIONS[actions_struct['action_name']]
             action = action_class(unit_B, **actions_struct['args'])
-            if action.pre_check():
-                action.apply()
+            action.apply()
+
+        for unit in self.units:
+            unit.launch_triggers(["phase", "end"], unit, unit.context)
+        for unit in self.units:
+            unit.launch_triggers(["turn", "end"], unit, unit.context)
         context = {
             'A': unit_A,
             'B': unit_B,
@@ -80,3 +95,4 @@ class TestAction:
             expression_result = expression.get(check_context)
             result = result.get(context) if isinstance(result, Property) else result
             assert expression_result == result, "{} != {}".format(expression_result, result)
+        self.tearDown()

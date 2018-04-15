@@ -1,6 +1,5 @@
-#Example Tests
-
-- A:
+- name: position_check
+  A:
     unit: Dummy
     cell: !cell [0, 0]
   B:
@@ -736,6 +735,36 @@
         - and
         - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-" , "(" , !prop A.stats.damage, "*", 0.5, ")", ")"]
       result: true
+
+- name: on_kill_and_on_apply_event_tests
+  A:
+    unit: EvilDummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [0, 1]
+  actions_A:
+    - action_name: Attack
+      args: {}
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !prop A.stats.health
+      result: 201
+
+- name: regen_test
+  A:
+    unit: HealthyDummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [0, 1]
+  actions_A: []
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !prop A.stats.health
+      result: 110
       
 #LoadBullet tests
 
