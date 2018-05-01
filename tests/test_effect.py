@@ -1,3 +1,4 @@
+from collections import ChainMap
 from functools import partial
 
 import yaml
@@ -30,11 +31,11 @@ class TestEffect:
         self.victim = UNITS[DUMMY](B)
         self.victim.place_in(self.target)
         self.victim.switch_state()
-        self.context = {
+        self.context = ChainMap({
             'owner': self.author,
             'source': self.source,
             'victim': self.victim,
-        }
+        })
 
     def tearDown(self):
         self.author.kill()

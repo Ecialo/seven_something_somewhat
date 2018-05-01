@@ -1,18 +1,20 @@
-- name: test_damage
+- name: damage
   effects:
     - !eff
       name: Damage
       amount: 10
   check: !expr [!prop victim.health, '==', 90]
 
-- effects:
+- name: add_status
+  effects:
     - !eff
       name: AddStatus
       status: !status
         name: Burning
   check: !expr ["Burning", "in", !prop victim]
 
-- effects:
+- name: remove_status
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -23,7 +25,8 @@
         name: Burning
   check: !expr ["Burning", "not in", !prop victim]
 
-- effects:
+- name: remove_status_from_set
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -41,7 +44,8 @@
     - "and"
     - ["Bleeding", "in", !prop victim]
 
-- effects:
+- name: remove_status_by_tag
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -59,7 +63,8 @@
     - "and"
     - ["Bleeding", "not in", !prop victim]
 
-- effects:
+- name: remove_status_by_tag_without_affect
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -84,7 +89,8 @@
     - "and"
     - ["Regeneration", "in", !prop victim]
 
-- effects:
+- name: old_parry_effect_success
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -96,7 +102,8 @@
   check: !prop victim.health
   result: 100
 
-- effects:
+- name: old_parry_effect_fail
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -108,7 +115,8 @@
   check: !prop victim.health
   result: 60
 
-- effects:
+- name: old_parry_effect_success_redirect
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -122,7 +130,8 @@
     - 'and'
     - [!prop owner.health, '==', 95]
 
-- effects:
+- name: change_armor
+  effects:
   - !eff
     name: ChangeStat
     stat_name: armor
@@ -130,7 +139,8 @@
   check: !prop victim.armor
   result: 10
 
-- effects:
+- name: armor_damage_reduction
+  effects:
   - !eff
     name: ChangeStat
     stat_name: armor
@@ -142,7 +152,8 @@
   check: !prop victim.health
   result: 95
 
-- effects:
+- name: damage_by_max_armor
+  effects:
   - !eff
     name: Damage
     extra_tags: ["melee"]
@@ -150,7 +161,8 @@
   check: !prop victim.health
   result: 50
   
-- effects:
+- name: parry_success
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -162,22 +174,8 @@
   check: !prop victim.health
   result: 100
 
-- effects:
-  - !eff
-    name: AddStatus
-    status: !status
-      name: Burning
-      power: 15
-      duration: 1
-  - !eff
-    name: AddStatus
-    status: !status
-      name: Burning
-      power: 10
-      duration: 1
-  check: !prop victim.statuses.Burning.power
-  result: 15
-- effects:
+- name: parry_fail
+  effects:
   - !eff
     name: AddStatus
     status: !status
@@ -221,23 +219,25 @@
     # - 'and'
     # - [!prop owner.health, '==', 80]
 
-- effects:
-  - !eff
-    name: AddStatus
-    status: !status
-      name: Burning
-      power: 10
-      duration: 1
+- name: dot_sum_power
+  effects:
   - !eff
     name: AddStatus
     status: !status
       name: Burning
       power: 15
       duration: 1
+  - !eff
+    name: AddStatus
+    status: !status
+      name: Burning
+      power: 10
+      duration: 1
   check: !prop victim.statuses.Burning.power
   result: 15
 
-- effects:
+- name: dot_sum_duration
+  effects:
   - !eff
     name: AddStatus
     status: !status

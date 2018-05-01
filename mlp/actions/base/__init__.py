@@ -40,25 +40,16 @@ class Move(UnitEffect):
 
     def __init__(self, **kwargs):
         self.path = kwargs['path']
-        # print("TARGET COORD", self.target_coord)
         super().__init__(**kwargs)
 
-    # def _apply(self, source_action, target):
-
     def _apply(self, target, context):
-        # print(self.path)
-        # print("CONTEXT", context['action'].target_coord)
         with self.configure(context) as c:
             path = c.path
-            # print(path)
             grid = target.cell.grid
             if not isinstance(path, Iterable):
                 path = [path]
             for path_part in path:
-                # print("PARTPATH", path_part)
-                # next_cell = grid.find_path(target.cell, path_part)[1]
                 full_path = grid.find_path(target.cell, path_part)
-                # print("FULLPATH", full_path)
                 next_cell = full_path[1]
 
                 # send command
@@ -117,7 +108,9 @@ class AddStatus(UnitEffect):
     def _apply(self, target, context):
         # if cell.object:
         with self.configure(context) as c:
-            status = c.status.configure(context=context)
+            context_ = context.new_child()
+            context_['carrier'] = target
+            status = c.status.configure(context=context_)
             target.add_status(status)
             self.info_message = self.info_message.format(c.status, target)
             super()._apply(target, context)

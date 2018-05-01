@@ -7,7 +7,9 @@ from typing import (
     Callable,
     Tuple,
     Union,
+    Mapping,
 )
+from collections import ChainMap
 
 from yaml import (
     Loader,
@@ -42,11 +44,13 @@ class Unit(GameObject):
     statuses = ClassVar[List[Reference]]
 
     _stats: MajorStats
+    _context: ChainMap
     state: int
     current_action_bar: CurrentActionBar
-    context: Dict[str, Any]
 
     def __init__(self, master_name: str, id_=Optional[int]) -> None: ...
+    @property
+    def context(self) -> ChainMap: ...
     @property
     def action_bar(self) -> ActionBar: ...
     @property

@@ -2,6 +2,7 @@ from itertools import (
     chain,
     combinations,
 )
+from collections import ChainMap
 import logging as log
 
 import blinker
@@ -43,6 +44,12 @@ UNITS = UnitsRegistry()
 
 class Unit(GameObject):
 
+    """
+    Контекстные значения юнита
+    owner: сам юнит
+    source: клетка в которой находится юнит в момент взятия контекста
+    """
+
     behavior = None
     hooks = []
     actions = []
@@ -63,26 +70,24 @@ class Unit(GameObject):
         for action_name in self.actions:
             self._stats.action_bar.append_action(registry[action_name])
         self.clear_presumed()
-        self.context = {
-            'source': self.cell,
-            'owner': self
-        }
+        self._context = ChainMap({
+            'owner': self,
+        })
         self.switch_state()
         context = self.context.copy()
         context['target'] = self
-        # print("EARLY CONtEXT", context)
-        # add_status_effect = MetaRegistry()['Effect']['AddStatus']
         for status_ref in self.statuses:
             status = status_ref.get().configure(context)
-            # print("LATE CONXTEX", status.context)
             self.add_status(status)
-            # print("VERY LATE CONTEXT", status.context)
-            # status.context = None
-            # print(status)
-            # self.add_status(status)
         self.switch_state()
 
         kill.connect(self.on_kill)
+
+    @property
+    def context(self):
+        context = self._context.new_child()
+        context['source'] = self.cell
+        return context
 
     @property
     def action_bar(self):
@@ -238,6 +243,9 @@ class Unit(GameObject):
             self.remove_status(status)
 
     def launch_triggers(self, tags, target, target_context):
+        """
+        target: для эффекта это эффект, для иного сам юнит
+        """
         log.debug("{tags}, {unit}".format(tags=tags, unit=self))
         is_on_apply = "apply" in tags
         if is_on_apply:

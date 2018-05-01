@@ -35,6 +35,17 @@ SPEED = Enum(
 
 
 class Action(metaclass=ActionMeta):
+    """
+    Контекстные значения действия
+
+    Наследуются от юнита
+    owner: юнит делающий действие
+    source: клетка в которой находится юнит в момент взятия контекста
+    ----
+    Свои
+    action: само действие
+    """
+
     hooks = []
 
     name = None
@@ -72,11 +83,9 @@ class Action(metaclass=ActionMeta):
         if self._context:
             return self._context
         else:
-            return {
-                'action': self,
-                'owner': self.owner,
-                'source': self.owner.cell,
-            }
+            context = self.owner.context
+            context['action'] = self
+            return context.new_child()
 
     @context.setter
     def context(self, value):

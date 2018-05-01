@@ -6,7 +6,9 @@ from typing import (
     Dict,
     Any,
     Callable,
+    Optional,
 )
+from collections import ChainMap
 
 import yaml
 
@@ -22,6 +24,12 @@ class Action:
     setup_fields: ClassVar[List[Dict[str, Any]]]
     action_speed: ClassVar[int]
 
+    owner: Unit
+    _context = Optional[ChainMap]
+
+    def __init__(self, owner: Unit, speed=None, **kwargs) -> None: ...
+    @property
+    def context(self) -> ChainMap: ...
     def cursors(self) -> Iterable[Tuple(str, GeometrySelectCursor)]: ...
     def copy(self) -> Action: ...
     def instant_setup(self, **kwargs) -> Action: ...

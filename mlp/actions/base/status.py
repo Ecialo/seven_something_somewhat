@@ -1,3 +1,5 @@
+from collections import ChainMap
+
 from ...replication_manager import MetaRegistry
 from ..property.property import (
     Property,
@@ -12,6 +14,24 @@ StatusMeta = MetaRegistry().make_registered_metaclass("Status")
 
 
 class Status(metaclass=StatusMeta):
+
+    """
+    Контекстные значения статуса
+
+    Наследуются от юнита
+    owner: юнит наложивший статус
+    source: клетка в которой находится юнит в момент взятия контекста
+    ----
+    Наследуются от действия
+    action: действие наложившее статус
+    ---
+    Наследуются от эффекта
+    effect: эффект наложивший статус
+    carrier: юнит на который наложен статус
+    ---
+    Своё
+    status: сам статус
+    """
 
     name = None
     events = {}
@@ -43,7 +63,7 @@ class Status(metaclass=StatusMeta):
             else:
                 context_values[k] = v
         new_status = self.__class__(**context_values)
-        context = context.copy()
+        context = context.new_child()
         context['status'] = new_status
         new_status.context = context
         # new_status.on_add_effects = [e.get() for e in self.on_add_effects]
@@ -67,10 +87,11 @@ class Status(metaclass=StatusMeta):
     def dump(self):
         params = vars(self).copy()
         # print("PARAMS", params)
-        params['context'] = params['context'].copy()
+        params['context'] = dict(params['context'])
         params['context'].pop('status')
         params['context']['target'] = params['context']['target'].cell
         params['context']['owner'] = params['context']['owner'].cell
+        params['context']['carrier'] = params['context']['carrier'].cell
         return {
             "name": self.name,
             "params": params,
@@ -81,12 +102,14 @@ class Status(metaclass=StatusMeta):
         for effect_ref in effects:
             effect = effect_ref.get()
             if isinstance(effect, MetaEffect):
-                effect.apply(target, self.context, effect_context=context)
+                effect.apply(target, self.context.new_child(), effect_context=context.new_child())
             else:
-                new_context = {
-                    **self.context,
-                    **context,
-                }
+                new_context = self.context.new_child()
+                new_context['target_context'] = context
+                # new_context = {
+                #     **self.context,
+                #     **context,
+                # }
                 # print(new_context)
                 effect.apply(self.context['target'].cell, new_context)
 
@@ -106,6 +129,7 @@ class Status(metaclass=StatusMeta):
         # print(self.context)
         self.context['target'] = self.context['target'].object
         self.context['owner'] = self.context['owner'].object
+        self.context['carrier'] = self.context['carrier'].object
         self.context['status'] = self
 
 
