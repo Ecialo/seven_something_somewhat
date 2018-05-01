@@ -12,6 +12,9 @@ import yaml
 
 from .replication_manager import GameObject
 
+class FixedArea:
+
+    def __init__(self, cells, color): ...
 
 class Cell:
 

@@ -70,7 +70,7 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-      
+
 # Move unit by via easy pathfinding 1 step
 - A:
     unit: Dummy
@@ -90,7 +90,7 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-      
+
 # Long Move
 - A:
     unit: Dummy
@@ -101,7 +101,7 @@
   actions_A:
     - action_name: Move
       args:
-        path: 
+        path:
           - !cell [0, 2]
           - !cell [0, 1]
   actions_B: []
@@ -112,8 +112,8 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-      
-# 2 consecutive Moves 
+
+# 2 consecutive Moves
 - A:
     unit: Dummy
     cell: !cell [2, 2]
@@ -135,7 +135,7 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-      
+
 # Move back and forth
 - A:
     unit: Dummy
@@ -158,7 +158,7 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-   
+
 # Move into obstacle
 - A:
     unit: Dummy
@@ -178,7 +178,7 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-      
+
 # Long Move with obstacle
 - A:
     unit: Dummy
@@ -189,7 +189,7 @@
   actions_A:
     - action_name: Move
       args:
-        path: 
+        path:
           - !cell [1, 2]
           - !cell [2, 2]
           - !cell [3, 3]
@@ -201,7 +201,7 @@
     - cell: !cell [1, 2]
       check: !prop cell.object
       result: !prop A
-      
+
 # Move in place
 - A:
     unit: Dummy
@@ -221,11 +221,11 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-      
-      
-      
-      
-# Attack tests 
+
+
+
+
+# Attack tests
 
 # Simple Attack
 - A:
@@ -248,7 +248,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', !prop A.stats.damage]
-      
+
 # Simple Attack against armored target
 - A:
     unit: Dummy
@@ -270,7 +270,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', !prop A.stats.damage, '+', !prop B.stats.armor]
-      
+
 # Attack out of range
 - A:
     unit: Dummy
@@ -295,7 +295,7 @@
     - cell: !cell [2, 2]
       check: !prop A.stats.health
       result: !prop A.stats.max__health
-      
+
 #Kick tests
 
 #Simple kick
@@ -320,7 +320,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', 7]
-      
+
 #Empowered kick
 - A:
     unit: Dummy
@@ -343,7 +343,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', 10]
-      
+
 #Empowered kick into wall
 - A:
     unit: Dummy
@@ -609,7 +609,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
-      
+
 #whacky maneuver
 - A:
     unit: Dummy
@@ -633,7 +633,7 @@
     - cell: !cell [3, 2]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
-      
+
 #big distance
 - A:
     unit: Dummy
@@ -657,8 +657,8 @@
     - cell: !cell [4, 1]
       check: !prop B.stats.health
       result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
-      
-# Parry tests 
+
+# Parry tests
 
 #normal parry
 - A:
@@ -683,7 +683,7 @@
     - cell: !cell [3, 2]
       check: !prop A.stats.health
       result: !prop A.stats.max__health
-      
+
 #parry break
 - A:
     unit: Dummy
@@ -707,7 +707,7 @@
     - cell: !cell [3, 2]
       check: !prop A.stats.health
       result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', 1.4, ')']
-      
+
 
 - name: empowered parry
   A:
@@ -752,6 +752,23 @@
       check: !prop A.stats.health
       result: 201
 
+- name: check_global
+  A:
+    unit: Dummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [2, 2]
+  actions_A: []
+  actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !expr [!prop A, 'in', !glob arena]
+      result: true
+    - cell: !cell [2, 2]
+      check: !expr [!prop B, 'in', !glob arena]
+      result: true
+
 - name: regen_test
   A:
     unit: HealthyDummy
@@ -765,7 +782,7 @@
     - cell: !cell [0, 0]
       check: !prop A.stats.health
       result: 110
-      
+
 #LoadBullet tests
 
 #Normal load
@@ -789,7 +806,7 @@
     - cell: !cell [3, 2]
       check: !prop A.stats.loaded
       result: "bullet"
-      
+
 #no bullets
 - A:
     unit: Dummy
@@ -811,7 +828,7 @@
     - cell: !cell [3, 2]
       check: !prop A.stats.loaded
       result: "nothing"
-      
+
 #Load then shoot
 - A:
     unit: Fighter_rifle
@@ -841,7 +858,7 @@
         - and
         - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
       result: true
-      
+
 #Shoot wihout loading
 - A:
     unit: Fighter_rifle
@@ -869,7 +886,7 @@
         - and
         - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
       result: true
-      
+
 #Shoot all bullets (unstable)
 - A:
     unit: Fighter_rifle
