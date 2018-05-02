@@ -13,7 +13,7 @@
 
 - !new_status
   name: OrderedScythe
-  subtype: Order
+#  subtype: Order
   duration: 1
   on_add:
     - !eff
@@ -30,7 +30,7 @@
 
 - !new_status
   name: OrderedUpyr
-  subtype: Order
+#  subtype: Order
   duration: 1
   on_remove:
     - !eff
@@ -46,7 +46,7 @@
 
 - !new_status
   name: OrderedShulikun
-  subtype: Order
+#  subtype: Order
   duration: 1
   on_remove:
     - !eff

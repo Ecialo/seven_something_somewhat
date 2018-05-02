@@ -31,6 +31,10 @@ class FixedArea:
     def __init__(self, cells=None, color=None):
         self.cells = cells or []
         self.color = color
+
+    @property
+    def pos(self):
+        return self.cells[0].pos
         # print(self.color)
 
     def __getitem__(self, item):

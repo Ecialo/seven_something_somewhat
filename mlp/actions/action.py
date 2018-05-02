@@ -83,7 +83,7 @@ class Action(metaclass=ActionMeta):
         if self._context:
             context = self._context.new_child()
             context['action'] = self
-            return self._context
+            return context
         else:
             context = self.owner.context
             context['action'] = self
@@ -126,6 +126,7 @@ class Action(metaclass=ActionMeta):
             setattr(self, field_name, None)
 
     def apply(self):
+        print("ACTION CONTEXT", self, self.context)
         for resource, cost in self.cost.items():
             setattr(self.owner.stats, resource, getattr(self.owner.stats, resource) - cost)
             # res = res and (getattr(self.owner.stats, resource) >= cost)
