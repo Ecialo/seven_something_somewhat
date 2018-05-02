@@ -26,6 +26,33 @@
     pressed_icon: './data/units/fighter_rifle/bullet_pressed.png'
 
 - !new_action
+  name: LoadBuckshot
+  action_type: FULL
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "buckshot"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: ShootBuckshot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.buckshots, ">", 0]
+  widget:
+    icon: './data/units/fighter_rifle/ph.png'
+    pressed_icon: './data/units/fighter_rifle/ph_pressed.png'
+
+- !new_action
   name: ShootBullet
   action_type: STANDARD
   speed: SLOW
@@ -125,4 +152,96 @@
   widget:
     icon: './data/units/fighter_rifle/crosshair.png'
     pressed_icon: './data/units/fighter_rifle/crosshair_pressed.png'
-          
+
+- !new_action
+  name: ShootBuckshot
+  action_type: STANDARD
+  speed: SLOW
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          inner_radius: 1
+          radius: 5
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 5
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 50
+      area: !area
+        name: Tail
+        source: !prop source
+        target: !prop action.target
+        length: 1
+        start: 0
+    - effect: !eff
+        name: Damage
+        amount: 40
+      area: !area
+        name: Tail
+        source: !prop source
+        target: !prop action.target
+        length: 1
+        start: 1
+    - effect: !eff
+        name: Damage
+        amount: 30
+      area: !area
+        name: Tail
+        source: !prop source
+        target: !prop action.target
+        length: 1
+        start: 2
+    - effect: !eff
+        name: Damage
+        amount: 20
+      area: !area
+        name: Tail
+        source: !prop source
+        target: !prop action.target
+        length: 1
+        start: 3
+    - effect: !eff
+        name: Damage
+        amount: 10
+      area: !area
+        name: Tail
+        source: !prop source
+        target: !prop action.target
+        length: 1
+        start: 4
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "nothing"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: buckshots
+        value: !expr [!prop owner.buckshots, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: ShootBuckshot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.loaded, "==", "buckshot"]
+  widget:
+    icon: './data/units/fighter_rifle/gunshot.png'
+    pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'

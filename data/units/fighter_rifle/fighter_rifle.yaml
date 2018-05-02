@@ -25,6 +25,7 @@
     - Kick
     - EmpoweredKick
     - LoadBullet
+    - LoadBuckshot
     - ReadyBullet
     #- EmpoweredShoot
     #- Reload 

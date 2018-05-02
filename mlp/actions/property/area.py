@@ -205,7 +205,10 @@ class Tail(Area):
     def _get(self, context):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
-        start = self.start or distance
+        if self.start is None:
+            start = distance
+        else:
+            start = self.start
         line = grid.get_line(self.source.get(context), self.target.get(context), self.length + start)[start + 1:]
         return line
 
@@ -270,10 +273,6 @@ class Cone60(Area):
         delta1 = [b - a for a,b in zip(cell0, cell1)]
         delta2 = [b - a for a,b in zip(cell0, cell2)]
         delta_inner = [b - a for a,b in zip(cell1, cell2)]
-        print(cell0)
-        print(cell1)
-        print((left_x, left_y, left_z))
-        print((right_x, right_y, right_z))
         cells = [grid.cube_to_offsets(cell0)]
         for i in range(1, self.length + 1):
             cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
@@ -321,10 +320,6 @@ class Cone60Enemy(Area):
         delta1 = [b - a for a,b in zip(cell0, cell1)]
         delta2 = [b - a for a,b in zip(cell0, cell2)]
         delta_inner = [b - a for a,b in zip(cell1, cell2)]
-        print(cell0)
-        print(cell1)
-        print((left_x, left_y, left_z))
-        print((right_x, right_y, right_z))
         cells = [grid.cube_to_offsets(cell0)]
         for i in range(1, self.length + 1):
             cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
