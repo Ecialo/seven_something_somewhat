@@ -52,6 +52,9 @@ class FixedArea:
     def __len__(self):
         return len(self.cells)
 
+    def __repr__(self):
+        return str(self.cells)
+
     def select(self):
         for cell in self.cells:
             w = cell.make_widget()

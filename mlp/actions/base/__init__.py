@@ -261,6 +261,9 @@ class LaunchAction(CellEffect):
                 **self.setup
             )
             # action.context['action'] = action
+            # new_context = action.context
+            print("TARGET FROM", getattr(new_context['carrier'], 'cell', None))
+            print("TARGET TO", getattr(new_context['status'], 'shoot_target', None))
             action.apply()
 
 
