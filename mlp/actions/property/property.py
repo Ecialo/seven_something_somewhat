@@ -72,7 +72,7 @@ class Oper(Property):
 
     def get(self, context):
         # left = self.left.get(context)
-        right = self.right.get(context)
+        # right = self.right.get(context)
         # print(left, self.left)
         # print(right, self.right)
         return self.oper(self.left.get(context), self.right.get(context))

@@ -8,6 +8,7 @@ from .effect import MetaEffect
 from ..property.reference import (
     Reference
 )
+from ...tools import dotdict
 
 STATUSES = MetaRegistry()["Status"]
 StatusMeta = MetaRegistry().make_registered_metaclass("Status")
@@ -105,7 +106,13 @@ class Status(metaclass=StatusMeta):
                 effect.apply(target, self.context.new_child(), effect_context=context.new_child())
             else:
                 new_context = self.context.new_child()
-                new_context['target_context'] = context
+                for k, v in context.items():
+                    if k in new_context:
+                        new_context["target_" + k] = v
+                    else:
+                        new_context[k] = v
+                # new_context['target_context'] = dotdict(context)
+                # print(new_context)
                 # new_context = {
                 #     **self.context,
                 #     **context,

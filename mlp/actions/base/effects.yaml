@@ -36,5 +36,6 @@
     - effect: !eff
         name: ChangeStat
         stat_name: health
+#        value: !expr [!prop owner.health, '+', !prop target_context.victim.max__health]
         value: !expr [!prop owner.health, '+', !prop victim.max__health]
 #      condition: !expr [!prop killer, '==', !prop owner]

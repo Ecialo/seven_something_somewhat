@@ -293,11 +293,11 @@ class Unit(GameObject):
         self.behavior.apply_to(self)
 
     def on_kill(self, killer, victim):
-        context = {
+        context = self.context.new_child({
             'target': self,
             'killer': killer,
             'victim': victim,
-        }
+        })
         self.launch_triggers(['kill'], self, context)
 
 
