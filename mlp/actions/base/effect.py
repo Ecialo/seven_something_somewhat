@@ -35,9 +35,10 @@ class AbstractEffect(metaclass=EffectMeta):
     name = ""
     _tags = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, area=None, **kwargs):
         self.is_canceled = False
         self.extra_tags = kwargs.get('extra_tags', [])
+        self.area = area
 
     def log(self, source):
         pass
@@ -81,6 +82,8 @@ class UnitEffect(AbstractEffect):
         Контекст, это контекст действия вызывающего эффект
         """
         logging.debug("Effect {} cells {}".format(self, cells))
+        if self.area:
+            cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
@@ -110,6 +113,8 @@ class CellEffect(AbstractEffect):
         """
         Контекст, это контекст действия вызывающего эффект
         """
+        if self.area:
+            cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
