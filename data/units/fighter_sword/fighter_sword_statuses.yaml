@@ -1,0 +1,26 @@
+- !new_status
+  name: Parry
+  on_phase_end:
+    - !eff
+      name: RemoveStatus
+      status: !status
+        name: Parry
+  on_harmful_melee:
+    - !eff
+      name: Parry
+      power: 40
+      
+- !new_status
+  name: TotalParry
+  on_phase_end:
+    - !eff
+      name: RemoveStatus
+      status: !status
+        name: TotalParry
+  on_harmful:
+    - !eff
+      name: Discard
+    - !eff
+      name: LaunchAction
+      action_name: CounterAttack
+      setup: {}

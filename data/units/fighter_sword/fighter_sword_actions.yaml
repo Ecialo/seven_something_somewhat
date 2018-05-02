@@ -234,3 +234,22 @@
   widget:
     icon: './data/units/fighter_sword/empowered_parry.png'
     pressed_icon: './data/units/fighter_sword/empowered_parry_pressed.png'
+    
+- !new_action
+  name: CounterAttack
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 0
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        extra_tags: ["melee"]
+        amount: !expr [!prop owner.damage, '*', 0.5]
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
+  widget:
+    icon: './data/punch(1).png'
+    pressed_icon: './data/punch.png'
