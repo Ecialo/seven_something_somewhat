@@ -246,11 +246,13 @@ class LaunchAction(CellEffect):
 
     def _apply(self, cell, context):
         with self.configure(context) as c:
-            new_context = {
-                'source': cell,
-                **context,
-                # 'owner': context['owner']
-            }
+            # new_context = {
+            #     'source': cell,
+            #     **context,
+            #     'owner': context['owner']
+            # }
+            new_context = context['owner'].context
+            new_context['source'] = cell
             action = ACTIONS[self.action_name](
                 owner=context['owner'],
                 context=new_context,
@@ -279,6 +281,7 @@ class Redirect(MetaEffect):
                 'source': context['source'],
                 'owner': context['owner'],
             }
+            new_context = context.new_child(new_context)
             new_effect.apply(c.target, new_context)
 
 

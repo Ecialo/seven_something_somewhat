@@ -81,6 +81,8 @@ class Action(metaclass=ActionMeta):
     @property
     def context(self):
         if self._context:
+            context = self._context.new_child()
+            context['action'] = self
             return self._context
         else:
             context = self.owner.context
