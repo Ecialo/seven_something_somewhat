@@ -71,10 +71,10 @@ class Oper(Property):
         self.right = right
 
     def get(self, context):
-        left = self.left.get(context)
-        right = self.right.get(context)
-        print(left, self.left)
-        print(right, self.right)
+        # left = self.left.get(context)
+        # right = self.right.get(context)
+        # print(left, self.left)
+        # print(right, self.right)
         return self.oper(self.left.get(context), self.right.get(context))
 
 
@@ -86,6 +86,7 @@ class IndexProperty(Property):
 
     def get(self, context):
         return self.source.get(context)[self.index]
+
 
 PROPERTY_TABLE = {
 }
@@ -108,8 +109,10 @@ def str2prop(property_):
     else:
         return Attribute(property_)
 
+
 def property_constructor(loader, node):
     property_ = loader.construct_scalar(node)
     return str2prop(property_)
+
 
 PROPERTY_TAG = "!prop"

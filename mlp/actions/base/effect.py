@@ -35,9 +35,10 @@ class AbstractEffect(metaclass=EffectMeta):
     name = ""
     _tags = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, area=None, **kwargs):
         self.is_canceled = False
         self.extra_tags = kwargs.get('extra_tags', [])
+        self.area = area
 
     def log(self, source):
         pass
@@ -77,20 +78,26 @@ class UnitEffect(AbstractEffect):
         self.log(source)
 
     def apply(self, cells, context):
+        """
+        Контекст, это контекст действия вызывающего эффект
+        """
         logging.debug("Effect {} cells {}".format(self, cells))
+        if self.area:
+            cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
             cells = [cells]
         for cell in cells:
             if cell.object is not None:
-                effect_context = context.copy()
+                # effect_context = context.copy()
+                effect_context = context
                 effect_context['target'] = cell.object
                 effect = self.copy()
-                cell.object.launch_triggers(self.tags, effect, effect_context)
+                cell.object.launch_triggers(self.tags, effect, effect_context.new_child())
                 if not effect.is_canceled:
                     effect._apply(cell.object, effect_context)
-                    context['owner'].launch_triggers(["apply"] + self.tags, effect, effect_context)
+                    context['owner'].launch_triggers(["apply"] + self.tags, effect, effect_context.new_child())
 
     def copy(self):
         return self.__class__(**vars(self))
@@ -103,16 +110,22 @@ class CellEffect(AbstractEffect):
         self.log(source)
 
     def apply(self, cells, context):
+        """
+        Контекст, это контекст действия вызывающего эффект
+        """
+        if self.area:
+            cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return
         if not isinstance(cells, Iterable):
             cells = [cells]
         for cell in cells:
-            effect_context = context.copy()
+            # effect_context = context.copy()
+            effect_context = context
             effect_context['cell'] = cell
             effect = self.copy()
             if not effect.is_canceled:
-                effect._apply(cell, effect_context)
+                effect._apply(cell, effect_context.new_child())
 
     def copy(self):
         return self.__class__(**vars(self))
@@ -128,16 +141,32 @@ class MetaEffect(AbstractEffect):
         self.log(context)
 
     def apply(self, effect, context, effect_context):
-        context = context.copy()
+        """
+        Контекст, это контекст действия вызывающего эффект
+        """
+        # context = context
         context['incoming_effect'] = effect
         context['incoming_effect_context'] = dotdict(effect_context)
-        self._apply(effect, context)
+        self._apply(effect, context.new_child())
 
     def copy(self):
         return self.__class__(**vars(self))
 
 
 class CustomUnitEffect(UnitEffect):
+    """
+    Контекстные значения эффекта
+
+    Наследуются от юнита
+    owner: юнит делающий действие вызывающее эффект
+    source: клетка в которой находится юнит в момент взятия контекста
+    ----
+    Наследуются от действия
+    action: действие вызывающее эффект
+    ---
+    Свои
+    effect: сам эффект
+    """
 
     name = None
     params = []
@@ -150,7 +179,7 @@ class CustomUnitEffect(UnitEffect):
 
     def apply(self, cells, context):
         context['effect'] = self
-        super().apply(cells, context)
+        super().apply(cells, context.new_child())
 
     def _apply(self, target, context):
         for e_s in self.effects:
@@ -175,11 +204,11 @@ class CustomMetaEffect(MetaEffect):
             setattr(self, k, v)
 
     def apply(self, effect, context, effect_context):
-        context = context.copy()
+        # context = context.copy()
         context['incoming_effect'] = effect
         context['incoming_effect_context'] = dotdict(effect_context)
         context['effect'] = self
-        self._apply(effect, context)
+        self._apply(effect, context.new_child())
 
     def _apply(self, effect, context):
         for e_s in self.effects:

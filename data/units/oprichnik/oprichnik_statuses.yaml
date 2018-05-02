@@ -1,0 +1,61 @@
+- !new_status
+  name: Sadism
+  on_kill:
+    - !eff
+      name: ChangeStat
+      stat_name: coins
+      value: !expr [!prop target.coins, '+', 2]
+  on_apply_debuff:
+    - !eff
+      name: ChangeStat
+      stat_name: coins
+      value: !expr [!prop target.coins, '+', 1]
+
+- !new_status
+  name: OrderedScythe
+#  subtype: Order
+  duration: 1
+  on_add:
+    - !eff
+      name: RemoveAction
+      extra_tags: ["plan"]
+      action_name: "OrderScythe"
+  on_remove:
+    - !eff
+      name: AddAction
+      action_name: "ScytheSwing"
+    - !eff
+      name: AddAction
+      action_name: "ScytheHook"
+
+- !new_status
+  name: OrderedUpyr
+#  subtype: Order
+  duration: 1
+  on_remove:
+    - !eff
+      name: Summon
+      unit: !unit
+        name: Upyr
+      owner: !prop owner.owner
+      area: !area
+        name: KRandomCells
+        area: !glob arena     # TODO Добавить глобалы
+        k: 1
+        filter: !expr [!prop cell.object, "==", null]
+
+- !new_status
+  name: OrderedShulikun
+#  subtype: Order
+  duration: 1
+  on_remove:
+    - !eff
+      name: Summon
+      unit: !unit
+        name: Shulikun
+      owner: !prop owner.owner
+      area: !area
+        name: KRandomCells
+        area: !glob arena     # TODO Добавить глобалы
+        k: 4
+        filter: !expr [!prop cell.object, "==", null]

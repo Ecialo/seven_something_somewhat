@@ -2,57 +2,15 @@ import logging as log
 from random import shuffle
 
 from .property import Property
-from ...grid import HexGrid
+from ...grid import (
+    HexGrid,
+    FixedArea
+)
 from ...tools import dotdict
 from ...replication_manager import MetaRegistry
 
 AREAS = MetaRegistry()['Area']
 AreaMeta = MetaRegistry().make_registered_metaclass("Area")
-
-
-class FixedArea:
-
-    def __init__(self, cells=None, color=None):
-        self.cells = cells or []
-        self.color = color
-        # print(self.color)
-
-    def __getitem__(self, item):
-        return self.cells[item]
-
-    def __iter__(self):
-        return iter(self.cells)
-
-    def __contains__(self, item):
-        return item in self.cells
-
-    def __len__(self):
-        return len(self.cells)
-
-    def __repr__(self):
-        return str(self.cells)
-
-    def select(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            print(w.select_color)
-            w.select_color = self.color or w.default_select_color
-            w.is_selected = True
-
-    def unselect(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            w.is_selected = False
-
-    def highlight(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            w.is_highlighted = True
-
-    def playdown(self):
-        for cell in self.cells:
-            w = cell.make_widget()
-            w.is_highlighted = False
 
 
 class Area(Property, metaclass=AreaMeta):
@@ -241,14 +199,14 @@ class CardinalWave(Area):
             if right is not None:
                 result.append(right)
         return center_line + result
-        
+
 class Cone60(Area):
 
     def __init__(self, source, target, length):
         self.source = source
         self.target = target
         self.length = length
-        
+
     def _get(self,context):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
@@ -260,16 +218,16 @@ class Cone60(Area):
         abs_target_x, abs_target_y, abs_target_z = grid.offsets_to_cube(self.target.get(context).pos)
         left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
         right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
-        
-        dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z))) 
+
+        dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z)))
         dist_to_right = max((abs(abs_target_x - right_x), abs(abs_target_y - right_y), abs(abs_target_z - right_z)))
-        
+
         cell0 = [source_x, source_y, source_z]
         cell1 = [target_x, target_y, target_z]
         cell2 = [left_x, left_y, left_z]
         if dist_to_left > dist_to_right:
             cell2 = [right_x, right_y, right_z]
-        
+
         delta1 = [b - a for a,b in zip(cell0, cell1)]
         delta2 = [b - a for a,b in zip(cell0, cell2)]
         delta_inner = [b - a for a,b in zip(cell1, cell2)]
@@ -279,23 +237,23 @@ class Cone60(Area):
             cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
             for j in range(1, i):
                 cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
-        
+
         result = []
         for cell in cells:
             col, row = cell
             width, height = grid.size
             if col < width and col >= 0 and row < height and row >= 0:
                 result.append(grid[(col, row)])
-        
+
         return result
-        
+
 class Cone60Enemy(Area):
 
     def __init__(self, source, target, length):
         self.source = source
         self.target = target
         self.length = length
-        
+
     def _get(self,context):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
@@ -307,16 +265,16 @@ class Cone60Enemy(Area):
         abs_target_x, abs_target_y, abs_target_z = grid.offsets_to_cube(self.target.get(context).pos)
         left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
         right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
-        
-        dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z))) 
+
+        dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z)))
         dist_to_right = max((abs(abs_target_x - right_x), abs(abs_target_y - right_y), abs(abs_target_z - right_z)))
-        
+
         cell0 = [source_x, source_y, source_z]
         cell1 = [target_x, target_y, target_z]
         cell2 = [left_x, left_y, left_z]
         if dist_to_left > dist_to_right:
             cell2 = [right_x, right_y, right_z]
-        
+
         delta1 = [b - a for a,b in zip(cell0, cell1)]
         delta2 = [b - a for a,b in zip(cell0, cell2)]
         delta_inner = [b - a for a,b in zip(cell1, cell2)]
@@ -326,16 +284,16 @@ class Cone60Enemy(Area):
             cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
             for j in range(1, i):
                 cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
-        
+
         result = []
         for cell in cells:
             col, row = cell
             width, height = grid.size
             if col < width and col >= 0 and row < height and row >= 0:
                 result.append(grid[(col, row)])
-        
+
         return result
-        
+
         shuffle(result)
         for cell in result:
             if cell.object and cell.object.stats.owner != context['owner'].stats.owner:

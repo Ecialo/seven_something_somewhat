@@ -8,8 +8,8 @@
       action_name: ShootBullet
       setup:
         target: !area
-          name: Cone60Enemy
-          source: !prop target.cell
+          name: Cone60
+          source: !prop carrier.cell
           target: !prop status.shoot_target
           length: 5
     - !eff

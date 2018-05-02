@@ -35,6 +35,17 @@ SPEED = Enum(
 
 
 class Action(metaclass=ActionMeta):
+    """
+    Контекстные значения действия
+
+    Наследуются от юнита
+    owner: юнит делающий действие
+    source: клетка в которой находится юнит в момент взятия контекста
+    ----
+    Свои
+    action: само действие
+    """
+
     hooks = []
 
     name = None
@@ -70,13 +81,13 @@ class Action(metaclass=ActionMeta):
     @property
     def context(self):
         if self._context:
-            return self._context
+            context = self._context.new_child()
+            context['action'] = self
+            return context
         else:
-            return {
-                'action': self,
-                'owner': self.owner,
-                'source': self.owner.cell,
-            }
+            context = self.owner.context
+            context['action'] = self
+            return context.new_child()
 
     @context.setter
     def context(self, value):
@@ -115,6 +126,7 @@ class Action(metaclass=ActionMeta):
             setattr(self, field_name, None)
 
     def apply(self):
+        print("ACTION CONTEXT", self, self.context)
         for resource, cost in self.cost.items():
             setattr(self.owner.stats, resource, getattr(self.owner.stats, resource) - cost)
             # res = res and (getattr(self.owner.stats, resource) >= cost)

@@ -6,7 +6,9 @@ from typing import (
     Dict,
     Any,
     Callable,
+    Optional,
 )
+from collections import ChainMap
 
 import yaml
 
@@ -20,7 +22,14 @@ SPEED: Enum
 class Action:
 
     setup_fields: ClassVar[List[Dict[str, Any]]]
+    action_speed: ClassVar[int]
 
+    owner: Unit
+    _context = Optional[ChainMap]
+
+    def __init__(self, owner: Unit, speed=None, **kwargs) -> None: ...
+    @property
+    def context(self) -> ChainMap: ...
     def cursors(self) -> Iterable[Tuple(str, GeometrySelectCursor)]: ...
     def copy(self) -> Action: ...
     def instant_setup(self, **kwargs) -> Action: ...
@@ -43,6 +52,7 @@ class CurrentActionBar:
 
     def clear(self) -> None: ...
     def remove_action(self, action_index: int) -> None: ...
+    def __iter__(self) -> Iterable[Action]: ...
 
 def new_action_constructor(loader: yaml.Loader, node: yaml.Node) -> type: ...
 NEW_ACTION_TAG: str
