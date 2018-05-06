@@ -55,8 +55,8 @@ class FixedArea:
     def __repr__(self):
         return str(self.cells)
 
-    # def is_empty(self):
-    #     return all((cell. for cell in self.cells))
+    def is_empty(self):
+        return all((cell.object is None for cell in self.cells))
 
     def select(self):
         for cell in self.cells:
