@@ -10,11 +10,12 @@ class Func(Property):
 
     def get(self, context):
         args = [(arg.get(context) if isinstance(arg, Property) else arg) for arg in self.args]
-        return getattr(self, self.func_name)(*args)
+        return getattr(self.obj.get(context), self.func_name)(*args)
 
 
 def func_constructor(loader, node):
-    pass
+    seq = loader.construct_sequence(node)
+    return Func(seq)
 
 
 FUNC_TAG = "!call"
