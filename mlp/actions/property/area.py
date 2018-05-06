@@ -292,8 +292,6 @@ class Cone60Enemy(Area):
             if col < width and col >= 0 and row < height and row >= 0:
                 result.append(grid[(col, row)])
 
-        return result
-
         shuffle(result)
         for cell in result:
             if cell.object and cell.object.stats.owner != context['owner'].stats.owner:

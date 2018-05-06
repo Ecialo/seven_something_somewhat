@@ -103,5 +103,5 @@ def load(paths=None):
 
 
 def load_resource(resource_path):
-    with open(resource_path) as a:
+    with open(resource_path, encoding='utf-8') as a:
         yaml.load(a)

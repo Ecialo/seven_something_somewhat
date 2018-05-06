@@ -20,6 +20,13 @@
       area: !area
         name: Cell
         cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: ReadyBullet
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
   check: !expr [!prop owner.bullets, ">", 0]
   widget:
     icon: './data/units/fighter_rifle/bullet.png'
@@ -49,8 +56,8 @@
         cell: !prop owner.cell
   check: !expr [!prop owner.buckshots, ">", 0]
   widget:
-    icon: './data/units/fighter_rifle/ph.png'
-    pressed_icon: './data/units/fighter_rifle/ph_pressed.png'
+    icon: './data/units/fighter_rifle/buckshot.png'
+    pressed_icon: './data/units/fighter_rifle/buckshot_pressed.png'
 
 - !new_action
   name: ShootBullet
@@ -103,11 +110,50 @@
       area: !area
         name: Cell
         cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: ReadyBullet
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
   check: !expr [!prop owner.loaded, "==", "bullet"]
   widget:
     icon: './data/units/fighter_rifle/gunshot.png'
     pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
-    
+
+- !new_action
+  name: ShootTestBullet
+  action_type: STANDARD
+  speed: SLOW
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry_last
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          inner_radius: 1
+          radius: 5
+        - !area
+          name: Ray
+          source: !prop source
+          target: !prop selected
+          length: 5
+  effects:
+    - effect: !eff
+        name: TestShoot
+      area: !area
+        name: Ray
+        source: !prop source
+        target: !prop action.target
+        length: 5
+  widget:
+    icon: './data/units/fighter_rifle/gunshot.png'
+    pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
+
+
 - !new_action
   name: ReadyBullet
   action_type: STANDARD
@@ -144,7 +190,21 @@
         value: !expr [!prop owner.endurance, "-", 1]
       area: !area
         name: Cell
-        cell: !prop owner.cell 
+        cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: ReadyBullet
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: ShootBullet
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
   check: !expr
     - [!prop owner.endurance, ">", 0]
     - and

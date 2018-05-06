@@ -1,0 +1,30 @@
+- !new_eff
+  name: ShootIfAble
+  params:
+    - shoot_area
+  effects:
+    - effect: !eff
+        name: LaunchAction
+        action_name: ShootBullet
+        setup:
+          target: !prop effect.shoot_area
+      #condition: True TODO check shoot_area for not being empty here
+
+- !new_eff
+  name: ShootLoaded
+  params:
+    - loaded
+  effects:
+
+- !new_eff
+  name: TestShoot
+  params: []
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 35
+        area: !area
+          name: Ray
+          source: !prop owner.cell
+          target: !prop action.target
+          length: 1
