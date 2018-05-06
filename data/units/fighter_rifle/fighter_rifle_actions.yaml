@@ -234,50 +234,17 @@
           length: 5
   effects:
     - effect: !eff
-        name: Damage
-        amount: 50
+        name: BuckshotDamage
+        line_of_fire: !area
+          name: Ray
+          source: !prop source
+          target: !prop action.target
+          length: 5
       area: !area
-        name: Tail
+        name: Ray
         source: !prop source
         target: !prop action.target
-        length: 1
-        start: 0
-    - effect: !eff
-        name: Damage
-        amount: 40
-      area: !area
-        name: Tail
-        source: !prop source
-        target: !prop action.target
-        length: 1
-        start: 1
-    - effect: !eff
-        name: Damage
-        amount: 30
-      area: !area
-        name: Tail
-        source: !prop source
-        target: !prop action.target
-        length: 1
-        start: 2
-    - effect: !eff
-        name: Damage
-        amount: 20
-      area: !area
-        name: Tail
-        source: !prop source
-        target: !prop action.target
-        length: 1
-        start: 3
-    - effect: !eff
-        name: Damage
-        amount: 10
-      area: !area
-        name: Tail
-        source: !prop source
-        target: !prop action.target
-        length: 1
-        start: 4
+        length: 5
     - effect: !eff
         name: ChangeStat
         extra_tags: ["plan"]

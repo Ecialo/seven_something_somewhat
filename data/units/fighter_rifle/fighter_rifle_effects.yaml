@@ -17,6 +17,15 @@
   effects:
 
 - !new_eff
+  name: BuckshotDamage
+  params:
+    - line_of_fire
+  effects:
+    - effect:
+        name: Damage
+        amount: !expr ["(" ,6, "-", !call [!prop effect.line_of_fire, "length"], ")", "*", 10]
+
+- !new_eff
   name: TestShoot
   params: []
   effects:

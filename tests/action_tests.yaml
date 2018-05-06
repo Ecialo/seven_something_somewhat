@@ -953,7 +953,7 @@
       check: !prop A.stats.loaded
       result: "buckshot"
 
-- name: Load jacan then shoot
+- name: Load buckshot then shoot
   A:
     unit: Fighter_rifle
     cell: !cell [2, 2]
