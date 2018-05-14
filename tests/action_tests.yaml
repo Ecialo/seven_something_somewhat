@@ -841,7 +841,7 @@
   actions_A:
     - action_name: LoadBullet
       args: {}
-    - action_name: ShootBullet
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -869,7 +869,7 @@
     unit: Dummy
     cell: !cell [3, 2]
   actions_A:
-    - action_name: ShootBullet
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -899,17 +899,17 @@
   actions_A:
     - action_name: LoadBullet
       args: {}
-    - action_name: ShootBullet
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
     - action_name: LoadBullet
       args: {}
-    - action_name: ShootBullet
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
     - action_name: LoadBullet
       args: {}
-    - action_name: ShootBullet
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -963,7 +963,7 @@
   actions_A:
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -991,7 +991,7 @@
     unit: Dummy
     cell: !cell [3, 2]
   actions_A:
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -1021,17 +1021,17 @@
   actions_A:
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -1061,7 +1061,7 @@
   actions_A:
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 1]
   actions_B: []
@@ -1091,7 +1091,7 @@
   actions_A:
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [4, 0]
   actions_B: []
@@ -1121,7 +1121,7 @@
   actions_A:
     - action_name: LoadBuckshot
       args: {}
-    - action_name: ShootBuckshot
+    - action_name: Shoot
       args:
         target: !cell [3, 1]
   actions_B: []
@@ -1141,7 +1141,7 @@
         - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
       result: true
 
-- name: ready action fail test
+- name: ready bullet test
   A:
     unit: Fighter_rifle
     cell: !cell [2, 2]
@@ -1151,7 +1151,37 @@
   actions_A:
     - action_name: LoadBullet
       args: {}
-    - action_name: ReadyBullet
+    - action_name: Ready
+      args:
+        target: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+      result: true
+
+- name: ready buckshot test
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: LoadBuckshot
+      args: {}
+    - action_name: Ready
       args:
         target: !cell [3, 2]
   actions_B: []
@@ -1193,33 +1223,3 @@
     - cell: !cell [3, 1]
       check: !prop B.stats.health
       result: !prop B.stats.max__health
-
-- name: Load buckshot then shoot(new shoot action)
-  A:
-    unit: Fighter_rifle
-    cell: !cell [2, 2]
-  B:
-    unit: Dummy
-    cell: !cell [3, 2]
-  actions_A:
-    - action_name: LoadBuckshot
-      args: {}
-    - action_name: Shoot
-      args:
-        target: !cell [3, 2]
-  actions_B: []
-  checks:
-    - cell: !cell [2, 2]
-      check: !prop cell.object
-      result: !prop A
-    - cell: !cell [3, 2]
-      check: !prop cell.object
-      result: !prop B
-    - cell: !cell [3, 2]
-      check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 50, ")"]
-        - and
-        - [!prop A.stats.loaded, "==", "nothing"]
-        - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
-      result: true

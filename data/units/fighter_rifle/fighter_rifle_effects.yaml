@@ -5,7 +5,7 @@
   effects:
     - effect: !eff
         name: LaunchAction
-        action_name: ShootBullet
+        action_name: Shoot
         setup:
           target: !prop effect.shoot_area
       condition: !expr [!call [!prop effect.shoot_area, "length"], "!=", 0]
