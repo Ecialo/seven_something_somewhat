@@ -1193,3 +1193,33 @@
     - cell: !cell [3, 1]
       check: !prop B.stats.health
       result: !prop B.stats.max__health
+
+- name: Load buckshot then shoot(new shoot action)
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: LoadBuckshot
+      args: {}
+    - action_name: Shoot
+      args:
+        target: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 50, ")"]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
+      result: true

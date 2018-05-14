@@ -12,8 +12,7 @@
 
 - !new_eff
   name: ShootLoaded
-  params:
-    - loaded
+  params: []
   effects:
     - effect: !eff
         name: Damage
@@ -40,6 +39,24 @@
         extra_tags: ["plan"]
         stat_name: bullets
         value: !expr [!prop owner.bullets, "-", 1]
+      condition: !expr [!prop owner.loaded, "==", "bullet"]
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: buckshots
+        value: !expr [!prop owner.buckshots, "-", 1]
+      condition: !expr [!prop owner.loaded, "==", "buckshot"]
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: jacans
+        value: !expr [!prop owner.jacans, "-", 1]
+      condition: !expr [!prop owner.loaded, "==", "jacan"]
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "nothing"
 
 - !new_eff
   name: BuckshotDamage
