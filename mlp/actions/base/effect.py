@@ -178,18 +178,22 @@ class CustomUnitEffect(UnitEffect):
             setattr(self, k, v)
 
     def apply(self, cells, context):
-        context['effect'] = self
+        # context['effect'] = self
         super().apply(cells, context.new_child())
 
     def _apply(self, target, context):
+        context['effect'] = self
         for e_s in self.effects:
             cond = e_s.get('condition')
             # print(context)
             if cond is None or cond.get(context):
                 effect = e_s['effect'].get()
-                # print(context)
+                # print(self, context)
                 # print(effect)
-                effect._apply(target, context)     # TODO перепроектировать это
+                effect._apply(target, context.new_child())     # TODO перепроектировать это
+
+    def __repr__(self):
+        return self.name
 
 
 class CustomMetaEffect(MetaEffect):
