@@ -8,7 +8,7 @@
         action_name: ShootBullet
         setup:
           target: !prop effect.shoot_area
-      #condition: True TODO check shoot_area for not being empty here
+      condition: !expr [!call [!prop effect.shoot_area, "length"], "!=", 0]
 
 - !new_eff
   name: ShootLoaded
