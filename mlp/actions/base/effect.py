@@ -173,11 +173,15 @@ class CustomUnitEffect(UnitEffect):
     effects = []
 
     def __init__(self, **kwargs):
+        # print(kwargs)
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             setattr(self, k, v)
 
     def apply(self, cells, context):
+        print(self, self.area)
+        if self.area:
+            cells = self.area.get(context)
         context['effect'] = self
         super().apply(cells, context.new_child())
 
@@ -190,6 +194,9 @@ class CustomUnitEffect(UnitEffect):
                 # print(context)
                 # print(effect)
                 effect._apply(target, context)     # TODO перепроектировать это
+
+    def __repr__(self):
+        return self.name
 
 
 class CustomMetaEffect(MetaEffect):
