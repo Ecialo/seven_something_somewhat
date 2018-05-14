@@ -15,15 +15,53 @@
   params:
     - loaded
   effects:
+    - effect: !eff
+        name: Damage
+        amount: 35
+      condition: !expr [!prop owner.loaded, "==", "bullet"]
+    - effect: !eff
+        name: BuckshotDamage
+        line_of_fire: !area
+          name: Ray
+          source: !prop source
+          target: !prop action.target
+          length: 5
+      condition: !expr [!prop owner.loaded, "==", "buckshot"]
+    - effect: !eff
+        name: JacanEffect
+      condition: !expr [!prop owner.loaded, "==", "jacan"]
+
+- !new_eff
+  name: RemoveLoaded
+  params: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: bullets
+        value: !expr [!prop owner.bullets, "-", 1]
 
 - !new_eff
   name: BuckshotDamage
   params:
     - line_of_fire
   effects:
-    - effect:
+    - effect: !eff
         name: Damage
         amount: !expr ["(" ,6, "-", !call [!prop effect.line_of_fire, "length"], ")", "*", 10]
+
+- !new_eff
+  name: JacanEffect
+  params: []
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 30
+    - effect: !eff
+        name: Stun
+        power: 2
+
+
 
 - !new_eff
   name: TestShoot
