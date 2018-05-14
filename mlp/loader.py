@@ -29,6 +29,10 @@ from .actions.property.expression import (
     expression_constructor,
     EXPRESSION_TAG
 )
+from .actions.property.funcs import (
+    func_constructor,
+    FUNC_TAG,
+)
 from .actions.property.area import (
     area_constructor,
     AREA_TAG,
@@ -68,6 +72,7 @@ yaml.add_constructor(NEW_STATUS_TAG, new_status_constructor)
 
 yaml.add_constructor(PROPERTY_TAG, property_constructor)
 yaml.add_constructor(EXPRESSION_TAG, expression_constructor)
+yaml.add_constructor(FUNC_TAG, func_constructor)
 yaml.add_constructor(AREA_TAG, area_constructor)
 
 yaml.add_constructor(UNIT_TAG, unit_constructor)

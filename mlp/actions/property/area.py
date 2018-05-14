@@ -1,5 +1,6 @@
 import logging as log
 from random import shuffle
+from contextlib import contextmanager
 
 from .property import Property
 from ...grid import (
@@ -23,6 +24,16 @@ class Area(Property, metaclass=AreaMeta):
 
     def _get(self, context):
         pass
+
+    @contextmanager
+    def configure(self, context):
+        context_values = dotdict()
+        for k, v in vars(self).items():
+            if isinstance(v, Property):
+                context_values[k] = v.get(context)
+            else:
+                context_values[k] = v
+        yield context_values
 
     @property
     def grid(self):
@@ -78,7 +89,9 @@ class Line(Area):
 
     def _get(self, context):
         grid = self.grid
-        return grid.get_line(self.source.get(context), self.target.get(context), self.length)
+        with self.configure(context) as c:
+            return grid.get_line(c.source, c.target, c.length)
+            # return grid.get_line(self.source.get(context), self.target.get(context), self.length)
 
 
 class KNearestNeighbors(Area):
