@@ -171,14 +171,22 @@ class CustomUnitEffect(UnitEffect):
     name = None
     params = []
     effects = []
+    area = None
 
     def __init__(self, **kwargs):
+        # print(kwargs)
+        area = self.area
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             setattr(self, k, v)
+        self.area = self.area or area
 
     def apply(self, cells, context):
         # context['effect'] = self
+        print(self, self.area)
+        if self.area:
+            cells = self.area.get(context)
+        context['effect'] = self
         super().apply(cells, context.new_child())
 
     def _apply(self, target, context):
@@ -188,7 +196,7 @@ class CustomUnitEffect(UnitEffect):
             # print(context)
             if cond is None or cond.get(context):
                 effect = e_s['effect'].get()
-                # print(self, context)
+                # print(context)
                 # print(effect)
                 effect._apply(target, context.new_child())     # TODO перепроектировать это
 
@@ -250,6 +258,7 @@ def new_effect_constructor(loader, node):
             name = n_e["name"]
             effects = n_e['effects']
             params = n_e['params']
+            area = n_e.get('area')
     elif type_ == "meta":
         class NewEffect(CustomMetaEffect):
             name = n_e["name"]

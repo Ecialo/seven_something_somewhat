@@ -87,8 +87,8 @@
     - effect: !eff
         name: Damage
         amount: 35
-        area: !area
-          name: Ray
-          source: !prop owner.cell
-          target: !prop action.target
-          length: 1
+  area: !area
+    name: Ray
+    source: !prop owner.cell
+    target: !prop action.target
+    length: 1
