@@ -23,7 +23,7 @@
     - effect: !eff
         name: AddAction
         extra_tags: ["plan"]
-        action_name: ReadyBullet
+        action_name: Ready
       area: !area
         name: Cell
         cell: !prop owner.cell
@@ -51,6 +51,13 @@
         name: AddAction
         extra_tags: ["plan"]
         action_name: Shoot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Ready
       area: !area
         name: Cell
         cell: !prop owner.cell
@@ -315,7 +322,7 @@
     - effect: !eff
         name: RemoveAction
         extra_tags: ["plan"]
-        action_name: ReadyBullet
+        action_name: Ready
       area: !area
         name: Cell
         cell: !prop owner.cell
@@ -323,3 +330,53 @@
   widget:
     icon: './data/units/fighter_rifle/gunshot.png'
     pressed_icon: './data/units/fighter_rifle/gunshot_pressed.png'
+
+- !new_action
+  name: Ready
+  action_type: STANDARD
+  speed: SLOW
+  cost:
+    action_points: 1
+    endurance: 1
+  setup:
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          inner_radius: 1
+          radius: 5
+        - !area
+          name: Cone60
+          source: !prop source
+          target: !prop selected
+          length: 5
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: ReadyToShoot
+          shoot_target: !prop action.target
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: Ready
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: RemoveAction
+        extra_tags: ["plan"]
+        action_name: Shoot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.loaded, "!=", "nothing"]
+  widget:
+    icon: './data/units/fighter_rifle/crosshair.png'
+    pressed_icon: './data/units/fighter_rifle/crosshair_pressed.png'
