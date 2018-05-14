@@ -41,3 +41,13 @@ class TestProperty:
         """)
         res = yaml.load(io.StringIO(Y))
         assert res.get(self.context)
+
+    def test_func_inside_expression(self):
+        Y = dedent("""
+        !expr [
+            !call [!area {'name': Line, 'source': !cell [0, 0], 'target': !cell [1, 1], 'length': 2}, 'length'],
+            '+', 1]
+        """)
+        res = yaml.load(io.StringIO(Y)).get(self.context)
+        # print(res, "RES", type(res))
+        assert res == 4 # TODO это враньё

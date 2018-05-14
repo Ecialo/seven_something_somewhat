@@ -4,10 +4,15 @@ from yaml import (
     ScalarNode,
 )
 from collections import deque
+
 from .property import (
     Property,
     Const,
     Oper,
+)
+from .funcs import (
+    func_constructor,
+    FUNC_TAG,
 )
 
 
@@ -98,12 +103,19 @@ def expression_constructor(loader, node):
     # expression = loader.construct_sequence(node)
     expression = []
     for child in node.value:
-        if isinstance(child, SequenceNode):
+        if isinstance(child, SequenceNode) and child.tag == FUNC_TAG:
+            # print(child)
+            func = func_constructor(loader, child)
+            # print(func)
+            expression.append(func)
+        elif isinstance(child, SequenceNode):
+            # print(child)
             expression.extend(loader.construct_sequence(child))
         elif isinstance(child, ScalarNode):
             expression.append(loader.construct_object(child))
-        else:
-            raise ExpressionError
+        # else:
+        #     expression.append(loader.construct_object(child))
+            # raise ExpressionError
     #     print("ololo")
     #     print(child)
     #     expression.extend(loader.construct_object(child))

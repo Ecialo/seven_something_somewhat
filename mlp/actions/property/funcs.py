@@ -12,6 +12,9 @@ class Func(Property):
         args = [(arg.get(context) if isinstance(arg, Property) else arg) for arg in self.args]
         return getattr(self.obj.get(context), self.func_name)(*args)
 
+    def __repr__(self):
+        return "Call {}.{} with {}".format(self.obj, self.func_name, self.args)
+
 
 def func_constructor(loader, node):
     seq = loader.construct_sequence(node)
