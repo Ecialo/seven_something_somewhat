@@ -15,6 +15,7 @@ from .status import (
     STATUSES,
 )
 from ..property.reference import ReferenceList
+from ..property.property import Property
 from ...replication_manager import MetaRegistry
 
 trace = blinker.signal("trace")
@@ -91,6 +92,7 @@ class Damage(UnitEffect):
                 target.kill()
             self.info_message = self.info_message.format(target, c.amount)
             super()._apply(target, context)
+            # print(self, "!")
 
     def __repr__(self):
         return "Damage: ({})".format(self.amount)
@@ -255,10 +257,15 @@ class LaunchAction(CellEffect):
             new_context = context['owner'].context
             new_context['source'] = cell
             new_context = context.new_child(new_context)
+            setup = {
+                key: (value if not isinstance(value, Property) else value.get(new_context))
+                for key, value in self.setup.items()
+            }
             action = ACTIONS[self.action_name](
                 owner=context['owner'],
                 context=new_context,
-                **self.setup
+                **setup
+                # **self.setup
             )
             # action.context['action'] = action
             # new_context = action.context

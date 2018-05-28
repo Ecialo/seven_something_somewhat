@@ -65,6 +65,7 @@
   effects:
     - effect: !eff
         name: Damage
+#        amount: !call [!prop effect.line_of_fire, "length"]
         amount: !expr ["(" ,6, "-", !call [!prop effect.line_of_fire, "length"], ")", "*", 10]
 
 - !new_eff

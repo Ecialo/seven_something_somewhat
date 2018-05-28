@@ -1,5 +1,6 @@
 import logging
 import os
+from pprint import pprint
 from yaml import SequenceNode
 from ...tools import (
     # convert,
@@ -182,23 +183,35 @@ class CustomUnitEffect(UnitEffect):
         self.area = self.area or area
 
     def apply(self, cells, context):
+        # context = context.new_child()
         # context['effect'] = self
-        print(self, self.area)
+        # print("\n\n")
+        # print(self, context)
         if self.area:
             cells = self.area.get(context)
-        context['effect'] = self
+        # context['effect'] = self
         super().apply(cells, context.new_child())
 
     def _apply(self, target, context):
+        print("Enter {}".format(self))
+        context = context.new_child()
         context['effect'] = self
         for e_s in self.effects:
+            # context = context.new_child()
             cond = e_s.get('condition')
-            # print(context)
+            # print("\n\n")
+            # print(self, context)
+            # print(cond)
             if cond is None or cond.get(context):
                 effect = e_s['effect'].get()
-                # print(context)
-                # print(effect)
+                # print(self)
+                # print("\n\n")
+                # print(effect, getattr(effect, 'line_of_fire', None))
+                print("Start", effect)
                 effect._apply(target, context.new_child())     # TODO перепроектировать это
+                print("DONE", self)
+                # print(effect)
+                # print(self)
 
     def __repr__(self):
         return self.name

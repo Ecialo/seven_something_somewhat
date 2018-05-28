@@ -137,6 +137,8 @@ class Action(metaclass=ActionMeta):
             effect.apply(cells, self.context)
 
     def check(self):
+        # print("CONTEXT ON CHECK {}".format(self))
+        # print(self.context)
         if self._check:
             res = self._check.get(self.context)
         else:

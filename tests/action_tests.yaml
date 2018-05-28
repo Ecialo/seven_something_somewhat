@@ -1194,11 +1194,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 50, ")"]
         - and
         - [!prop A.stats.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: test_shoot_area
