@@ -1194,11 +1194,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 50, ")"]
         - and
         - [!prop A.stats.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: test_shoot_area
@@ -1223,3 +1223,34 @@
     - cell: !cell [3, 1]
       check: !prop B.stats.health
       result: !prop B.stats.max__health
+
+#- name: test_jacan_stun_overflow
+#  A:
+#    unit: Fighter_sword
+#    cell: !cell [2, 2]
+#  B:
+#    unit: Fighter_rifle
+#    cell: !cell [3, 1]
+#  actions_A:
+#    - action_name: Attack
+#      args: {}
+#    - action_name: Attack
+#      args: {}
+#    - action_name: Attack
+#      args: {}
+#  actions_B:
+#    - action_name: LoadJacan
+#      args: {}
+#    - action_name: Shoot
+#      args:
+#        target: !cell [2, 2]
+#  checks:
+#    - cell: !cell [2, 2]
+#      check: !prop cell.object
+#      result: !prop A
+#    - cell: !cell [3, 1]
+#      check: !prop cell.object
+#      result: !prop B
+#    - cell: !cell [3, 1]
+#      check: !prop A.stats.action_points
+#      result: 3

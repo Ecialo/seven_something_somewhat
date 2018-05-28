@@ -39,3 +39,25 @@
 #        value: !expr [!prop owner.health, '+', !prop target_context.victim.max__health]
         value: !expr [!prop owner.health, '+', !prop victim.max__health]
 #      condition: !expr [!prop killer, '==', !prop owner]
+
+- !new_eff
+  name: Stun
+  params:
+    - power
+  effects:
+    - effect: !eff
+        name: AddStatus
+        status: !status
+          name: ResidualStun
+          power: !expr [!prop effect.power, "-", !prop target.action_points]
+      condition: !expr [!prop target.action_points, "<", !prop effect.power]
+    - effect: !eff
+        name: ChangeStat
+        stat_name: action_points
+        value: 0
+      condition: !expr [!prop target.action_points, "<", !prop effect.power]
+    - effect: !eff
+        name: ChangeStat
+        stat_name: action_points
+        value: !expr [!prop target.action_points, "-", !prop effect.power]
+      condition: !expr [!prop target.action_points, ">=", !prop effect.power]

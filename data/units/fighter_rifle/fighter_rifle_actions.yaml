@@ -67,6 +67,40 @@
     pressed_icon: './data/units/fighter_rifle/buckshot_pressed.png'
 
 - !new_action
+  name: LoadJacan
+  action_type: FULL
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "jacan"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Shoot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Ready
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.jacans, ">", 0]
+  widget:
+    icon: './data/units/fighter_rifle/jacan.png'
+    pressed_icon: './data/units/fighter_rifle/jacan_pressed.png'
+
+- !new_action
   name: ShootBullet
   action_type: STANDARD
   speed: SLOW
@@ -355,7 +389,6 @@
   effects:
     - effect: !eff
         name: AddStatus
-        extra_tags: ["plan"]
         status: !status
           name: ReadyToShoot
           shoot_target: !prop action.target

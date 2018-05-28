@@ -76,7 +76,7 @@
         amount: 30
     - effect: !eff
         name: Stun
-        power: 2
+        power: 6
 
 
 

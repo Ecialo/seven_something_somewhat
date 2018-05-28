@@ -105,3 +105,16 @@
       name: ChangeStat
       stat_name: health
       value: !expr [!prop target.health, "+", 1]
+
+- !new_status
+  name: ResidualStun
+  params:
+    - power
+  on_turn_start:
+    - !eff
+      name: Stun
+      power: !prop status.power
+    - !eff
+      name: RemoveStatus
+      status: !status
+        name: ResidualStun
