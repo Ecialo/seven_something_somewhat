@@ -1,5 +1,6 @@
 import logging
 import os
+from pprint import pprint
 from yaml import SequenceNode
 from ...tools import (
     # convert,
@@ -171,26 +172,46 @@ class CustomUnitEffect(UnitEffect):
     name = None
     params = []
     effects = []
+    area = None
 
     def __init__(self, **kwargs):
+        # print(kwargs)
+        area = self.area
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             setattr(self, k, v)
+        self.area = self.area or area
 
     def apply(self, cells, context):
+        # context = context.new_child()
+        # context['effect'] = self
+        # print("\n\n")
+        # print(self, context)
+        if self.area:
+            cells = self.area.get(context)
         # context['effect'] = self
         super().apply(cells, context.new_child())
 
     def _apply(self, target, context):
+        print("Enter {}".format(self))
+        context = context.new_child()
         context['effect'] = self
         for e_s in self.effects:
+            # context = context.new_child()
             cond = e_s.get('condition')
-            # print(context)
+            # print("\n\n")
+            # print(self, context)
+            # print(cond)
             if cond is None or cond.get(context):
                 effect = e_s['effect'].get()
-                # print(self, context)
-                # print(effect)
+                # print(self)
+                # print("\n\n")
+                # print(effect, getattr(effect, 'line_of_fire', None))
+                print("Start", effect)
                 effect._apply(target, context.new_child())     # TODO перепроектировать это
+                print("DONE", self)
+                # print(effect)
+                # print(self)
 
     def __repr__(self):
         return self.name
@@ -250,6 +271,7 @@ def new_effect_constructor(loader, node):
             name = n_e["name"]
             effects = n_e['effects']
             params = n_e['params']
+            area = n_e.get('area')
     elif type_ == "meta":
         class NewEffect(CustomMetaEffect):
             name = n_e["name"]

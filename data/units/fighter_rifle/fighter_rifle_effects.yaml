@@ -65,6 +65,7 @@
   effects:
     - effect: !eff
         name: Damage
+#        amount: !call [!prop effect.line_of_fire, "length"]
         amount: !expr ["(" ,6, "-", !call [!prop effect.line_of_fire, "length"], ")", "*", 10]
 
 - !new_eff
@@ -87,8 +88,8 @@
     - effect: !eff
         name: Damage
         amount: 35
-        area: !area
-          name: Ray
-          source: !prop owner.cell
-          target: !prop action.target
-          length: 1
+  area: !area
+    name: Ray
+    source: !prop owner.cell
+    target: !prop action.target
+    length: 1
