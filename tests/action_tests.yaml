@@ -1201,28 +1201,109 @@
         - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
       result: true
 
-- name: test_shoot_area
+- name: ready miss test
   A:
     unit: Fighter_rifle
     cell: !cell [2, 2]
   B:
     unit: Dummy
-    cell: !cell [3, 1]
+    cell: !cell [2, 3]
   actions_A:
-    - action_name: ShootTestBullet
+    - action_name: LoadBullet
+      args: {}
+    - action_name: Ready
       args:
-        target: !cell [3, 1]
+        target: !cell [2, 1]
   actions_B: []
   checks:
     - cell: !cell [2, 2]
       check: !prop cell.object
       result: !prop A
-    - cell: !cell [3, 1]
+    - cell: !cell [2, 3]
       check: !prop cell.object
       result: !prop B
-    - cell: !cell [3, 1]
-      check: !prop B.stats.health
-      result: !prop B.stats.max__health
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - and
+        - [!prop A.stats.loaded, "==", "bullet"]
+        - and
+        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
+      result: true
+
+- name: ready walk in test
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [2, 3]
+  actions_A:
+    - action_name: LoadBullet
+      args: {}
+    - action_name: Ready
+      args:
+        target: !cell [2, 1]
+  actions_B:
+    - action_name: Move
+      args:
+        path: !cell [3, 3]
+    - action_name: Move
+      args:
+        path: !cell [3, 2]
+    - action_name: Move
+      args:
+        path: !cell [2, 1]
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [2, 1]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+      result: true
+
+- name: ready weird fuckery test
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 3]
+  B:
+    unit: Fighter_sword
+    cell: !cell [2, 2]
+  actions_A:
+    - action_name: LoadBullet
+      args: {}
+    - action_name: Ready
+      args:
+        target: !cell [3, 4]
+  actions_B:
+    - action_name: EmpoweredKick
+      args:
+        target: !cell [2, 3]
+  checks:
+    - cell: !cell [2, 4]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr
+        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 31, ")"]
+        - and
+        - [!prop A.stats.loaded, "==", "nothing"]
+        - and
+        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - and
+        - [!prop A.stats.health, "==", "(", !prop A.stats.max__health, "-", 10, ")"]
+      result: true
 
 #- name: test_jacan_stun_overflow
 #  A:
