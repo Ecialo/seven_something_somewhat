@@ -11,6 +11,8 @@ class Func(Property):
     def get(self, context):
         print(self, self.obj.get(context))
         args = [(arg.get(context) if isinstance(arg, Property) else arg) for arg in self.args]
+        exposed = getattr(self.obj.get(context), 'exposed', [])
+        assert self.func_name in exposed
         return getattr(self.obj.get(context), self.func_name)(*args)
 
     def __repr__(self):
