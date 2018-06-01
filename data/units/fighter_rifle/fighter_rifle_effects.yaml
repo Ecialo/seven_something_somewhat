@@ -9,6 +9,14 @@
         setup:
           target: !prop effect.shoot_area
       condition: !expr [!call [!prop effect.shoot_area, "length"], "!=", 0]
+    - effect: !eff
+        name: AddAction
+        action_name: Shoot
+      condition: !expr [!call [!prop effect.shoot_area, "length"], "==", 0]
+    - effect: !eff
+        name: AddAction
+        action_name: Ready
+      condition: !expr [!call [!prop effect.shoot_area, "length"], "==", 0]
 
 - !new_eff
   name: ShootLoaded
@@ -78,18 +86,3 @@
     - effect: !eff
         name: Stun
         power: 6
-
-
-
-- !new_eff
-  name: TestShoot
-  params: []
-  effects:
-    - effect: !eff
-        name: Damage
-        amount: 35
-  area: !area
-    name: Ray
-    source: !prop owner.cell
-    target: !prop action.target
-    length: 1
