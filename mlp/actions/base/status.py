@@ -90,6 +90,7 @@ class Status(metaclass=StatusMeta):
         # print("PARAMS", params)
         params['context'] = dict(params['context'])
         params['context'].pop('status')
+        params['context'].pop('effect')
         params['context']['target'] = params['context']['target'].cell
         params['context']['owner'] = params['context']['owner'].cell
         params['context']['carrier'] = params['context']['carrier'].cell

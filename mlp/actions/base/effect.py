@@ -67,6 +67,15 @@ class AbstractEffect(metaclass=EffectMeta):
     def cancel(self):
         self.is_canceled = True
 
+    # def freeze(self, context):
+    #     pass
+
+    def dump(self):
+        pass
+
+    def load(self, struct):
+        pass
+
 
 class UnitEffect(AbstractEffect):
 
