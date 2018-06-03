@@ -284,6 +284,23 @@
     pressed_icon: './data/linden-leaf(1).png'
 
 - !new_action
+  name: SelfBurn
+  action_type: FULL
+  speed: SLOW
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ['plan']
+        status: !status
+          name: Burning
+          duration: 2
+          power: 3
+      area: !prop source
+  widget:
+
+- !new_action
   name: LetDogsOut
   action_type: FULL
   speed: SLOW

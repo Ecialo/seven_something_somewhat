@@ -28,6 +28,11 @@ def sum_iterables(iter1, iter2):
 
 class FixedArea:
 
+    exposed = [
+        'length',
+        'is_empty',
+    ]
+
     def __init__(self, cells=None, color=None):
         self.cells = cells or []
         self.color = color
