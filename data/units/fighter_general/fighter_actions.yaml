@@ -1,0 +1,20 @@
+- !new_action
+  name: HealthPotion
+  action_type: MOVE
+  speed: FAST
+  cost:
+    action_points: 1
+    health_pots: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        stat_name: health
+        value: !expr [!prop owner.health, "+", 30]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.health, "!=", !prop owner.max__health]
+  widget:
+    icon: './data/units/fighter_general/healthpot.png'
+    pressed_icon: './data/units/fighter_sword/healthpot_pressed.png'

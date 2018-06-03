@@ -85,4 +85,4 @@
         amount: 30
     - effect: !eff
         name: Stun
-        power: 6
+        power: 2
