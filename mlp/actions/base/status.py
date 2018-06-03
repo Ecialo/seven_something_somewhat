@@ -119,7 +119,7 @@ class Status(metaclass=StatusMeta):
                 #     **context,
                 # }
                 # print(new_context)
-                effect.apply(self.context['target'].cell, new_context)
+                effect.apply(self.context['carrier'].cell, new_context)
 
     def __repr__(self):
         return "Status {}".format(self.name)
