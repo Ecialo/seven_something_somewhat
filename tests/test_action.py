@@ -24,6 +24,8 @@ class TestAction:
     grid = HexGrid((5, 5))
 
     def setUp(self):
+        self.A = None
+        self.B = None
         self.units = []
         summon.connect(self.track_units)
 
@@ -36,6 +38,42 @@ class TestAction:
 
     def track_units(self, _, unit, cell):
         self.units.append(unit)
+
+    def start_phase(self):
+        for unit in self.units:
+            unit.launch_triggers(["phase", "start"], unit, unit.context)
+
+    def end_phase(self):
+        for unit in self.units:
+            unit.launch_triggers(["phase", "end"], unit, unit.context)
+
+    def start_turn(self):
+        for unit in self.units:
+            unit.refill_action_points()
+            unit.launch_triggers(["turn", "start"], unit, unit.context)
+
+    def end_turn(self):
+        for unit in self.units:
+            unit.launch_triggers(["turn", "end"], unit, unit.context)
+
+    def update(self):
+        for unit in self.units:
+            unit.clear_presumed()
+            unit.update_position()
+
+    def run_phase(self, phase):
+        unit_A = self.A
+        unit_B = self.B
+
+        for actions_struct in phase['actions_A']:
+            action_class = ACTIONS[actions_struct['action_name']]
+            action = action_class(unit_A, **actions_struct['args'])
+            if action.pre_check():
+                action.apply()
+        for actions_struct in phase['actions_B']:
+            action_class = ACTIONS[actions_struct['action_name']]
+            action = action_class(unit_B, **actions_struct['args'])
+            action.apply()
 
     def test_actions(self):
         with open(self.tests_path) as tests_file:
@@ -56,37 +94,38 @@ class TestAction:
         unit_B.switch_state()
         summon.send(None, unit=unit_B, cell=test['B']['cell'])
 
-        for unit in self.units:
-            unit.clear_presumed()
-            unit.update_position()
+        self.A = unit_A
+        self.B = unit_B
 
-        for unit in self.units:
-            unit.launch_triggers(["turn", "start"], unit, unit.context)
-        for unit in self.units:
-            unit.launch_triggers(["phase", "start"], unit, unit.context)
+        self.update()
 
-        for actions_struct in test['actions_A']:
-            action_class = ACTIONS[actions_struct['action_name']]
-            action = action_class(unit_A, **actions_struct['args'])
-            if action.pre_check():
-                action.apply()
-        for actions_struct in test['actions_B']:
-            action_class = ACTIONS[actions_struct['action_name']]
-            action = action_class(unit_B, **actions_struct['args'])
-            action.apply()
+        if 'turns' in test:
+            for turn in test['turns']:
+                self.start_turn()
+                for phase in turn:
+                    self.start_phase()
+                    self.run_phase(phase)
+                    self.end_phase()
+                    self.update()
+                self.end_turn()
+                self.update()
+        else:
 
-        for unit in self.units:
-            unit.launch_triggers(["phase", "end"], unit, unit.context)
-        for unit in self.units:
-            unit.launch_triggers(["turn", "end"], unit, unit.context)
+            self.start_turn()
+            self.start_phase()
+
+            self.run_phase(test)
+
+            self.end_phase()
+            self.end_turn()
+
+            self.update()
+
         context = {
             'A': unit_A,
             'B': unit_B,
             'units': self.units,
         }
-        for unit in self.units:
-            unit.clear_presumed()
-            unit.update_position()
         for check in test['checks']:
             check_context = context.copy()
             check_context['cell'] = check['cell']

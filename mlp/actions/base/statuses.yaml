@@ -86,6 +86,10 @@
 - !new_status
   name: Burning
   subtype: Dot
+  on_turn_start:
+    - !eff
+      name: Damage
+      amount: !prop status.power
 
 - !new_status
   name: Bleeding

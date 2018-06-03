@@ -1305,6 +1305,33 @@
         - [!prop A.stats.health, "==", "(", !prop A.stats.max__health, "-", 10, ")"]
       result: true
 
+- name: Self Burn
+  A:
+    unit: Dummy
+    cell: !cell [0, 0]
+  B:
+    unit: Dummy
+    cell: !cell [2, 2]
+  turns:
+    - - actions_A:
+          - action_name: SelfBurn
+            args: {}
+        actions_B: []
+    - - actions_A: []
+        actions_B: []
+    - - actions_A: []
+        actions_B:
+          - action_name: SelfBurn
+            args: {}
+    - - actions_A: []
+        actions_B: []
+  checks:
+    - cell: !cell [0, 0]
+      check: !prop A.stats.health
+      result: 94
+    - cell: !cell [2, 2]
+      check: !prop B.stats.health
+      result: 97
 #- name: test_jacan_stun_overflow
 #  A:
 #    unit: Fighter_sword
