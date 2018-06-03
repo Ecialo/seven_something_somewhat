@@ -57,6 +57,10 @@ class Unit(GameObject):
     statuses = []
     playable = False
 
+    exposed = [
+        ''
+    ]
+
     def __init__(self, master_name=None, id_=None):
         super().__init__(id_)
         self.is_alive = True
