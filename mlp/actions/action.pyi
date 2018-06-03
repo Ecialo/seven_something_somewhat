@@ -25,6 +25,7 @@ class Action:
     action_speed: ClassVar[int]
 
     owner: Unit
+    actions: List[Action]
     _context = Optional[ChainMap]
 
     def __init__(self, owner: Unit, speed=None, **kwargs) -> None: ...
