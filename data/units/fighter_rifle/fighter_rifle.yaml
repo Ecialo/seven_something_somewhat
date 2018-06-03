@@ -7,6 +7,8 @@
     damage: 10
     endurance: 4
     armor: 0
+    grenades: 2
+    fire_grenades: 1
     bullets: 2 
     buckshots: 2
     jacans: 2
@@ -27,10 +29,8 @@
     - LoadBullet
     - LoadBuckshot
     - LoadJacan
-    #- ReadyBullet
-    #- EmpoweredShoot
-    #- Reload 
-    #- Empowered Reload
+    - Grenade
+    - FireGrenade
   widget:
     sprite: './data/units/fighter_rifle/sprite.png'
     scale: 0.33

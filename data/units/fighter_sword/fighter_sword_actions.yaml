@@ -10,7 +10,7 @@
         - !area
           name: Ring
           center: !prop source
-          radius: 2
+          radius: 1
           inner_radius: 1
         - !area
           name: CardinalWave
@@ -105,29 +105,7 @@
   action_type: FULL
   speed: NORMAL
   cost: 2
-  setup: 
-    # - name: target
-      # cursor: geometry_last
-      # cursor_params:
-        # - !area
-          # name: Circle
-          # center: !prop source
-          # radius: 5
-        # -
-          # - name: startup
-            # area: !area
-              # name: Ray
-              # source: !prop source
-              # target: !prop selected
-              # length: 3
-              # widget: [0, 1, 0]
-          # - name: some_shit
-            # area: !area
-              # name: Ray
-              # source: !prop startup[-1]
-              # target: !prop selected
-              # length: 2
-              # widget: [0, 0, 1]
+  setup:
     - name: move
       cursor: geometry_last
       cursor_params:

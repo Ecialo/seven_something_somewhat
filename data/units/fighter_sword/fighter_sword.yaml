@@ -7,8 +7,8 @@
     damage: 25
     endurance: 4
     armor: 4
-    health_pots: 3
-    speed_pots: 2
+    health_pots: 2
+    speed_pots: 1
   actions:
     - Move
     - Attack
@@ -20,6 +20,8 @@
     - EmpoweredKick
     - Parry
     - EmpoweredParry
+    - HealthPotion
+    - SpeedPotion
   widget:
     sprite: './data/units/fighter_sword/sprite.png'
     scale: 0.33

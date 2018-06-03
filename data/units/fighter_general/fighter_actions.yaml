@@ -17,4 +17,172 @@
   check: !expr [!prop owner.health, "!=", !prop owner.max__health]
   widget:
     icon: './data/units/fighter_general/healthpot.png'
-    pressed_icon: './data/units/fighter_sword/healthpot_pressed.png'
+    pressed_icon: './data/units/fighter_general/healthpot_pressed.png'
+
+- !new_action
+  name: SpeedPotion
+  action_type: MOVE
+  speed: FAST
+  cost:
+    action_points: 1
+    speed_pots: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        stat_name: action_points
+        value: !expr [!prop owner.action_points, "+", 3]
+        extra_tags: ["plan"]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  widget:
+    icon: './data/units/fighter_general/scroll.png'
+    pressed_icon: './data/units/fighter_general/scroll_pressed.png'
+
+- !new_action
+  name: Grenade
+  action_type: STANDARD
+  speed: SLOW
+  cost:
+    action_points: 1
+    grenades: 1
+  setup:
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          radius: 4
+          inner_radius: 1
+        - !area
+          name: Circle
+          center: !prop selected
+          radius: 1
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 30
+      area: !area
+        name: Cell
+        cell: !prop action.target
+    - effect: !eff
+        name: Damage
+        amount: 10
+      area: !area
+        name: Ring
+        center: !prop action.target
+        radius: 2
+        inner_radius: 1
+  widget:
+    icon: './data/units/fighter_general/bomb.png'
+    pressed_icon: './data/units/fighter_general/bomb_pressed.png'
+
+- !new_action
+  name: FireGrenade
+  action_type: STANDARD
+  speed: SLOW
+  cost:
+    action_points: 1
+    fire_grenades: 1
+  setup:
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Ring
+          center: !prop source
+          radius: 4
+          inner_radius: 1
+        - !area
+          name: Circle
+          center: !prop selected
+          radius: 1
+  effects:
+    - effect: !eff
+        name: AddStatus
+        status: !status
+          name: Burning
+          duration: 3
+          power: 10
+      area: !area
+        name: Circle
+        center: !prop action.target
+        radius: 1
+  widget:
+    icon: './data/units/fighter_general/firebomb.png'
+    pressed_icon: './data/units/fighter_general/firebomb_pressed.png'
+
+- !new_action
+  name: Kick
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Cell
+          cell: !prop selected
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 7
+        extra_tags: ["melee"]
+      area: !area
+        name: Cell
+        cell: !prop action.target
+  widget:
+    icon: './data/high-kick(1).png'
+    pressed_icon: './data/high-kick.png'
+
+- !new_action
+  name: EmpoweredKick
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Cell
+          cell: !prop selected
+  effects:
+    - effect: !eff
+        name: Damage
+        amount: 10
+        extra_tags: ["melee"]
+      area: !area
+        name: Cell
+        cell: !prop action.target
+    - effect: !eff
+        name: Move
+        path: !area
+          name: Tail
+          source: !prop owner.cell
+          target: !prop action.target
+          length: 1
+      area: !area
+        name: Cell
+        cell: !prop action.target
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: endurance
+        value: !expr [!prop owner.endurance, "-", 1]
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.endurance, ">", 0]
+  widget:
+    icon: './data/kick.png'
+    pressed_icon: './data/kick_pressed.png'
