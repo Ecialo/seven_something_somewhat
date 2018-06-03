@@ -75,7 +75,7 @@ class Unit(GameObject):
         })
         self.switch_state()
         context = self.context.copy()
-        context['target'] = self
+        context['carrier'] = self
         for status_ref in self.statuses:
             status = status_ref.get().configure(context)
             self.add_status(status)
