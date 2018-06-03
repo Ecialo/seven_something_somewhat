@@ -42,6 +42,8 @@ class Action:
 
 class ActionBar:
 
+    actions: List[Action]
+
     def __iter__(self) -> Iterable[Action]: ...
 
 class CurrentActionBar:
