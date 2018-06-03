@@ -226,7 +226,8 @@ class ActionBar:
         return iter(self.actions)
 
     def append_action(self, action):
-        self.actions.append(action(self.owner))
+        if action.name not in [a.name for a in self.actions]:
+            self.actions.append(action(self.owner))
 
     def remove_action(self, action_to_remove):
         for i, action in enumerate(self.actions):
