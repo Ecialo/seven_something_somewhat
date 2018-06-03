@@ -52,10 +52,9 @@
       cursor: geometry
       cursor_params:
         - !area
-          name: Ring
+          name: Circle
           center: !prop source
           radius: 4
-          inner_radius: 1
         - !area
           name: Circle
           center: !prop selected
@@ -91,10 +90,9 @@
       cursor: geometry
       cursor_params:
         - !area
-          name: Ring
+          name: Circle
           center: !prop source
           radius: 4
-          inner_radius: 1
         - !area
           name: Circle
           center: !prop selected

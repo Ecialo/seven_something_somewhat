@@ -1437,3 +1437,75 @@
         - and
         - [!prop B.stats.action_points, "==", "(", !prop B.stats.max__action_points, "-", 2, ")"]
       result: true
+
+- name: throw grenade
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Grenade
+      args:
+        target: !cell [3, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr [!prop B.stats.max__health, "-", 30]
+      result: !prop B.stats.health
+
+- name: throw grenade collateral
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Grenade
+      args:
+        target: !cell [2, 2]
+  actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr [!prop B.stats.max__health, "-", 10]
+      result: !prop B.stats.health
+
+- name: throw fire grenade
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Dummy
+    cell: !cell [3, 2]
+  turns:
+    - - actions_A:
+          - action_name: FireGrenade
+            args:
+              target: !cell [3, 2]
+        actions_B: []
+    - - actions_A: []
+        actions_B: []
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr [!prop B.stats.max__health, "-", 20]
+      result: !prop B.stats.health
