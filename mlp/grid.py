@@ -251,15 +251,20 @@ class HexGrid(Grid):
     @staticmethod
     def cube_to_offsets(pos):
         x, y, z = pos
-        col = x
-        row = z + (x + (x & 1)) // 2
+        # col = x
+        # row = z + (x + (x & 1)) // 2
+        col = x + (z - (z & 1)) // 2
+        row = z
         return col, row
 
     @staticmethod
     def offsets_to_cube(pos):
         col, row = pos
-        x = col
-        z = row - (col + (col & 1)) // 2
+        # x = col
+        # z = row - (col + (col & 1)) // 2
+        # y = -x - z
+        x = col - (row - (row & 1)) // 2
+        z = row
         y = -x - z
         return x, y, z
 
