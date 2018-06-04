@@ -66,7 +66,7 @@ class TestSearchInAOE:
             unit.clear_presumed()
             unit.update_position()
         action = ACTIONS['Move'](unit_A)
-        extractor = distance_to_cell(self.grid[(2, 0)])
+        extractor = distance_to_cell(self.grid[(4, 2)])
         params = action.search_in_aoe(find_min, extractor)
         # print(params)
         action.instant_setup(**params)
@@ -74,4 +74,4 @@ class TestSearchInAOE:
         for unit in self.units:
             unit.clear_presumed()
             unit.update_position()
-        assert unit_A.cell == self.grid[(2, 1)]
+        assert unit_A.cell == self.grid[(3, 2)]
