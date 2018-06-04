@@ -1507,5 +1507,113 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !expr [!prop B.stats.max__health, "-", 20]
+      check: !expr [!prop B.stats.max__health, "-", 10]
       result: !prop B.stats.health
+
+- name: healthpot test
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Fighter_sword
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Grenade
+      args:
+        target: !cell [3, 2]
+    - action_name: LoadBuckshot
+      args: {}
+    - action_name: Shoot
+      args:
+        target: !cell [3, 2]
+  actions_B:
+    - action_name: HealthPotion
+      args: {}
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr [!prop B.stats.max__health, "-", 42]
+      result: !prop B.stats.health
+
+- name: heal to full
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Fighter_sword
+    cell: !cell [3, 2]
+  actions_A:
+    - action_name: Grenade
+      args:
+        target: !cell [3, 2]
+  actions_B:
+    - action_name: HealthPotion
+      args: {}
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop B.stats.max__health
+      result: !prop B.stats.health
+
+- name: speedpot test1
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Fighter_sword
+    cell: !cell [3, 2]
+  actions_A: []
+  actions_B:
+    - action_name: EmpoweredCleave
+      args: {}
+    - action_name: SpeedPotion
+      args: {}
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !prop A.stats.max__action_points
+      result: !prop A.stats.action_points
+
+
+- name: speedpot test2
+  A:
+    unit: Fighter_rifle
+    cell: !cell [2, 2]
+  B:
+    unit: Fighter_sword
+    cell: !cell [3, 2]
+  actions_A: []
+  actions_B:
+    - action_name: EmpoweredCleave
+      args: {}
+    - action_name: EmpoweredCleave
+      args: {}
+    - action_name: SpeedPotion
+      args: {}
+    - action_name: EmpoweredCleave
+      args: {}
+  checks:
+    - cell: !cell [2, 2]
+      check: !prop cell.object
+      result: !prop A
+    - cell: !cell [3, 2]
+      check: !prop cell.object
+      result: !prop B
+    - cell: !cell [3, 2]
+      check: !expr [!prop A.stats.max__health, "-", 105]
+      result: !prop A.stats.health
