@@ -66,11 +66,12 @@ class HexCellWidget(relativelayout.FloatLayout):
         points = []
         step = 6
         istep = (pi * 2) / float(step)
+        offset = pi/6
         xs = []
         ys = []
         for i in range(step):
-            x = cos(istep * i) * self.hex_size + self.hex_size
-            y = sin(istep * i) * self.hex_size + self.hex_size*H_COEF
+            x = cos(istep * i + offset) * self.hex_size + self.hex_size
+            y = sin(istep * i + offset) * self.hex_size + self.hex_size*H_COEF
 
             c = np.matrix([[x], [y], [0]])
             m = (self.rotator * c)
@@ -142,7 +143,7 @@ class Hexgrid(widget.Widget):
     def make_cells(self):
         for cell in reversed(list(self.grid)):
             pos = cell.pos
-            terrain = cell.terrain
+            # terrain = cell.terrain
             x, y = pos
             w = cell.make_widget(
                 hex_size=self.cell_size,
@@ -193,8 +194,11 @@ class Hexgrid(widget.Widget):
         size = self.cell_size
         col, row = pos
 
-        x = size * 3 / 2 * col
-        y = size * sqrt(3) * (row - 0.5 * (col & 1))
+        # x = size * 3 / 2 * col
+        # y = size * sqrt(3) * (row - 0.5 * (col & 1))
+
+        x = size * sqrt(3) * (col + 0.5 * (row & 1))
+        y = size * 3 / 2 * row
 
         x, y = sx+x, sy+y
         c = np.matrix([[x], [y], [0]])

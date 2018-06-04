@@ -24,8 +24,8 @@ class TestGrid:
         grid = self.grid
         cells = grid.get_area((2, 2), 1)
         assert cells == {
-            grid[1, 3], grid[2, 3], grid[3, 3],
-            grid[1, 2], grid[2, 1], grid[3, 2],
+            grid[1, 3], grid[1, 2], grid[1, 1],
+            grid[2, 3], grid[3, 2], grid[2, 1],
             grid[2, 2]
         }
 
@@ -37,7 +37,7 @@ class TestGrid:
     def test_left_bottom_area(self):
         grid = self.grid
         cells = grid.get_area((0, 0), 1)
-        assert cells == {grid[0, 1], grid[1, 1], grid[1, 0], grid[0, 0]}
+        assert cells == {grid[0, 1], grid[1, 0], grid[0, 0]}
 
     def test_right_bottom_area(self):
         grid = self.grid
@@ -47,7 +47,7 @@ class TestGrid:
     def test_right_top_area(self):
         grid = self.grid
         cells = grid.get_area((4, 4), 1)
-        assert cells == {grid[3, 4], grid[4, 3], grid[4, 4]}
+        assert cells == {grid[3, 4], grid[3, 3], grid[4, 3], grid[4, 4]}
 
     def test_cell_load(self):
         cell = yaml.load(io.StringIO("!cell [0, 0]"))
@@ -69,9 +69,9 @@ class TestGrid:
             grid[2, 3],
             grid[1, 3],
             grid[1, 2],
+            grid[1, 1],
             grid[2, 1],
             grid[3, 2],
-            grid[3, 3],
         }
 
     def test_ring_r2(self):
@@ -86,13 +86,13 @@ class TestGrid:
             grid[0, 2],
             grid[0, 1],
 
-            grid[1, 1],
+            grid[1, 0],
             grid[2, 0],
-            grid[3, 1],
+            grid[3, 0],
 
-            grid[4, 3],
+            grid[3, 3],
             grid[4, 2],
-            grid[4, 1],
+            grid[3, 1],
         }
 
     def test_find_path(self):
@@ -104,7 +104,7 @@ class TestGrid:
     def test_line_area(self):
         grid = self.grid
         cells = grid.get_line(grid[2, 4], grid[0, 0])
-        assert cells == [grid[2, 4], grid[2, 3], grid[1, 3], grid[1, 2], grid[0, 1], grid[0, 0]]
+        assert cells == [grid[2, 4], grid[1, 3], grid[1, 2], grid[0, 1], grid[0, 0]]
         
     def test_line_small(self):
         grid = self.grid
