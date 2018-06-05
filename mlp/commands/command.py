@@ -1,8 +1,12 @@
 from importlib import import_module
 
+import blinker
+
 from ..replication_manager import MetaRegistry
 from ..grid import Grid
 from ..tools import rsum
+
+rearrange = blinker.signal('rearrange')
 
 EFFECTS = MetaRegistry()['Command']
 CommandMeta = MetaRegistry().make_registered_metaclass("Command")
@@ -53,6 +57,7 @@ class Place(Command):
         uw.connect(cw)
         if not self.old_place:
             s_l.add_widget(uw)
+        rearrange.send()
 
     def dump(self):
         return {
