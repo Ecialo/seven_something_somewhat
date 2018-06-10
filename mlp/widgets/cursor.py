@@ -250,7 +250,7 @@ class GeometrySelectCursor(RequestCursor):
 
     def send(self, _):
         super().send(_)
-        self.requester.select_result = self._context['selected']
+        self.requester.select_result = self._context.get('selected')
 
 
 class GeometryLastSelectCursor(GeometrySelectCursor):
