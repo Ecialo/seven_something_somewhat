@@ -195,10 +195,10 @@ class CardinalWave(Area):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
         if distance == 0:
-            return [self.source.get(context)]
+            return [grid[grid.to_offsets(self.source.get(context))]]
         cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
-        target_x, target_y, target_z = grid.offsets_to_cube(cardinal_target.pos)
-        source_x, source_y, source_z = grid.offsets_to_cube(self.source.get(context).pos)
+        target_x, target_y, target_z = grid.to_cube(cardinal_target)
+        source_x, source_y, source_z = grid.to_cube(self.source.get(context))
         left_x, left_y, left_z = (source_x + source_y - target_y - target_x, source_y + source_z - target_z - target_y, source_z + source_x - target_x - target_z)
         right_x, right_y, right_z = (source_x + source_z - target_z - target_x, source_y + source_x - target_x - target_y, source_z + source_y - target_y - target_z)
         center_line = grid.get_line(self.source.get(context), cardinal_target, self.length)[1:]
@@ -224,11 +224,11 @@ class Cone60(Area):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
         if distance == 0:
-            return [self.source.get(context)]
+            return [grid[grid.to_offsets(self.source.get(context))]]
         cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
-        target_x, target_y, target_z = grid.offsets_to_cube(cardinal_target.pos)
-        source_x, source_y, source_z = grid.offsets_to_cube(self.source.get(context).pos)
-        abs_target_x, abs_target_y, abs_target_z = grid.offsets_to_cube(self.target.get(context).pos)
+        target_x, target_y, target_z = grid.to_cube(cardinal_target)
+        source_x, source_y, source_z = grid.to_cube(self.source.get(context))
+        abs_target_x, abs_target_y, abs_target_z = grid.to_cube(self.target.get(context))
         left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
         right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
 
@@ -271,11 +271,11 @@ class Cone60Enemy(Area):
         grid = self.grid
         distance = grid.distance(self.source.get(context), self.target.get(context))
         if distance == 0:
-            return [self.source.get(context)]
+            return [grid[grid.to_offsets(self.source.get(context))]]
         cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
-        target_x, target_y, target_z = grid.offsets_to_cube(cardinal_target.pos)
-        source_x, source_y, source_z = grid.offsets_to_cube(self.source.get(context).pos)
-        abs_target_x, abs_target_y, abs_target_z = grid.offsets_to_cube(self.target.get(context).pos)
+        target_x, target_y, target_z = grid.to_cube(cardinal_target)
+        source_x, source_y, source_z = grid.to_cube(self.source.get(context))
+        abs_target_x, abs_target_y, abs_target_z = grid.to_cube(self.target.get(context))
         left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
         right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
 
