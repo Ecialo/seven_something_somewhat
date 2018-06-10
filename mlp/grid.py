@@ -230,8 +230,16 @@ class RectGrid(Grid):
 
 @bind_widget('HexCellWidget')
 class HexCell(Cell):
-    pass
 
+    exposed = [
+        'parallel_transfer',
+    ]
+
+    def parallel_transfer(self, vector):
+        col, row = self.pos
+        col += vector[0]
+        row += vector[1]
+        return self.grid[(col, row)]
 
 @bind_widget('Hexgrid')
 class HexGrid(Grid):

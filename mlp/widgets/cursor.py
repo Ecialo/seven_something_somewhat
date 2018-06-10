@@ -251,6 +251,14 @@ class GeometryLastSelectCursor(GeometrySelectCursor):
         self.game.remove_cursor()
         self.requester.select_result = self.selected_cells[-1]
 
+class GeometryDirectionSelectCursor(GeometrySelectCursor):
+
+    def send(self, _):
+        self.game.remove_cursor()
+        source_col, source_row = self._context['source'].pos
+        target_col, target_row = self._context['selected'].pos
+        self.requester.select_result = [target_col - source_row, target_row - source_row]
+
 
 CURSOR_TABLE = {
     'any_cell': MultiSelectCursor,
@@ -258,4 +266,5 @@ CURSOR_TABLE = {
     'line': LineSelectCursor,
     'geometry': GeometrySelectCursor,
     'geometry_last': GeometryLastSelectCursor,
+    'geometry_direction': GeometryDirectionSelectCursor
 }
