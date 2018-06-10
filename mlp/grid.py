@@ -34,7 +34,7 @@ class FixedArea:
     ]
 
     def __init__(self, cells=None, color=None):
-        self.cells = cells or []
+        self.cells = [cell for cell in cells if cell is not None] or []
         self.color = color
 
     @property
