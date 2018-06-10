@@ -257,6 +257,28 @@ class HexGrid(Grid):
         row = z
         return col, row
 
+    @classmethod
+    def to_cube(cls, cell_or_pos):
+        if isinstance(cell_or_pos, Cell):
+            return cls.offsets_to_cube(cell_or_pos.pos)
+        elif len(cell_or_pos) == 3:
+            return cell_or_pos
+        elif len(cell_or_pos) == 2:
+            return cls.offsets_to_cube(cell_or_pos)
+        else:
+            raise ValueError()
+
+    @classmethod
+    def to_offsets(cls, cell_or_pos):
+        if isinstance(cell_or_pos, Cell):
+            return cell_or_pos.pos
+        elif len(cell_or_pos) == 3:
+            return cls.cube_to_offsets(cell_or_pos)
+        elif len(cell_or_pos) == 2:
+            return cell_or_pos
+        else:
+            raise ValueError()
+
     @staticmethod
     def offsets_to_cube(pos):
         col, row = pos
@@ -269,9 +291,9 @@ class HexGrid(Grid):
         return x, y, z
 
     @classmethod
-    def distance(cls, cell_a, cell_b):
-        pos_a = cls.offsets_to_cube(cell_a.pos)
-        pos_b = cls.offsets_to_cube(cell_b.pos)
+    def distance(cls, cell_or_pos_a, cell_or_pos_b):
+        pos_a = cls.to_cube(cell_or_pos_a)
+        pos_b = cls.to_cube(cell_or_pos_b)
         return max((abs(a - b) for a, b in zip(pos_a, pos_b)))
 
     @staticmethod
@@ -296,16 +318,16 @@ class HexGrid(Grid):
             rz = -rx - ry
         return int(rx), int(ry), int(rz)
 
-    def get_line(self, source_cell, target_cell, length=None):
+    def get_line(self, source_cell_or_pos, target_cell_or_pos, length=None):
         # TODO правильно продлевать длину линий
-        distance = self.distance(source_cell, target_cell)
+        distance = self.distance(source_cell_or_pos, target_cell_or_pos)
         if distance == 0:
-            return [source_cell]
+            return [source_cell_or_pos]
         step = 1 / distance
         length = length or distance
         result = []
-        s_cube_pos = self.offsets_to_cube(source_cell.pos)
-        t_cube_pos = self.offsets_to_cube(target_cell.pos)
+        s_cube_pos = self.to_cube(source_cell_or_pos)
+        t_cube_pos = self.to_cube(target_cell_or_pos)
         for i in range(length+1):
             col, row = self.cube_to_offsets(self.round_cube(self.cube_inter(s_cube_pos, t_cube_pos, step*i)))
             width, height = self.size
