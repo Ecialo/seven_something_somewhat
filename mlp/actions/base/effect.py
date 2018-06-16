@@ -217,7 +217,12 @@ class CustomUnitEffect(UnitEffect):
                 # print("\n\n")
                 # print(effect, getattr(effect, 'line_of_fire', None))
                 print("Start", effect)
-                effect._apply(target, context.new_child())     # TODO перепроектировать это
+                # При наличии Cell эффектов всё взрывается. Нужно передавать клетку
+                if isinstance(effect, CellEffect):
+                    logging.info(target.cell)
+                    effect._apply(target.cell, context.new_child())
+                else:
+                    effect._apply(target, context.new_child())     # TODO перепроектировать это
                 print("DONE", self)
                 # print(effect)
                 # print(self)

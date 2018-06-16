@@ -5,7 +5,9 @@ from contextlib import contextmanager
 from .property import Property
 from ...grid import (
     HexGrid,
-    FixedArea
+    FixedArea,
+    Cell,
+    HexCell,
 )
 from ...tools import dotdict
 from ...replication_manager import MetaRegistry
@@ -68,16 +70,18 @@ class Melee(Area):
         self.center = center
 
     def _get(self, context):
-        grid = self.grid
-        for cell in grid.get_area(self.center.get(context), self.radius):
-            log.debug("Cell {} CellObj {} Owner {}".format(
-                cell,
-                cell.object.stats.owner if cell.object else None,
-                context['owner'].stats.owner
-            ))
-            if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
-                return [cell]
-        return []
+        with self.configure(context) as c:
+            center, radius = c.center, c.radius
+            grid = self.grid
+            for cell in grid.get_area(center, radius):
+                log.debug("Cell {} CellObj {} Owner {}".format(
+                    cell,
+                    cell.object.stats.owner if cell.object else None,
+                    context['owner'].stats.owner
+                ))
+                if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
+                    return [cell]
+            return []
 
 
 class Line(Area):
@@ -135,7 +139,9 @@ class Circle(Area):
         self.radius = radius
 
     def _get(self, context):
-        return self.grid.get_area(self.center.get(context), self.radius)
+        with self.configure(context) as c:
+            center, radius = c.center, c.radius
+            return self.grid.get_area(center, radius)
 
 
 class Ring(Area):
@@ -146,7 +152,9 @@ class Ring(Area):
         self.inner_radius = inner_radius
 
     def _get(self, context):
-        return self.grid.get_ring(self.center.get(context), self.radius, self.inner_radius)
+        with self.configure(context) as c:
+            center, radius, inner_radius = c.center, c.radius, c.inner_radius
+            return self.grid.get_ring(center, radius, inner_radius)
 
 
 class Ray(Area):
@@ -157,12 +165,16 @@ class Ray(Area):
         self.length = length
 
     def _get(self, context):
-        grid = self.grid
-        line = grid.get_line(self.source.get(context), self.target.get(context), self.length)[1:]
-        for i, cell in enumerate(line):
-            if cell.object:
-                return line[:i + 1]
-        return line
+        with self.configure(context) as c:
+            source, target, length = c.source, c.target, c.length
+            # assert isinstance(source, HexCell), str(type(source))
+            # assert isinstance(target, HexCell), str(type(target))
+            grid = self.grid
+            line = grid.get_line(source, target, length)[1:]
+            for i, cell in enumerate(line):
+                if cell.object:
+                    return line[:i + 1]
+            return line
 
 
 class Tail(Area):
@@ -174,14 +186,18 @@ class Tail(Area):
         self.start = start
 
     def _get(self, context):
-        grid = self.grid
-        distance = grid.distance(self.source.get(context), self.target.get(context))
-        if self.start is None:
-            start = distance
-        else:
-            start = self.start
-        line = grid.get_line(self.source.get(context), self.target.get(context), self.length + start)[start + 1:]
-        return line
+        with self.configure(context) as c:
+            source, target, length, start = c.source, c.target, c.length, c.start
+            # assert isinstance(source, HexCell), str(type(source))
+            # assert isinstance(target, HexCell), str(type(target))
+            grid = self.grid
+            distance = grid.distance(source, target)
+            if self.start is None:
+                start = distance
+            else:
+                start = self.start
+            line = grid.get_line(source, target, length + start)[start + 1:]
+            return line
 
 
 class CardinalWave(Area):
@@ -192,26 +208,39 @@ class CardinalWave(Area):
         self.length = length
 
     def _get(self, context):
-        grid = self.grid
-        distance = grid.distance(self.source.get(context), self.target.get(context))
-        if distance == 0:
-            return [grid[grid.to_offsets(self.source.get(context))]]
-        cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
-        target_x, target_y, target_z = grid.to_cube(cardinal_target)
-        source_x, source_y, source_z = grid.to_cube(self.source.get(context))
-        left_x, left_y, left_z = (source_x + source_y - target_y - target_x, source_y + source_z - target_z - target_y, source_z + source_x - target_x - target_z)
-        right_x, right_y, right_z = (source_x + source_z - target_z - target_x, source_y + source_x - target_x - target_y, source_z + source_y - target_y - target_z)
-        center_line = grid.get_line(self.source.get(context), cardinal_target, self.length)[1:]
-        result = []
-        for cell in center_line:
-            x, y, z = grid.offsets_to_cube(cell.pos)
-            left = grid[grid.cube_to_offsets((x + left_x, y + left_y, z + left_z))]
-            right = grid[grid.cube_to_offsets((x + right_x, y + right_y, z + right_z))]
-            if left is not None:
-                result.append(left)
-            if right is not None:
-                result.append(right)
-        return center_line + result
+        with self.configure(context) as c:
+            source, target, length = c.source, c.target, c.length
+            # assert isinstance(source, HexCell), str(type(source))
+            # assert isinstance(target, HexCell), str(type(target))
+            grid = self.grid
+            distance = grid.distance(source, target)
+            if distance == 0:
+                return [grid[grid.to_offsets(source)]]
+            cardinal_target = grid.get_line(source, target, 2)[1]
+            target_x, target_y, target_z = grid.to_cube(cardinal_target)
+            source_x, source_y, source_z = grid.to_cube(source)
+            left_x, left_y, left_z = (
+                source_x + source_y - target_y - target_x,
+                source_y + source_z - target_z - target_y,
+                source_z + source_x - target_x - target_z,
+            )
+            right_x, right_y, right_z = (
+                source_x + source_z - target_z - target_x,
+                source_y + source_x - target_x - target_y,
+                source_z + source_y - target_y - target_z,
+            )
+            center_line = grid.get_line(source, cardinal_target, length)[1:]
+            result = []
+            for cell in center_line:
+                x, y, z = grid.offsets_to_cube(cell.pos)
+                left = grid[grid.cube_to_offsets((x + left_x, y + left_y, z + left_z))]
+                right = grid[grid.cube_to_offsets((x + right_x, y + right_y, z + right_z))]
+                if left is not None:
+                    result.append(left)
+                if right is not None:
+                    result.append(right)
+            return center_line + result
+
 
 class Cone60(Area):
 
@@ -220,45 +249,58 @@ class Cone60(Area):
         self.target = target
         self.length = length
 
-    def _get(self,context):
-        grid = self.grid
-        distance = grid.distance(self.source.get(context), self.target.get(context))
-        if distance == 0:
-            return [grid[grid.to_offsets(self.source.get(context))]]
-        cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
-        target_x, target_y, target_z = grid.to_cube(cardinal_target)
-        source_x, source_y, source_z = grid.to_cube(self.source.get(context))
-        abs_target_x, abs_target_y, abs_target_z = grid.to_cube(self.target.get(context))
-        left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
-        right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
+    def _get(self, context):
+        with self.configure(context) as c:
+            source, target, length = c.source, c.target, c.length
+            # assert isinstance(source, HexCell), str(type(source))
+            # assert isinstance(target, HexCell), str(type(target))
+            grid = self.grid
+            distance = grid.distance(source, target)
+            if distance == 0:
+                return [grid[grid.to_offsets(source)]]
+            cardinal_target = grid.get_line(source, target, 2)[1]
+            target_x, target_y, target_z = grid.to_cube(cardinal_target)
+            source_x, source_y, source_z = grid.to_cube(source)
+            abs_target_x, abs_target_y, abs_target_z = grid.to_cube(target)
+            left_x, left_y, left_z = (
+                source_x + source_y - target_y,
+                source_y + source_z - target_z,
+                source_z + source_x - target_x,
+            )
+            right_x, right_y, right_z = (
+                source_x + source_z - target_z,
+                source_y + source_x - target_x,
+                source_z + source_y - target_y,
+            )
 
-        dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z)))
-        dist_to_right = max((abs(abs_target_x - right_x), abs(abs_target_y - right_y), abs(abs_target_z - right_z)))
+            dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z)))
+            dist_to_right = max((abs(abs_target_x - right_x), abs(abs_target_y - right_y), abs(abs_target_z - right_z)))
 
-        cell0 = [source_x, source_y, source_z]
-        cell1 = [target_x, target_y, target_z]
-        cell2 = [left_x, left_y, left_z]
-        if dist_to_left > dist_to_right:
-            cell2 = [right_x, right_y, right_z]
+            cell0 = [source_x, source_y, source_z]
+            cell1 = [target_x, target_y, target_z]
+            cell2 = [left_x, left_y, left_z]
+            if dist_to_left > dist_to_right:
+                cell2 = [right_x, right_y, right_z]
 
-        delta1 = [b - a for a,b in zip(cell0, cell1)]
-        delta2 = [b - a for a,b in zip(cell0, cell2)]
-        delta_inner = [b - a for a,b in zip(cell1, cell2)]
-        cells = [grid.cube_to_offsets(cell0)]
-        for i in range(1, self.length + 1):
-            cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
-            cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
-            for j in range(1, i):
-                cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
+            delta1 = [b - a for a,b in zip(cell0, cell1)]
+            delta2 = [b - a for a,b in zip(cell0, cell2)]
+            delta_inner = [b - a for a,b in zip(cell1, cell2)]
+            cells = [grid.cube_to_offsets(cell0)]
+            for i in range(1, self.length + 1):
+                cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
+                cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
+                for j in range(1, i):
+                    cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
 
-        result = []
-        for cell in cells:
-            col, row = cell
-            width, height = grid.size
-            if col < width and col >= 0 and row < height and row >= 0:
-                result.append(grid[(col, row)])
+            result = []
+            for cell in cells:
+                col, row = cell
+                width, height = grid.size
+                if col < width and col >= 0 and row < height and row >= 0:
+                    result.append(grid[(col, row)])
 
-        return result
+            return result
+
 
 class Cone60Enemy(Area):
 
@@ -267,49 +309,53 @@ class Cone60Enemy(Area):
         self.target = target
         self.length = length
 
-    def _get(self,context):
-        grid = self.grid
-        distance = grid.distance(self.source.get(context), self.target.get(context))
-        if distance == 0:
-            return [grid[grid.to_offsets(self.source.get(context))]]
-        cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
-        target_x, target_y, target_z = grid.to_cube(cardinal_target)
-        source_x, source_y, source_z = grid.to_cube(self.source.get(context))
-        abs_target_x, abs_target_y, abs_target_z = grid.to_cube(self.target.get(context))
-        left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
-        right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
+    def _get(self, context):
+        with self.configure(context) as c:
+            source, target, length = c.source, c.target, c.length
+            assert isinstance(source, HexCell), str(type(source))
+            assert isinstance(target, HexCell), str(type(target))
+            grid = self.grid
+            distance = grid.distance(self.source.get(context), self.target.get(context))
+            if distance == 0:
+                return [grid[grid.to_offsets(self.source.get(context))]]
+            cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
+            target_x, target_y, target_z = grid.to_cube(cardinal_target)
+            source_x, source_y, source_z = grid.to_cube(self.source.get(context))
+            abs_target_x, abs_target_y, abs_target_z = grid.to_cube(self.target.get(context))
+            left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
+            right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
 
-        dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z)))
-        dist_to_right = max((abs(abs_target_x - right_x), abs(abs_target_y - right_y), abs(abs_target_z - right_z)))
+            dist_to_left = max((abs(abs_target_x - left_x), abs(abs_target_y - left_y), abs(abs_target_z - left_z)))
+            dist_to_right = max((abs(abs_target_x - right_x), abs(abs_target_y - right_y), abs(abs_target_z - right_z)))
 
-        cell0 = [source_x, source_y, source_z]
-        cell1 = [target_x, target_y, target_z]
-        cell2 = [left_x, left_y, left_z]
-        if dist_to_left > dist_to_right:
-            cell2 = [right_x, right_y, right_z]
+            cell0 = [source_x, source_y, source_z]
+            cell1 = [target_x, target_y, target_z]
+            cell2 = [left_x, left_y, left_z]
+            if dist_to_left > dist_to_right:
+                cell2 = [right_x, right_y, right_z]
 
-        delta1 = [b - a for a,b in zip(cell0, cell1)]
-        delta2 = [b - a for a,b in zip(cell0, cell2)]
-        delta_inner = [b - a for a,b in zip(cell1, cell2)]
-        cells = [grid.cube_to_offsets(cell0)]
-        for i in range(1, self.length + 1):
-            cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
-            cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
-            for j in range(1, i):
-                cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
+            delta1 = [b - a for a,b in zip(cell0, cell1)]
+            delta2 = [b - a for a,b in zip(cell0, cell2)]
+            delta_inner = [b - a for a,b in zip(cell1, cell2)]
+            cells = [grid.cube_to_offsets(cell0)]
+            for i in range(1, self.length + 1):
+                cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta1))))
+                cells.append(grid.cube_to_offsets(tuple(a + i * b for a,b in zip(cell0, delta2))))
+                for j in range(1, i):
+                    cells.append(grid.cube_to_offsets(tuple(a + i * b + j * c for a,b,c in zip(cell0, delta1, delta_inner))))
 
-        result = []
-        for cell in cells:
-            col, row = cell
-            width, height = grid.size
-            if col < width and col >= 0 and row < height and row >= 0:
-                result.append(grid[(col, row)])
+            result = []
+            for cell in cells:
+                col, row = cell
+                width, height = grid.size
+                if col < width and col >= 0 and row < height and row >= 0:
+                    result.append(grid[(col, row)])
 
-        shuffle(result)
-        for cell in result:
-            if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
-                return [cell]
-        return []
+            shuffle(result)
+            for cell in result:
+                if cell.object and cell.object.stats.owner != context['owner'].stats.owner:
+                    return [cell]
+            return []
 
 
 def area_constructor(loader, node):

@@ -3,6 +3,7 @@ from collections.abc import Iterable
 
 import blinker
 
+from ...grid import Cell
 from ...commands import command as com
 from .effect import (
     UnitEffect,
@@ -247,6 +248,7 @@ class LaunchAction(CellEffect):
         self.setup = setup
 
     def _apply(self, cell, context):
+        assert isinstance(cell, Cell)
         with self.configure(context) as c:
             # new_context = {
             #     'source': cell,

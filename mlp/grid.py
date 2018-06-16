@@ -34,7 +34,8 @@ class FixedArea:
     ]
 
     def __init__(self, cells=None, color=None):
-        self.cells = [cell for cell in cells if cell is not None] or []
+        cells = cells or []
+        self.cells = [cell for cell in cells if cell is not None]
         self.color = color
 
     @property
@@ -241,6 +242,7 @@ class HexCell(Cell):
         row += vector[1]
         return self.grid[(col, row)]
 
+
 @bind_widget('Hexgrid')
 class HexGrid(Grid):
 
@@ -267,7 +269,8 @@ class HexGrid(Grid):
 
     @classmethod
     def to_cube(cls, cell_or_pos):
-        if isinstance(cell_or_pos, Cell):
+        # if isinstance(cell_or_pos, HexCell):
+        if hasattr(cell_or_pos, 'pos'):
             return cls.offsets_to_cube(cell_or_pos.pos)
         elif len(cell_or_pos) == 3:
             return cell_or_pos
@@ -278,7 +281,8 @@ class HexGrid(Grid):
 
     @classmethod
     def to_offsets(cls, cell_or_pos):
-        if isinstance(cell_or_pos, Cell):
+        # if isinstance(cell_or_pos, HexCell):
+        if hasattr(cell_or_pos, 'pos'):
             return cell_or_pos.pos
         elif len(cell_or_pos) == 3:
             return cls.cube_to_offsets(cell_or_pos)
