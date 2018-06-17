@@ -27,8 +27,11 @@
     - Kick
     - EmpoweredKick
     - LoadBullet
+    - EmpoweredLoadBullet
     - LoadBuckshot
+    - EmpoweredLoadBuckshot
     - LoadJacan
+    - EmpoweredLoadJacan
     - Grenade
     - FireGrenade
   widget:
