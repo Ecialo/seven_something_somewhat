@@ -255,9 +255,9 @@ class GeometryDirectionSelectCursor(GeometrySelectCursor):
 
     def send(self, _):
         self.game.remove_cursor()
-        source_col, source_row = self._context['source'].pos
-        target_col, target_row = self._context['selected'].pos
-        self.requester.select_result = [target_col - source_row, target_row - source_row]
+        source_col, source_row = self.context['source'].pos
+        target_col, target_row = self.context['selected'].pos
+        self.requester.select_result = [target_col - source_col, target_row - source_row]
 
 
 CURSOR_TABLE = {
