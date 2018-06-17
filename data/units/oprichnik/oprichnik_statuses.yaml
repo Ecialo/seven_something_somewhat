@@ -59,3 +59,11 @@
         area: !glob arena     # TODO Добавить глобалы
         k: 4
         filter: !expr [!prop cell.object, "==", null]
+
+- !new_status
+  name: Vampirism
+  on_apply_harmful:
+    - !eff
+      name: ChangeStat
+      stat_name: health
+      value: !expr [!prop carrier.health, "+", !prop target_amount]

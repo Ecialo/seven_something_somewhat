@@ -178,6 +178,7 @@
         extra_tags: ["plan"]
         status: !status
           name: Parry
+          damage_threshold: 40
       area: !area
         name: Cell
         cell: !prop source

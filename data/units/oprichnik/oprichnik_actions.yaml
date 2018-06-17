@@ -1,5 +1,5 @@
 - !new_action
-  name: Slice
+  name: SabreAttack
   action_type: STANDARD
   speed: NORMAL
   cost: 1
@@ -15,9 +15,10 @@
         center: !prop source
     - effect: !eff
         name: AddStatus
+        extra_tags: ["debuff"]
         status: !status
-          name: Bleed
-          duration: 2
+          name: Bleeding
+          duration: 1
           power: 3
       area: !area
         name: Melee
@@ -26,6 +27,56 @@
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
+
+- !new_action
+  name: SabreParry
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["plan"]
+        status: !status
+          name: Parry
+          damage_threshold: 25
+      area: !area
+        name: Cell
+        cell: !prop source
+  widget:
+    icon: './data/units/fighter_sword/sword-clash(1).png'
+    pressed_icon: './data/units/fighter_sword/sword-clash.png'
+
+- !new_action
+  name: CrossSlash
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        extra_tags: ["melee"]
+        amount: !prop owner.damage
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["debuff"]
+        status: !status
+          name: Bleeding
+          duration: 6
+          power: 1
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
+  widget:
+    icon: './data/units/oprichnik/bleed_knife.png'
+    pressed_icon: './data/units/oprichnik/bleed_knife_pressed.png'
 
 - !new_action
   name: OrderScythe
@@ -41,7 +92,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedScythe
-  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '=', false]
+  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
@@ -60,7 +111,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedUpyr
-  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '=', false]
+  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
@@ -79,7 +130,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedShulikun
-  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '=', false]
+  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'

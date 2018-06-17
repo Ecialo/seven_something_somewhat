@@ -6,16 +6,20 @@
     action_points: 5
     initiative: 11
     damage: 15
-    coins: 3
+    coins: !res
+      name: coins
+      type: numeric
+      max: 100
+      initial: 3
   actions:
     - Move
-    - Slice
-    - Parry
+    - SabreAttack
+    - SabreParry
     - CrossSlash
-    - OrderUpyr
-    - OrderShulikun
-    - OrderScythe
-    - DeathIntervention
+    #- OrderUpyr
+    #- OrderShulikun
+    #- OrderScythe
+    #- DeathIntervention
   statuses:
     - !status
       name: "Sadism"

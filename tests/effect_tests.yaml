@@ -167,6 +167,7 @@
     name: AddStatus
     status: !status
       name: Parry
+      damage_threshold: 40
   - !eff
     name: Damage
     extra_tags: ["melee"]
@@ -180,6 +181,7 @@
     name: AddStatus
     status: !status
       name: Parry
+      damage_threshold: 40
   - !eff
     name: Damage
     extra_tags: ["melee"]
