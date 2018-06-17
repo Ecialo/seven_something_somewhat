@@ -41,12 +41,19 @@ class MainCursor(Cursor):
     def __init__(self, game_widget):
         super().__init__(game_widget)
         self.selected_cell = None
+        self.run_button = button.Button(
+            text="RUN",
+            pos_hint={'x': 0.73, 'y': 0.8},
+            size_hint=(0.1, 0.1)
+        )
+        self.run_button.bind(on_press=self.game.run_game)
 
     def deactivate(self):
         try:
             self.selected_cell.is_selected = False
         except AttributeError:
             pass
+        self.game.remove_widget(self.run_button)
         if self.game.stats:
             self.game.remove_widget(self.game.stats)
         if self.game.action_bar:
@@ -59,6 +66,7 @@ class MainCursor(Cursor):
         self.activate()
 
     def activate(self):
+        self.game.add_widget(self.run_button, index=1)
         if self.selected_cell:
             self.selected_cell.is_selected = True
             selected_object = self.selected_cell.cell.object
@@ -242,7 +250,7 @@ class GeometrySelectCursor(RequestCursor):
 
     def send(self, _):
         super().send(_)
-        self.requester.select_result = self._context['selected']
+        self.requester.select_result = self._context.get('selected')
 
 
 class GeometryLastSelectCursor(GeometrySelectCursor):
