@@ -41,7 +41,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedScythe
-  check: !expr ["Order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '=', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
@@ -60,7 +60,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedUpyr
-  check: !expr ["Order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '=', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
@@ -79,7 +79,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedShulikun
-  check: !expr ["Order", 'not in', !prop owner]   # TODO реализовать проверку вхождения статуса по тагу
+  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '=', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'

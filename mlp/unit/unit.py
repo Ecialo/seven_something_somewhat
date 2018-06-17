@@ -57,6 +57,10 @@ class Unit(GameObject):
     statuses = []
     playable = False
 
+    exposed = [
+        'has_status_by_tag'
+    ]
+
     def __init__(self, master_name=None, id_=None):
         super().__init__(id_)
         self.is_alive = True
@@ -300,6 +304,11 @@ class Unit(GameObject):
         })
         self.launch_triggers(['kill'], self, context)
 
+    def has_status_by_tag(self, tag):
+        for status in self.stats.statuses.values():
+            if tag in status.tags:
+                return True
+        return False
 
 def new_unit_constructor(loader, node):
     u_s = loader.construct_mapping(node)
