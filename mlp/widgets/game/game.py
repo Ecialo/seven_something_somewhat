@@ -1,16 +1,19 @@
 from collections import deque
+
+import blinker
 from kivy.uix import (
     floatlayout,
     button,
 )
+
 from ..grid import CompositeArena
 from ..general import camera
 from ...serialization import (
     remote_action_append,
 )
+
 from ...protocol import *
 from ..cursor import MainCursor
-import blinker
 
 commands = blinker.signal("commands")
 
@@ -77,14 +80,14 @@ class RemoteGame(floatlayout.FloatLayout):
             self.add_widget(self.camera, index=-1)
             self.add_widget(self.turn_order_indicator)
             self.is_loaded = True
-            run_button = button.Button(
-                text="RUN",
-                pos_hint={'x': 0.73, 'y': 0.8},
-                size_hint=(0.1, 0.1)
-            )
-            run_button.bind(on_press=self.run_game)  # TODO внести эту кнопку в главный курсор
+            # run_button = button.Button(
+            #     text="RUN",
+            #     pos_hint={'x': 0.73, 'y': 0.8},
+            #     size_hint=(0.1, 0.1)
+            # )
+            # run_button.bind(on_press=self.run_game)  # TODO внести эту кнопку в главный курсор
             self.camera.normed_camera_pos = (0.25, 0.25)
-            self.add_widget(run_button, index=1)
+            # self.add_widget(run_button, index=1)
         self.cursor.update()
 
     def receive_message(self, message_struct):

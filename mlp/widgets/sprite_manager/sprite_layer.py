@@ -2,6 +2,7 @@ from itertools import islice
 from collections import deque
 
 import numpy as np
+import blinker
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.widget import Widget
 from kivy.properties import (
@@ -20,6 +21,8 @@ Builder.load_file('./mlp/widgets/sprite_manager/sprite_layer.kv')
 
 MOVE_DURATION = 0.5
 
+rearrange = blinker.signal('rearrange')
+
 
 class SpriteLayer(RelativeLayout):
 
@@ -27,15 +30,18 @@ class SpriteLayer(RelativeLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    # def update_pos(self):
-    #     for child in self.children:
-    #         child.update_pos()
+        rearrange.connect(self.rearrange)
 
     def rescale(self, scale):
         for child in self.children:
             child.scale = scale * child.default_scale
-        # self.update_pos()
+
+    def rearrange(self, _):
+        children = [child for child in self.children]
+        children.sort(key=lambda ch: ch.unit.cell.pos[1], reverse=True)
+        self.clear_widgets()
+        for ch in children:
+            self.add_widget(ch)
 
 
 class Anchor(Widget):
@@ -182,6 +188,7 @@ class MoveAnimation:
         widget = self._widget
         widget.disconnect()
         widget.connect(self.path[-1].to_anchor)
+        rearrange.send()
         self._callback()
 
     def monitor_progress(self, inst, progress):

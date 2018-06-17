@@ -243,3 +243,4 @@ class CompositeArena(relativelayout.RelativeLayout):
     def cursor(self):
         return self.parent.parent.cursor
 
+
