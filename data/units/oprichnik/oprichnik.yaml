@@ -23,6 +23,8 @@
   statuses:
     - !status
       name: "Sadism"
+    - !status
+      name: "Vampirism"
   widget:
     sprite: './data/sprite.png'
     scale: 0.33
