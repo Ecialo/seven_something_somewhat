@@ -260,6 +260,59 @@ class CustomMetaEffect(MetaEffect):
                 effect_._apply(effect, context)
 
 
+class CustomCellEffect(CellEffect):
+
+    name = None
+    params = []
+    effects = []
+    area = None
+
+    def __init__(self, **kwargs):
+        # print(kwargs)
+        area = self.area
+        super().__init__(**kwargs)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+        self.area = self.area or area
+
+    def apply(self, cells, context):
+        # context = context.new_child()
+        # context['effect'] = self
+        # print("\n\n")
+        # print(self, context)
+        if self.area:
+            cells = self.area.get(context)
+        # context['effect'] = self
+        super().apply(cells, context.new_child())
+
+    def _apply(self, cell, context):
+        print("Enter {}".format(self))
+        context = context.new_child()
+        context['effect'] = self
+        for e_s in self.effects:
+            # context = context.new_child()
+            cond = e_s.get('condition')
+            # print("\n\n")
+            # print(self, context)
+            # print(cond)
+            if cond is None or cond.get(context):
+                effect = e_s['effect'].get()
+                # print(self)
+                # print("\n\n")
+                # print(effect, getattr(effect, 'line_of_fire', None))
+                print("Start", effect)
+                # При наличии Cell эффектов всё взрывается. Нужно передавать клетку
+                if isinstance(effect, UnitEffect) and cell.object is not None:
+                    # logging.info(cell.cell)
+                    effect._apply(cell.object, context.new_child())
+                else:
+                    effect._apply(cell, context.new_child())     # TODO перепроектировать это
+                print("DONE", self)
+                # print(effect)
+                # print(self)
+
+
+
 def effect_constructor(loader, node):
     e_s = {}
     for key_node, value_node in node.value:
@@ -291,6 +344,12 @@ def new_effect_constructor(loader, node):
             name = n_e["name"]
             effects = n_e['effects']
             params = n_e['params']
+    elif type_ == 'cell':
+        class NewEffect(CustomCellEffect):
+            name = n_e["name"]
+            effects = n_e['effects']
+            params = n_e['params']
+            area = n_e.get('area')
     else:
         raise ValueError("Effect type might be 'unit' or 'meta'")
     return NewEffect
