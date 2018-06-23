@@ -108,10 +108,10 @@ class Status(metaclass=StatusMeta):
             else:
                 new_context = self.context.new_child()
                 for k, v in context.items():
-                    if k in new_context:
-                        new_context["target_" + k] = v
-                    else:
-                        new_context[k] = v
+                    # if k in new_context:
+                    new_context["target_" + k] = v
+                    # else:
+                    #     new_context[k] = v
                 # new_context['target_context'] = dotdict(context)
                 # print(new_context)
                 # new_context = {
