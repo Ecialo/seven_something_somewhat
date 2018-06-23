@@ -118,7 +118,8 @@ class Status(metaclass=StatusMeta):
                 #     **self.context,
                 #     **context,
                 # }
-                # print(new_context)
+                print("Kappa")
+                print(new_context)
                 effect.apply(self.context['carrier'].cell, new_context)
 
     def __repr__(self):
