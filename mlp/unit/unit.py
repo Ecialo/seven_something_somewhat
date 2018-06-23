@@ -226,16 +226,12 @@ class Unit(GameObject):
             new_status = old_status + status
             self.add_status(new_status)
         else:
-            self.stats.statuses[status.name] = status
-            for event in status.events:
-                self.stats.triggers[event][status.name] = status
+            self.stats.add_status(status)
             status.on_add(self)
         # # print("STATUS", self.state, self.stats.statuses)
 
     def remove_status(self, status):
-        s = self.stats.statuses.pop(status.name)
-        for event in status.events:
-            self.stats.triggers[event].pop(status.name)
+        s = self.stats.remove_status(status)
         s.on_remove(self)
 
     def remove_status_by_tag(self, tag):

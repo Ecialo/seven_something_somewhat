@@ -23,7 +23,13 @@ class Stats(grl.GridLayout):
             resource = value.make_widget()
             # self.resources[res_name] = resource
             self.add_widget(resource)
+        self.statuses = []
 
-    # def on_load(self, struct):
-    #     for key in struct['resources']:
-    #         self.resources[key].value = self.stats.resources[key]
+    def on_load(self, struct):
+        for status_w in self.statuses:
+            self.remove_widget(status_w)
+        for status_name in struct['statuses']:
+            self.statuses.append(Label(text=status_name))
+            self.add_widget(self.statuses[-1])
+        # for key in struct['resources']:
+        #     self.resources[key].value = self.stats.resources[key]
