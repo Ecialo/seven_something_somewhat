@@ -109,7 +109,8 @@ class Status(metaclass=StatusMeta):
                 new_context = self.context.new_child()
                 for k, v in context.items():
                     # if k in new_context:
-                    new_context["target_" + k] = v
+                    new_context["event_effect_" + k] = v
+                new_context['event_effect'] = target
                     # else:
                     #     new_context[k] = v
                 # new_context['target_context'] = dotdict(context)
@@ -119,6 +120,7 @@ class Status(metaclass=StatusMeta):
                 #     **context,
                 # }
                 print("Kappa")
+                print(event, target)
                 print(new_context)
                 effect.apply(self.context['carrier'].cell, new_context)
 

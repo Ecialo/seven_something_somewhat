@@ -66,4 +66,4 @@
     - !eff
       name: ChangeStat
       stat_name: health
-      value: !expr [!prop carrier.stats.health, "+", !prop target_target.amount]
+      value: !expr [!prop carrier.stats.health, "+", !prop event_effect.amount]
