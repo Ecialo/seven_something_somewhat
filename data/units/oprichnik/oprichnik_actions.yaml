@@ -138,3 +138,32 @@
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
+
+- !new_action
+  name: KickUpyr
+  action_type: MOVE
+  speed: FAST
+  cost: 1
+  setup:
+    - name: target
+      cursor: geometry
+      cursor_params:
+        - !area
+          name: Adjacent
+          center: !prop source
+        - !area
+          name: Cell
+          cell: !prop selected
+  effects:
+    - effect: !eff
+        name: RandomSummon
+        unit: !unit
+          name: Upyr
+        owner: !prop owner.owner
+        amount: 1
+      area: !area
+        name: Cell
+        cell: !prop action.target
+  widget:
+    icon: './data/high-kick(1).png'
+    pressed_icon: './data/high-kick.png'

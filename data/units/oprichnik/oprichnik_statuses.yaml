@@ -33,17 +33,11 @@
 #  subtype: Order
   on_remove:
     - !eff
-      name: Summon
+      name: RandomSummon
       unit: !unit
         name: Upyr
       owner: !prop carrier.owner
-      area: !area
-        name: Cell
-        cell: !call [!prop carrier.cell, "parallel_transfer", [-2, -2]]
-#        name: KRandomCells
-#        area: !glob arena     # TODO Добавить глобалы
-#        k: 1
-#        filter: !expr [!prop cell.object, "==", null]
+      amount: 1
 
 - !new_status
   name: OrderedShulikun
