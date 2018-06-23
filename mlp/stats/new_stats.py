@@ -18,8 +18,8 @@ from ..resource import (
 
 class Stats:
 
-    # hooks = ['load']
-    hooks = []
+    hooks = ['load']
+    # hooks = []
 
     def __init__(self, owner, owner_name, resources):#, is_presumed=False):
         # self.resources = resources.copy()
@@ -51,6 +51,17 @@ class Stats:
     @triggers.setter
     def triggers(self, value):
         self._triggers = defaultdict(value)
+
+    def add_status(self, status):
+        self.statuses[status.name] = status
+        for event in status.events:
+            self.triggers[event][status.name] = status
+
+    def remove_status(self, status):
+        s = self.statuses.pop(status.name)
+        for event in status.events:
+            self.triggers[event].pop(status.name)
+        return s
 
     def load(self, struct):
         action_bar = struct.pop("action_bar")
