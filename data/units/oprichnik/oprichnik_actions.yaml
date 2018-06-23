@@ -92,7 +92,7 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedScythe
-  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
+  # check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
@@ -111,10 +111,14 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedUpyr
-  check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
+          duration: 1
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  # check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
-    icon: './data/punch(1).png'
-    pressed_icon: './data/punch.png'
+    icon: './data/units/oprichnik/zombie.png'
+    pressed_icon: './data/units/oprichnik/zombie_pressed.png'
 
 - !new_action
   name: OrderShulikun
