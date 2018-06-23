@@ -101,6 +101,114 @@
     pressed_icon: './data/units/fighter_rifle/jacan_pressed.png'
 
 - !new_action
+  name: EmpoweredLoadBullet
+  action_type: MOVE
+  speed: NORMAL
+  cost:
+    action_points: 1
+    endurance: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "bullet"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Shoot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Ready
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.bullets, ">", 0]
+  widget:
+    icon: './data/units/fighter_rifle/emp_bullet.png'
+    pressed_icon: './data/units/fighter_rifle/emp_bullet_pressed.png'
+
+- !new_action
+  name: EmpoweredLoadBuckshot
+  action_type: MOVE
+  speed: NORMAL
+  cost:
+    action_points: 1
+    endurance: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "buckshot"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Shoot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Ready
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.buckshots, ">", 0]
+  widget:
+    icon: './data/units/fighter_rifle/emp_buckshot.png'
+    pressed_icon: './data/units/fighter_rifle/emp_buckshot_pressed.png'
+
+- !new_action
+  name: EmpoweredLoadJacan
+  action_type: MOVE
+  speed: NORMAL
+  cost:
+    action_points: 1
+    endurance: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: ChangeStat
+        extra_tags: ["plan"]
+        stat_name: loaded
+        value: "jacan"
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Shoot
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+    - effect: !eff
+        name: AddAction
+        extra_tags: ["plan"]
+        action_name: Ready
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  check: !expr [!prop owner.jacans, ">", 0]
+  widget:
+    icon: './data/units/fighter_rifle/emp_jacan.png'
+    pressed_icon: './data/units/fighter_rifle/emp_jacan_pressed.png'
+
+- !new_action
   name: Shoot
   action_type: STANDARD
   speed: SLOW
@@ -160,7 +268,7 @@
     endurance: 1
   setup:
     - name: target
-      cursor: geometry
+      cursor: geometry_direction
       cursor_params:
         - !area
           name: Ring

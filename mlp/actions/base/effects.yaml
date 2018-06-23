@@ -42,6 +42,7 @@
 
 - !new_eff
   name: Stun
+  extra_tags: ["debuff"]
   params:
     - power
   effects:

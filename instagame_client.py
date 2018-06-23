@@ -43,11 +43,11 @@ class InstagameApp(App):
         self.players = [
             {
                 'name':'Ustas',
-                'unit': 'Fighter_sword'
+                'unit': 'Fighter_rifle'
             },
             {
                 'name': 'Vitaline',
-                'unit': 'Fighter_rifle'
+                'unit': 'Oprichnik'
             },
         ]
         self.screen_manager = sm

@@ -1,5 +1,5 @@
 - !new_eff
-  name: Parry
+  name: ParryEffect
   type: meta
   params:
     - power

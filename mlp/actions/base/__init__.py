@@ -82,10 +82,11 @@ class Damage(UnitEffect):
     def _apply(self, target, context):
         with self.configure(context) as c:
             logging.debug("DAMAGE {} for {}".format(target, max(1, c.amount - target.stats.armor)))
-            target.stats.health -= max(1, c.amount - target.stats.armor)
+            self.amount = max(1, c.amount - target.stats.armor)
+            target.stats.health -= self.amount
             trace.send(command=com.Damage(
                 unit=target,
-                amount=max(1, c.amount - target.stats.armor)
+                amount=self.amount
             ))
             if target.stats.health <= 0:
                 trace.send(command=com.Revoke(target, target.cell))

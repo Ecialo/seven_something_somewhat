@@ -91,7 +91,7 @@ class Status(metaclass=StatusMeta):
         params['context'] = dict(params['context'])
         params['context'].pop('status')
         params['context'].pop('effect', None)
-        params['context']['target'] = params['context']['target'].cell
+        # params['context']['target'] = params['context']['target'].cell
         params['context']['owner'] = params['context']['owner'].cell
         params['context']['carrier'] = params['context']['carrier'].cell
         return {
@@ -135,7 +135,7 @@ class Status(metaclass=StatusMeta):
         # pass
         # print(self.name)
         # print(self.context)
-        self.context['target'] = self.context['target'].object
+        # self.context['target'] = self.context['target'].object
         self.context['owner'] = self.context['owner'].object
         self.context['carrier'] = self.context['carrier'].object
         self.context['status'] = self
@@ -143,7 +143,7 @@ class Status(metaclass=StatusMeta):
 
 class Dot(Status):
     params = ["power"]
-    _tags = ["dot"]
+    _tags = ["dot", "debuff"]
 
     def __add__(self, other):
         assert self.__class__ is other.__class__

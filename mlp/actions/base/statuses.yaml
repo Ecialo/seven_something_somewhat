@@ -94,6 +94,10 @@
 - !new_status
   name: Bleeding
   subtype: Dot
+  on_turn_end:
+    - !eff
+      name: Damage
+      amount: !prop status.power
 
 - !new_status
   name: Reloading

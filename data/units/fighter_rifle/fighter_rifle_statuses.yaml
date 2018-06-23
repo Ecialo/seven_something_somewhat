@@ -8,7 +8,7 @@
       shoot_area: !area
         name: Cone60Enemy
         source: !prop carrier.cell
-        target: !prop status.shoot_target
+        target: !call [!prop carrier.cell, "parallel_transfer", !prop status.shoot_target]
         length: 5
     - !eff
       name: RemoveStatus

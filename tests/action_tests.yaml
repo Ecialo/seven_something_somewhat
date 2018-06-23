@@ -1153,7 +1153,7 @@
       args: {}
     - action_name: Ready
       args:
-        target: !cell [3, 2]
+        target: [1, 0]
   actions_B: []
   checks:
     - cell: !cell [2, 2]
@@ -1183,7 +1183,7 @@
       args: {}
     - action_name: Ready
       args:
-        target: !cell [3, 2]
+        target: [1, 0]
   actions_B: []
   checks:
     - cell: !cell [2, 2]
@@ -1213,7 +1213,7 @@
       args: {}
     - action_name: Ready
       args:
-        target: !cell [2, 1]
+        target: [0, -1]
   actions_B: []
   checks:
     - cell: !cell [2, 2]
@@ -1243,7 +1243,7 @@
       args: {}
     - action_name: Ready
       args:
-        target: !cell [2, 1]
+        target: [0, -1]
   actions_B:
     - action_name: Move
       args:
@@ -1282,7 +1282,7 @@
       args: {}
     - action_name: Ready
       args:
-        target: !cell [2, 3]
+        target: [0, 1]
   actions_B:
     - action_name: Move
       args:
@@ -1321,7 +1321,7 @@
       args: {}
     - action_name: Ready
       args:
-        target: !cell [3, 3]
+        target: [1, 0]
   actions_B:
     - action_name: EmpoweredKick
       args:
@@ -1335,11 +1335,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 31, ")"]
+        - [!prop B.stats.health, "==", !prop B.stats.max__health]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.stats.loaded, "==", "bullet"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
         - and
         - [!prop A.stats.health, "==", "(", !prop A.stats.max__health, "-", 10, ")"]
       result: true

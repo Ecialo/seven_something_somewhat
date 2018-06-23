@@ -255,10 +255,10 @@ class Cone60(Area):
             # assert isinstance(source, HexCell), str(type(source))
             # assert isinstance(target, HexCell), str(type(target))
             grid = self.grid
-            distance = grid.distance(source, target)
-            if distance == 0:
+            target_line = grid.get_line(source, target)
+            if len(target_line) < 2:
                 return [grid[grid.to_offsets(source)]]
-            cardinal_target = grid.get_line(source, target, 2)[1]
+            cardinal_target = target_line[1]
             target_x, target_y, target_z = grid.to_cube(cardinal_target)
             source_x, source_y, source_z = grid.to_cube(source)
             abs_target_x, abs_target_y, abs_target_z = grid.to_cube(target)
@@ -312,16 +312,16 @@ class Cone60Enemy(Area):
     def _get(self, context):
         with self.configure(context) as c:
             source, target, length = c.source, c.target, c.length
-            assert isinstance(source, HexCell), str(type(source))
-            assert isinstance(target, HexCell), str(type(target))
+            # assert isinstance(source, HexCell), str(type(source))
+            # assert isinstance(target, HexCell), str(type(target))
             grid = self.grid
-            distance = grid.distance(self.source.get(context), self.target.get(context))
-            if distance == 0:
-                return [grid[grid.to_offsets(self.source.get(context))]]
-            cardinal_target = grid.get_line(self.source.get(context), self.target.get(context), 2)[1]
+            target_line = grid.get_line(source, target)
+            if len(target_line) < 2:
+                return []
+            cardinal_target = target_line[1]
             target_x, target_y, target_z = grid.to_cube(cardinal_target)
-            source_x, source_y, source_z = grid.to_cube(self.source.get(context))
-            abs_target_x, abs_target_y, abs_target_z = grid.to_cube(self.target.get(context))
+            source_x, source_y, source_z = grid.to_cube(source)
+            abs_target_x, abs_target_y, abs_target_z = grid.to_cube(target)
             left_x, left_y, left_z = (source_x + source_y - target_y, source_y + source_z - target_z, source_z + source_x - target_x)
             right_x, right_y, right_z = (source_x + source_z - target_z, source_y + source_x - target_x, source_z + source_y - target_y)
 

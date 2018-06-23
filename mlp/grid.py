@@ -240,7 +240,7 @@ class HexCell(Cell):
         col, row = self.pos
         col += vector[0]
         row += vector[1]
-        return self.grid[(col, row)]
+        return (col, row)
 
 
 @bind_widget('Hexgrid')

@@ -1,0 +1,17 @@
+- !new_unit
+  name: Upyr
+  resources:
+    health: 40
+    armor: 0
+    action_points: 4
+    initiative: 8
+    damage: 10
+  actions:
+    - Move
+    - Attack
+  statuses:
+    - !status
+      name: "Vampirism"
+  widget:
+    sprite: './data/sprite.png'
+    scale: 0.33

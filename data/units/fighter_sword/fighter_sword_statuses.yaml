@@ -1,5 +1,7 @@
 - !new_status
   name: Parry
+  params:
+    - damage_threshold
   on_phase_end:
     - !eff
       name: RemoveStatus
@@ -7,8 +9,8 @@
         name: Parry
   on_harmful_melee:
     - !eff
-      name: Parry
-      power: 40
+      name: ParryEffect
+      power: !prop status.damage_threshold
       
 - !new_status
   name: TotalParry
