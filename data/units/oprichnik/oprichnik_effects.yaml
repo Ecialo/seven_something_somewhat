@@ -1,0 +1,16 @@
+- !new_eff
+  name: RandomSummon
+  params:
+    - unit
+    - amount
+    - owner
+  effects:
+    - effect: !eff
+        name: Summon
+        unit: !prop effect.unit
+        owner: !prop effect.owner
+      area: !area
+        name: KRandomCells
+        area: !glob arena
+        k: !prop effect.amount
+        filter: !expr [!prop cell.object, "==", null]

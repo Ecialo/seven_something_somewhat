@@ -48,7 +48,7 @@
     - effect: !eff
         name: Summon
         unit: !unit
-          name: Dog
+          name: Upyr
         owner: !prop owner.owner
       area: !prop action.target_cell
   widget:
