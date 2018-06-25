@@ -163,20 +163,88 @@ class MetaEffect(AbstractEffect):
         return self.__class__(**vars(self))
 
 
-class CustomUnitEffect(UnitEffect):
-    """
-    Контекстные значения эффекта
+# class CustomUnitEffect(UnitEffect):
+    # """
+    # Контекстные значения эффекта
+    #
+    # Наследуются от юнита
+    # owner: юнит делающий действие вызывающее эффект
+    # source: клетка в которой находится юнит в момент взятия контекста
+    # ----
+    # Наследуются от действия
+    # action: действие вызывающее эффект
+    # ---
+    # Свои
+    # effect: сам эффект
+    # """
+    #
+    # name = None
+    # params = []
+    # effects = []
+    # area = None
+    #
+    # def __init__(self, **kwargs):
+    #     # print(kwargs)
+    #     area = self.area
+    #     super().__init__(**kwargs)
+    #     for k, v in kwargs.items():
+    #         setattr(self, k, v)
+    #     self.area = self.area or area
+    #
+    # def apply(self, cells, context):
+    #     # context = context.new_child()
+    #     # context['effect'] = self
+    #     # print("\n\n")
+    #     # print(self, context)
+    #     if self.area:
+    #         cells = self.area.get(context)
+    #     # context['effect'] = self
+    #     super().apply(cells, context.new_child())
+    #
+    # def _apply(self, target, context):
+    #     print("Enter {}".format(self))
+    #     context = context.new_child()
+    #     context['effect'] = self
+    #     for e_s in self.effects:
+    #         # context = context.new_child()
+    #         cond = e_s.get('condition')
+    #         # print("\n\n")
+    #         # print(self, context)
+    #         # print(cond)
+    #         if cond is None or cond.get(context):
+    #             effect = e_s['effect'].get()
+    #             # print(self)
+    #             # print("\n\n")
+    #             # print(effect, getattr(effect, 'line_of_fire', None))
+    #             print("Start", effect)
+    #             # При наличии Cell эффектов всё взрывается. Нужно передавать клетку
+    #             if isinstance(effect, CellEffect):
+    #                 logging.info(target.cell)
+    #                 effect._apply(target.cell, context.new_child())
+    #             else:
+    #                 effect._apply(target, context.new_child())     # TODO перепроектировать это
+    #             print("DONE", self)
+    #             # print(effect)
+    #             # print(self)
+    #
+    # def __repr__(self):
+    #     return self.name
 
-    Наследуются от юнита
-    owner: юнит делающий действие вызывающее эффект
-    source: клетка в которой находится юнит в момент взятия контекста
-    ----
-    Наследуются от действия
-    action: действие вызывающее эффект
-    ---
-    Свои
-    effect: сам эффект
+
+class CustomEffect(AbstractEffect):
     """
+        Контекстные значения эффекта
+
+        Наследуются от юнита
+        owner: юнит делающий действие вызывающее эффект
+        source: клетка в которой находится юнит в момент взятия контекста
+        ----
+        Наследуются от действия
+        action: действие вызывающее эффект
+        ---
+        Свои
+        effect: сам эффект
+        """
 
     name = None
     params = []
@@ -192,40 +260,36 @@ class CustomUnitEffect(UnitEffect):
         self.area = self.area or area
 
     def apply(self, cells, context):
-        # context = context.new_child()
-        # context['effect'] = self
-        # print("\n\n")
-        # print(self, context)
         if self.area:
             cells = self.area.get(context)
-        # context['effect'] = self
-        super().apply(cells, context.new_child())
+        if context['owner'].state is PLANNING and "plan" not in self.tags:
+            return
+        if not isinstance(cells, Iterable):
+            cells = [cells]
+        for cell in cells:
+                # effect_context = context.copy()
+            effect_context = context
+            effect_context['target'] = cell.object
+            effect = self.copy()
+            if cell.object is not None:
+                cell.object.launch_triggers(self.tags, effect, effect_context.new_child())
+            if not effect.is_canceled:
+                effect._apply(cell, effect_context)
+                context['owner'].launch_triggers(["apply"] + self.tags, effect, effect_context.new_child())
 
-    def _apply(self, target, context):
-        print("Enter {}".format(self))
+    def copy(self):
+        return self.__class__(**vars(self))
+
+    def _apply(self, cell, context):
         context = context.new_child()
         context['effect'] = self
         for e_s in self.effects:
-            # context = context.new_child()
             cond = e_s.get('condition')
-            # print("\n\n")
-            # print(self, context)
-            # print(cond)
-            if cond is None or cond.get(context):
-                effect = e_s['effect'].get()
-                # print(self)
-                # print("\n\n")
-                # print(effect, getattr(effect, 'line_of_fire', None))
-                print("Start", effect)
-                # При наличии Cell эффектов всё взрывается. Нужно передавать клетку
-                if isinstance(effect, CellEffect):
-                    logging.info(target.cell)
-                    effect._apply(target.cell, context.new_child())
-                else:
-                    effect._apply(target, context.new_child())     # TODO перепроектировать это
-                print("DONE", self)
-                # print(effect)
-                # print(self)
+            effect = e_s['effect'].get()
+            if (isinstance(effect, CellEffect) or isinstance(effect, CustomEffect)) and (cond is None or cond.get(context)):
+                effect._apply(cell, context.new_child())
+            elif isinstance(effect, UnitEffect) and cell.object is not None and (cond is None or cond.get(context)):
+                effect._apply(cell.object, context.new_child())  # TODO перепроектировать это
 
     def __repr__(self):
         return self.name
@@ -260,59 +324,6 @@ class CustomMetaEffect(MetaEffect):
                 effect_._apply(effect, context)
 
 
-class CustomCellEffect(CellEffect):
-
-    name = None
-    params = []
-    effects = []
-    area = None
-
-    def __init__(self, **kwargs):
-        # print(kwargs)
-        area = self.area
-        super().__init__(**kwargs)
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-        self.area = self.area or area
-
-    def apply(self, cells, context):
-        # context = context.new_child()
-        # context['effect'] = self
-        # print("\n\n")
-        # print(self, context)
-        if self.area:
-            cells = self.area.get(context)
-        # context['effect'] = self
-        super().apply(cells, context.new_child())
-
-    def _apply(self, cell, context):
-        print("Enter {}".format(self))
-        context = context.new_child()
-        context['effect'] = self
-        for e_s in self.effects:
-            # context = context.new_child()
-            cond = e_s.get('condition')
-            # print("\n\n")
-            # print(self, context)
-            # print(cond)
-            if cond is None or cond.get(context):
-                effect = e_s['effect'].get()
-                # print(self)
-                # print("\n\n")
-                # print(effect, getattr(effect, 'line_of_fire', None))
-                print("Start", effect)
-                # При наличии Cell эффектов всё взрывается. Нужно передавать клетку
-                if isinstance(effect, UnitEffect) and cell.object is not None:
-                    # logging.info(cell.cell)
-                    effect._apply(cell.object, context.new_child())
-                else:
-                    effect._apply(cell, context.new_child())     # TODO перепроектировать это
-                print("DONE", self)
-                # print(effect)
-                # print(self)
-
-
-
 def effect_constructor(loader, node):
     e_s = {}
     for key_node, value_node in node.value:
@@ -328,13 +339,14 @@ def effect_constructor(loader, node):
 def new_effect_constructor(loader, node):
     n_e = loader.construct_mapping(node)
 
-    if "type" in n_e:
-        type_ = n_e.pop("type")
-    else:
-        type_ = "unit"
+    # if "type" in n_e:
+    type_ = n_e.pop("type", 'general')
+    # else:
+    #     type_ = "unit"
 
-    if type_ == "unit":
-        class NewEffect(CustomUnitEffect):
+    if type_ == "general":
+        # class NewEffect(CustomUnitEffect):
+        class NewEffect(CustomEffect):
             name = n_e["name"]
             effects = n_e['effects']
             params = n_e['params']
@@ -344,12 +356,12 @@ def new_effect_constructor(loader, node):
             name = n_e["name"]
             effects = n_e['effects']
             params = n_e['params']
-    elif type_ == 'cell':
-        class NewEffect(CustomCellEffect):
-            name = n_e["name"]
-            effects = n_e['effects']
-            params = n_e['params']
-            area = n_e.get('area')
+    # elif type_ == 'cell':
+    #     class NewEffect(CustomCellEffect):
+    #         name = n_e["name"]
+    #         effects = n_e['effects']
+    #         params = n_e['params']
+    #         area = n_e.get('area')
     else:
         raise ValueError("Effect type might be 'unit' or 'meta'")
     return NewEffect
