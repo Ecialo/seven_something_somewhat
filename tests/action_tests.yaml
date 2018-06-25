@@ -48,8 +48,8 @@
   actions_B: []
   checks:
     - cell: !cell [1, 0]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', !prop A.stats.damage]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', !prop A.damage]
 
 # Move tests
 
@@ -248,8 +248,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', !prop A.stats.damage]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', !prop A.damage]
       
 - name: Simple Attack against armored target
   A:
@@ -270,8 +270,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', !prop A.stats.damage, '+', !prop B.stats.armor]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', !prop A.damage, '+', !prop B.armor]
       
 - name: Attack out of range
   A:
@@ -292,11 +292,11 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [0, 2]
-      check: !prop B.stats.health
-      result: !prop B.stats.max__health
+      check: !prop B.health
+      result: !prop B.max__health
     - cell: !cell [2, 2]
-      check: !prop A.stats.health
-      result: !prop A.stats.max__health
+      check: !prop A.health
+      result: !prop A.max__health
       
 #Kick tests
 
@@ -320,8 +320,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', 7]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', 7]
       
 - name: Empowered kick
   A:
@@ -343,8 +343,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', 10]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', 10]
       
 - name: Empowered kick into wall
   A:
@@ -366,8 +366,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', 10]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', 10]
 
 - name: kick endurance check
   A:
@@ -395,8 +395,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !prop B.stats.max__health
+      check: !prop B.health
+      result: !prop B.max__health
 
 
 # Cleave tests
@@ -421,8 +421,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', !prop B.stats.damage]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', !prop B.damage]
 
 - name: cleave adjacent hit 1
   A:
@@ -444,8 +444,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', !prop B.stats.damage]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', !prop B.damage]
 
 - name: cleave adjacent hit 2
   A:
@@ -467,8 +467,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', !prop B.stats.damage]
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', !prop B.damage]
 
 
 - name: Empowered Cleave
@@ -490,8 +490,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop B.stats.damage, '*', 1.4, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop B.damage, '*', 1.4, ')']
 
 # Lunge tests
 - name: lunge into nothing
@@ -514,8 +514,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !prop B.stats.max__health
+      check: !prop B.health
+      result: !prop B.max__health
 
 - name: lunge into an enemy
   A:
@@ -537,8 +537,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 0.6, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop A.damage, '*', 0.6, ')']
 
 - name: Step + hit
   A:
@@ -560,8 +560,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [4, 1]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 0.6, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop A.damage, '*', 0.6, ')']
 
 - name: hit with the tip
   A:
@@ -583,8 +583,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 0]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 0.6, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop A.damage, '*', 0.6, ')']
 
 # Emp Lunge
 
@@ -609,8 +609,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop A.damage, '*', 1.0, ')']
       
 - name: whacky lunge
   A:
@@ -633,8 +633,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop A.damage, '*', 1.0, ')']
       
 - name: big distance lunge
   A:
@@ -657,8 +657,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 1]
-      check: !prop B.stats.health
-      result: !expr [!prop B.stats.max__health, '-', '(', !prop A.stats.damage, '*', 1.0, ')']
+      check: !prop B.health
+      result: !expr [!prop B.max__health, '-', '(', !prop A.damage, '*', 1.0, ')']
       
 # Parry tests 
 
@@ -683,8 +683,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop A.stats.health
-      result: !prop A.stats.max__health
+      check: !prop A.health
+      result: !prop A.max__health
       
 - name: parry break
   A:
@@ -707,8 +707,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop A.stats.health
-      result: !expr [!prop A.stats.max__health, '-', '(', !prop B.stats.damage, '*', 1.4, ')']
+      check: !prop A.health
+      result: !expr [!prop A.max__health, '-', '(', !prop B.damage, '*', 1.4, ')']
 
 
 - name: empowered parry
@@ -733,9 +733,9 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop A.stats.health, "==", !prop A.stats.max__health]
+        - [!prop A.health, "==", !prop A.max__health]
         - and
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-" , "(" , !prop A.stats.damage, "*", 0.5, ")", ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-" , "(" , !prop A.damage, "*", 0.5, ")", ")"]
       result: true
 
 - name: on_kill_and_on_apply_event_tests
@@ -751,7 +751,7 @@
   actions_B: []
   checks:
     - cell: !cell [0, 0]
-      check: !prop A.stats.health
+      check: !prop A.health
       result: 201
 
 - name: check_global
@@ -782,7 +782,7 @@
   actions_B: []
   checks:
     - cell: !cell [0, 0]
-      check: !prop A.stats.health
+      check: !prop A.health
       result: 110
       
 #LoadBullet tests
@@ -806,7 +806,7 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop A.stats.loaded
+      check: !prop A.loaded
       result: "bullet"
       
 - name: no bullets
@@ -828,7 +828,7 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop A.stats.loaded
+      check: !prop A.loaded
       result: "nothing"
       
 - name: Load then shoot
@@ -854,11 +854,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 35, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - [!prop A.bullets, "==", "(", !prop A.max__bullets, "-", 1, ")"]
       result: true
       
 - name: Shoot wihout loading
@@ -882,11 +882,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - [!prop B.health, "==", !prop B.max__health]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
+        - [!prop A.bullets, "==", !prop A.max__bullets]
       result: true
       
 - name: Shoot all bullets (unstable)
@@ -922,11 +922,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 70, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 70, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 2, ")"]
+        - [!prop A.bullets, "==", "(", !prop A.max__bullets, "-", 2, ")"]
       result: true
 
 #Buckshot tests
@@ -950,7 +950,7 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop A.stats.loaded
+      check: !prop A.loaded
       result: "buckshot"
 
 - name: Load buckshot then shoot
@@ -976,11 +976,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 50, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 50, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
+        - [!prop A.buckshots, "==", "(", !prop A.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: Shoot wihout loading(buckshot)
@@ -1004,11 +1004,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - [!prop B.health, "==", !prop B.max__health]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", !prop A.stats.max__buckshots]
+        - [!prop A.buckshots, "==", !prop A.max__buckshots]
       result: true
 
 - name: Shoot all buckshots (unstable)
@@ -1044,11 +1044,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 100, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 100, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 2, ")"]
+        - [!prop A.buckshots, "==", "(", !prop A.max__buckshots, "-", 2, ")"]
       result: true
 
 - name: Load + shoot 1 cell away
@@ -1074,11 +1074,11 @@
       result: !prop B
     - cell: !cell [3, 1]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 40, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 40, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
+        - [!prop A.buckshots, "==", "(", !prop A.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: Load + shoot 2 cells away
@@ -1104,11 +1104,11 @@
       result: !prop B
     - cell: !cell [4, 0]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 30, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 30, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
+        - [!prop A.buckshots, "==", "(", !prop A.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: Load + shoot 4 cells away
@@ -1134,11 +1134,11 @@
       result: !prop B
     - cell: !cell [3, 1]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 10, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 10, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
+        - [!prop A.buckshots, "==", "(", !prop A.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: ready bullet test
@@ -1164,11 +1164,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 35, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - [!prop A.bullets, "==", "(", !prop A.max__bullets, "-", 1, ")"]
       result: true
 
 - name: ready buckshot test
@@ -1194,11 +1194,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 50, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 50, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.buckshots, "==", "(", !prop A.stats.max__buckshots, "-", 1, ")"]
+        - [!prop A.buckshots, "==", "(", !prop A.max__buckshots, "-", 1, ")"]
       result: true
 
 - name: ready miss test
@@ -1224,11 +1224,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - [!prop B.health, "==", !prop B.max__health]
         - and
-        - [!prop A.stats.loaded, "==", "bullet"]
+        - [!prop A.loaded, "==", "bullet"]
         - and
-        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
+        - [!prop A.bullets, "==", !prop A.max__bullets]
       result: true
 
 - name: ready walk in test
@@ -1263,11 +1263,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 35, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 35, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.bullets, "==", "(", !prop A.stats.max__bullets, "-", 1, ")"]
+        - [!prop A.bullets, "==", "(", !prop A.max__bullets, "-", 1, ")"]
       result: true
 
 - name: ready walk out test
@@ -1302,11 +1302,11 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - [!prop B.health, "==", !prop B.max__health]
         - and
-        - [!prop A.stats.loaded, "==", "bullet"]
+        - [!prop A.loaded, "==", "bullet"]
         - and
-        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
+        - [!prop A.bullets, "==", !prop A.max__bullets]
       result: true
 
 - name: ready weird fuckery test
@@ -1335,13 +1335,13 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", !prop B.stats.max__health]
+        - [!prop B.health, "==", !prop B.max__health]
         - and
-        - [!prop A.stats.loaded, "==", "bullet"]
+        - [!prop A.loaded, "==", "bullet"]
         - and
-        - [!prop A.stats.bullets, "==", !prop A.stats.max__bullets]
+        - [!prop A.bullets, "==", !prop A.max__bullets]
         - and
-        - [!prop A.stats.health, "==", "(", !prop A.stats.max__health, "-", 10, ")"]
+        - [!prop A.health, "==", "(", !prop A.max__health, "-", 10, ")"]
       result: true
 
 - name: Self Burn
@@ -1366,10 +1366,10 @@
         actions_B: []
   checks:
     - cell: !cell [0, 0]
-      check: !prop A.stats.health
+      check: !prop A.health
       result: 94
     - cell: !cell [2, 2]
-      check: !prop B.stats.health
+      check: !prop B.health
       result: 97
 
 - name: jacan stun overflow
@@ -1403,7 +1403,7 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 1]
-      check: !prop A.stats.action_points
+      check: !prop A.action_points
       result: 3
 
 - name: Load jacan then shoot
@@ -1429,13 +1429,13 @@
       result: !prop B
     - cell: !cell [3, 2]
       check: !expr
-        - [!prop B.stats.health, "==", "(", !prop B.stats.max__health, "-", 30, ")"]
+        - [!prop B.health, "==", "(", !prop B.max__health, "-", 30, ")"]
         - and
-        - [!prop A.stats.loaded, "==", "nothing"]
+        - [!prop A.loaded, "==", "nothing"]
         - and
-        - [!prop A.stats.jacans, "==", "(", !prop A.stats.max__jacans, "-", 1, ")"]
+        - [!prop A.jacans, "==", "(", !prop A.max__jacans, "-", 1, ")"]
         - and
-        - [!prop B.stats.action_points, "==", "(", !prop B.stats.max__action_points, "-", 2, ")"]
+        - [!prop B.action_points, "==", "(", !prop B.max__action_points, "-", 2, ")"]
       result: true
 
 - name: throw grenade
@@ -1458,8 +1458,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !expr [!prop B.stats.max__health, "-", 30]
-      result: !prop B.stats.health
+      check: !expr [!prop B.max__health, "-", 30]
+      result: !prop B.health
 
 - name: throw grenade collateral
   A:
@@ -1481,8 +1481,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !expr [!prop B.stats.max__health, "-", 10]
-      result: !prop B.stats.health
+      check: !expr [!prop B.max__health, "-", 10]
+      result: !prop B.health
 
 - name: throw fire grenade
   A:
@@ -1507,8 +1507,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !expr [!prop B.stats.max__health, "-", 10]
-      result: !prop B.stats.health
+      check: !expr [!prop B.max__health, "-", 10]
+      result: !prop B.health
 
 - name: healthpot test
   A:
@@ -1537,8 +1537,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !expr [!prop B.stats.max__health, "-", 42]
-      result: !prop B.stats.health
+      check: !expr [!prop B.max__health, "-", 42]
+      result: !prop B.health
 
 - name: heal to full
   A:
@@ -1562,8 +1562,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop B.stats.max__health
-      result: !prop B.stats.health
+      check: !prop B.max__health
+      result: !prop B.health
 
 - name: speedpot test1
   A:
@@ -1586,8 +1586,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !prop A.stats.max__action_points
-      result: !prop A.stats.action_points
+      check: !prop A.max__action_points
+      result: !prop A.action_points
 
 
 - name: speedpot test2
@@ -1615,8 +1615,8 @@
       check: !prop cell.object
       result: !prop B
     - cell: !cell [3, 2]
-      check: !expr [!prop A.stats.max__health, "-", 105]
-      result: !prop A.stats.health
+      check: !expr [!prop A.max__health, "-", 105]
+      result: !prop A.health
 
 
 - name: summon test

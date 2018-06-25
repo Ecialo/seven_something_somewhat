@@ -22,9 +22,15 @@ def dict_merge(a, b):
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
-    __getattr__ = dict.__getitem__
+    # __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError("dot dict has not attribute {}".format(item))
 
 
 def rsum(iterable):

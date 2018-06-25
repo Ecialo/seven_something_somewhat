@@ -54,7 +54,7 @@ class Unit(GameObject):
     hooks = []
     actions = []
     resources = {}
-    statuses = []
+    initial_statuses = []
     playable = False
 
     exposed = [
@@ -80,12 +80,18 @@ class Unit(GameObject):
         self.switch_state()
         context = self.context.copy()
         context['carrier'] = self
-        for status_ref in self.statuses:
+        for status_ref in self.initial_statuses:
             status = status_ref.get().configure(context)
             self.add_status(status)
         self.switch_state()
 
         kill.connect(self.on_kill)
+
+    def __getattribute__(self, item):
+        try:
+            return super().__getattribute__(item)
+        except AttributeError:
+            return getattr(super().__getattribute__('stats'), item)
 
     @property
     def context(self):
@@ -327,7 +333,7 @@ def new_unit_constructor(loader, node):
         widget = u_s['widget']
         resources = u_s['resources']
         playable = u_s.get('playable', False)
-        statuses = u_s.get('statuses', [])
+        initial_statuses = u_s.get('statuses', [])
         behavior = class_behavior
         # behavior = None
 
