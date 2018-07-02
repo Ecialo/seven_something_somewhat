@@ -9,8 +9,8 @@
         name: Summon
         unit: !prop effect.unit
         owner: !prop effect.owner
-      area: !area
-        name: KRandomCells
-        area: !glob arena
-        k: !prop effect.amount
-        filter: !expr [!prop cell.object, "==", null]
+  area: !area
+    name: KRandomCells
+    area: !glob arena
+    k: !prop effect.amount
+    filter: !expr [!prop cell.object, "==", null]
