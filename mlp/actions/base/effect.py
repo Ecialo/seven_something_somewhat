@@ -260,6 +260,8 @@ class CustomEffect(AbstractEffect):
         self.area = self.area or area
 
     def apply(self, cells, context):
+        context = context.new_child()
+        context['effect'] = self
         logging.debug(self.area)
         if self.area:
             logging.debug(self.area)

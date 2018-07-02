@@ -129,11 +129,13 @@ class KRandomCells(Area):
         self.k = k
 
     def _get(self, context):
-        cells = self.area.get(context)
-        filter_ = self.filter
-        actual_cells = [cell for cell in cells if filter_.get(dotdict({'cell': cell}))]
-        shuffle(actual_cells)
-        return actual_cells[:self.k:]
+        context['cell'] = HexCell((-1, -1))
+        with self.configure(context) as c:
+            cells = c.area
+            filter_ = self.filter
+            actual_cells = [cell for cell in cells if filter_.get(dotdict({'cell': cell}))]
+            shuffle(actual_cells)
+            return actual_cells[:c.k:]
 
 
 class Circle(Area):
