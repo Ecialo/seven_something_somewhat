@@ -18,8 +18,8 @@
         extra_tags: ["debuff"]
         status: !status
           name: Bleeding
-          duration: 1
-          power: 3
+          duration: 2
+          power: 2
       area: !area
         name: Melee
         radius: 1
@@ -68,8 +68,8 @@
         extra_tags: ["debuff"]
         status: !status
           name: Bleeding
-          duration: 6
-          power: 1
+          duration: 0
+          power: 7
       area: !area
         name: Melee
         radius: 1
@@ -92,6 +92,10 @@
         extra_tags: ["plan"]
         status: !status
           name: OrderedScythe
+          duration: 1
+      area:
+        name: Cell
+        cell: !prop owner.cell
   # check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
     icon: './data/punch(1).png'
@@ -136,8 +140,39 @@
           name: OrderedShulikun
   check: !expr [!call [!prop owner, has_status_by_tag, 'Order'], '==', false]
   widget:
+    icon: './data/units/oprichnik/scythe.png'
+    pressed_icon: './data/units/oprichnik/scythe_pressed.png'
+
+- !new_action
+  name: ScytheAttack
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: Damage
+        extra_tags: ["melee"]
+        amount: !prop owner.damage
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
+    - effect: !eff
+        name: AddStatus
+        extra_tags: ["debuff"]
+        status: !status
+          name: Bleeding
+          duration: 2
+          power: 6
+      area: !area
+        name: Melee
+        radius: 1
+        center: !prop source
+  widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
+
 
 - !new_action
   name: KickUpyr

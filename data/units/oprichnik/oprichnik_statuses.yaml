@@ -23,10 +23,26 @@
   on_remove:
     - !eff
       name: AddAction
+      action_name: "ScytheAttack"
+    - !eff
+      name: AddAction
       action_name: "ScytheSwing"
     - !eff
       name: AddAction
       action_name: "ScytheHook"
+    - !eff
+      name: RemoveAction
+      action_name: "SabreAttack"
+    - !eff
+      name: RemoveAction
+      action_name: "CrossSlash"
+    - !eff
+      name: RemoveAction
+      action_name: "SabreParry"
+    - !eff
+      name: ChangeStat
+      stat_name: damage
+      value: 30
 
 - !new_status
   name: OrderedUpyr

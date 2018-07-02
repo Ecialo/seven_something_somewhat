@@ -239,3 +239,22 @@
   widget:
     icon: './data/punch(1).png'
     pressed_icon: './data/punch.png'
+
+- !new_action
+  name: ApplyTestStatus
+  action_type: STANDARD
+  speed: NORMAL
+  cost: 1
+  setup: []
+  effects:
+    - effect: !eff
+        name: AddStatus
+        status: !status
+          name: RemoveTestStatus
+          duration: 0
+      area: !area
+        name: Cell
+        cell: !prop owner.cell
+  widget:
+    icon: './data/punch(1).png'
+    pressed_icon: './data/punch.png'
