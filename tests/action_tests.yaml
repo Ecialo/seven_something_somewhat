@@ -1638,9 +1638,9 @@
     - cell: !cell [3, 2]
       check: !prop cell.object
       result: !prop B
-    - cell: !cell [2, 1]
+    - cell: !cell [0, 0]
       check: !expr
-        - [!prop cell.object, "!=", "null"]
+        - [!prop cell.object, "!=", null]
         - and
         - [!prop cell.object.name, "==", "Upyr"]
       result: true
