@@ -1,3 +1,4 @@
+import logging as log
 from collections import ChainMap
 
 from ...replication_manager import MetaRegistry
@@ -45,6 +46,7 @@ class Status(metaclass=StatusMeta):
         self.context = context
         self.duration = duration
         self.extra_tags = kwargs.get('extra_tags', [])
+        print(self.on_remove_effects, self.name)
         if 'extra_tags' in kwargs:
             kwargs.pop('extra_tags')
         for k, v in kwargs.items():
@@ -77,6 +79,7 @@ class Status(metaclass=StatusMeta):
             effect.get().apply(target.cell, self.context)
 
     def on_remove(self, target):
+        log.debug('ON REMOVE {} target: {} effects {}'.format(self, target, self.on_remove_effects))
         for effect in self.on_remove_effects:
             effect.get().apply(target.cell, self.context)
 
@@ -178,11 +181,11 @@ def new_status_constructor(loader, node):
     class NewStatus(status_type):
 
         name = s_s.pop("name")
-        on_add_effects = s_s.pop("on_add", []) or status_type.on_add_effects.copy()
-        on_remove_effects = s_s.pop("on_remove", []) or status_type.on_remove_effects.copy()
+        on_add_effects = s_s.pop("on_add", [])# or status_type.on_add_effects.copy()        # WTF!!!
+        on_remove_effects = s_s.pop("on_remove", [])# or status_type.on_remove_effects.copy()
         params = s_s.pop("params", []) or status_type.params.copy()
-        events = {frozenset(k.split("_")[1::]): v for k, v in s_s.items()} or status_type.events.copy()
         _tags = s_s.pop("tags", []) or status_type._tags.copy()
+        events = {frozenset(k.split("_")[1::]): v for k, v in s_s.items()} or status_type.events.copy()
 
     return NewStatus
 
