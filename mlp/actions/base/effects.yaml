@@ -62,3 +62,18 @@
         stat_name: action_points
         value: !expr [!prop target.action_points, "-", !prop effect.power]
       condition: !expr [!prop target.action_points, ">=", !prop effect.power]
+
+- !new_eff
+  name: RandomSummonTest
+  params:
+    - unit
+    - amount
+    - owner
+  effects:
+    - effect: !eff
+        name: Summon
+        unit: !prop effect.unit
+        owner: !prop effect.owner
+      area:
+        name: Cell
+        cell: !call [!prop owner.cell, "parallel_transfer", [-2, -2]]

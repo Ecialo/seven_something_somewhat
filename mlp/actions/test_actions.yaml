@@ -46,10 +46,11 @@
         - !prop source
   effects:
     - effect: !eff
-        name: Summon
+        name: RandomSummonTest
         unit: !unit
           name: Upyr
         owner: !prop owner.owner
+        amount: 1
       area: !prop action.target_cell
   widget:
     icon: './data/hound(1).png'
