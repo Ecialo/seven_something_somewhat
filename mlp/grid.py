@@ -240,6 +240,7 @@ class HexCell(Cell):
         col, row = self.pos
         col += vector[0]
         row += vector[1]
+        # return HexCell[]
         return (col, row)
 
 

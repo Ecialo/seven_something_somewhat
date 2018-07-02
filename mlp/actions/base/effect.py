@@ -260,7 +260,9 @@ class CustomEffect(AbstractEffect):
         self.area = self.area or area
 
     def apply(self, cells, context):
+        logging.debug(self.area)
         if self.area:
+            logging.debug(self.area)
             cells = self.area.get(context)
         if context['owner'].state is PLANNING and "plan" not in self.tags:
             return

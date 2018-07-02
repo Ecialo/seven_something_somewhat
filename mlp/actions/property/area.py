@@ -50,7 +50,11 @@ class Cell(Area):
         self.cell = cell
 
     def _get(self, context):
-        return [self.cell.get(context)]
+        # log.debug(self.cell)
+        cell = self.cell.get(context)
+        if isinstance(cell, tuple):
+            cell = self.grid[cell]
+        return [cell]
 
 
 class Adjacent(Area):

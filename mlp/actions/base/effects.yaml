@@ -74,6 +74,6 @@
         name: Summon
         unit: !prop effect.unit
         owner: !prop effect.owner
-      area:
-        name: Cell
-        cell: !call [!prop owner.cell, "parallel_transfer", [-2, -2]]
+  area: !area
+    name: Cell
+    cell: !call [!prop owner.cell, "parallel_transfer", [-2, -2]]

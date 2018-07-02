@@ -1640,7 +1640,7 @@
       result: !prop B
     - cell: !cell [0, 0]
       check: !expr
-        - [!prop cell.object, "!=", "null"]
+        - [!prop cell.object, "!=", null]
         - and
         - [!prop cell.object.name, "==", "Upyr"]
       result: true

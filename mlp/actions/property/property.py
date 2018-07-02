@@ -24,10 +24,24 @@ class Attribute(Property):
         self.donor = path[0]
         self.path = path[1::]
 
+    def _attr_split(self, attr_name):
+        if attr_name.endswith("]"):
+            attr_name, index = attr_name.split("[")
+            index = index.rstrip("]")
+            try:
+                index = int(index)
+            except ValueError:
+                pass
+            return attr_name, index
+        else:
+            return attr_name, None
+
     def get(self, context):
-        donor = context[self.donor]
+        donor, index = self._attr_split(self.donor)
+        donor = context[donor] if index is None else context[donor][index]
         for p in self.path:
-            donor = getattr(donor, p)
+            attr_name, index = self._attr_split(p)
+            donor = getattr(donor, attr_name) if index is None else getattr(donor, attr_name)[index]
         return donor if not isinstance(donor, Property) else donor.get(context)
 
     def __repr__(self):
@@ -95,15 +109,15 @@ def str2prop(property_):
         return PROPERTY_TABLE[property_]()
     # elif property_.startswith("owner") or property_.startswith("target") or property_.startswith("victim"):
     #     return UnitAttribute(property_)
-    elif property_.endswith("]"):
-        property_, index = property_.split("[")
-        index = index.rstrip("]")
-        try:
-            index = int(index)
-        except ValueError:
-            index = index
-        property_ = str2prop(property_)
-        return IndexProperty(property_, index)
+    # elif property_.endswith("]"):
+    #     property_, index = property_.split("[")
+    #     index = index.rstrip("]")
+    #     try:
+    #         index = int(index)
+    #     except ValueError:
+    #         index = index
+    #     property_ = str2prop(property_)
+    #     return IndexProperty(property_, index)
     else:
         return Attribute(property_)
 
