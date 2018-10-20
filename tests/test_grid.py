@@ -11,9 +11,21 @@ from ..mlp.grid import (
 load()
 
 
+class TestCell:
+
+    def setup(self):
+        self.cell = HexCell((1, 1))
+
+    def test_eq(self):
+        assert self.cell == HexCell((1, 1))
+
+    def test_data_compare(self):
+        pass
+
+
 class TestGrid:
 
-    def setUp(self):
+    def setup(self):
         self.grid = HexGrid((5, 5))
 
     def test_get(self):
@@ -115,3 +127,6 @@ class TestGrid:
         grid = self.grid
         rounded = grid.round_cube((0.5, -1, 0.5))
         assert rounded == (1, -1, 0)
+
+    def test_freeze(self):
+        pass

@@ -8,14 +8,16 @@ from functools import (
     reduce,
 )
 from operator import add
-
 from math import copysign
+from collections import deque
 
 import blinker
+from pyrsistent import freeze
 
 from .replication_manager import GameObject
 from .tools import dict_merge
 from .bind_widget import bind_widget
+from .freezable import Freezable
 
 summon_event = blinker.signal("summon")
 revoke = blinker.signal("revoke")
@@ -89,7 +91,7 @@ class FixedArea:
             w.is_highlighted = False
 
 
-class Cell:
+class Cell(Freezable):
 
     # hooks = ['take', 'place']
     hooks = []
@@ -98,10 +100,26 @@ class Cell:
         # super().__init__(id_=id_)
         self.grid = grid
         self.pos = pos
+
+        self.data = freeze({
+            'additional_content': [],
+            'object': None,
+        })
+
         self.adjacent = []
-        self.additional_content = []
-        self.object = None
+        # self.additional_content = []
+        # self.object = None
         self.terrain = terrain or None
+
+        self._checkpoints = deque()
+
+    @property
+    def object(self):
+        return self.data['object']
+
+    @object.setter
+    def object(self, val):
+        self.data = self.data.set('object', val)
 
     def place(self, obj):
         self.object = obj
@@ -121,8 +139,21 @@ class Cell:
     def __hash__(self):
         return hash(self.pos)
 
+    def compare_data(self, other):
+        assert isinstance(other, Cell), "Accept only Cells"
+        return self.data == other.data
 
-class Grid(GameObject):
+    def freeze(self):
+        self._checkpoints.append(self.data)
+
+    def unfreeze(self):
+        self._checkpoints.clear()
+
+    def rollback(self):
+        self.data = self._checkpoints.pop()
+
+
+class Grid(GameObject, Freezable):
 
     hooks = []
     cell = Cell
@@ -137,6 +168,9 @@ class Grid(GameObject):
             self.create_cells()
         summon_event.connect(self.summon)
         revoke.connect(self.revoke)
+
+    def __iter__(self):
+        return iter(chain(*self._grid))
 
     def change_terrain(self):
         pass
@@ -178,14 +212,22 @@ class Grid(GameObject):
             self.create_cells()
 
     def dump(self):
-        # return {
-        #     **super().dump(),
-        #     'size': self.size,
-        # }
         return dict_merge(
             super().dump(),
             {'size': self.size}
         )
+
+    def freeze(self):
+        for cell in self:
+            cell.freeze()
+
+    def unfreeze(self):
+        for cell in self:
+            cell.unfreeze()
+
+    def rollback(self):
+        for cell in self:
+            cell.rollback()
 
     @classmethod
     def locate(cls):
@@ -398,9 +440,6 @@ class HexGrid(Grid):
                 paths = new_paths
             else:
                 return []
-
-    def __iter__(self):
-        return iter(chain(*self._grid))
 
     @classmethod
     def get(cls, _=None):

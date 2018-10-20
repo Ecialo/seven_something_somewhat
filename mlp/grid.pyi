@@ -5,30 +5,41 @@ from typing import (
     Set,
     Optional,
     List,
-    Any,
+    Deque,
 )
 
 import yaml
 
 from .replication_manager import GameObject
+from .freezable import Freezable
+from pyrsistent import PMap
+
+Pos = Tuple[int, int]
 
 class FixedArea:
 
     def __init__(self, cells, color): ...
 
-class Cell:
+class Cell(Freezable):
 
-    pos: Tuple[int, int]
-    object: Any
+    pos: Pos
+    data: PMap
+    _checkpoints: Deque[PMap]
+
+    def __init__(self, pos: Pos, grid: Optional[Grid] = None, terrain=None) -> None: ...
+    def freeze(self) -> None: ...
+    def unfreeze(self) -> None: ...
+    def rollback(self) -> None: ...
 
 
 class HexCell(Cell):
     pass
 
 
-class Grid(GameObject):
+class Grid(GameObject, Freezable):
 
     def __getitem__(self, item: Sequence[int]) -> Cell: ...
+    def __iter__(self) -> Sequence[Cell]: ...
     @classmethod
     def distance(cls, cell_a: Cell, cell_b: Cell) -> int: ...
     def find_path(
@@ -36,6 +47,9 @@ class Grid(GameObject):
             from_pos_or_cell: Union[Tuple[int, int], Cell],
             to_pos_or_cell: Union[Tuple[int, int], Cell]
     ) -> List[Cell]: ...
+    def freeze(self) -> None: ...
+    def unfreeze(self) -> None: ...
+    def rollback(self) -> None: ...
 
 class HexGrid(Grid):
 
