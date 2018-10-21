@@ -118,8 +118,8 @@ class Cell(Freezable):
         return self.data['object']
 
     @object.setter
-    def object(self, val):
-        self.data = self.data.set('object', val)
+    def object(self, value):
+        self.data = self.data.set('object', value)
 
     def place(self, obj):
         self.object = obj

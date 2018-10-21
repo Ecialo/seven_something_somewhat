@@ -20,8 +20,22 @@ class TestCell:
         assert self.cell == HexCell((1, 1))
 
     def test_data_compare(self):
-        pass
+        cell = HexCell((1, 1))
+        cell.object = 1
+        self.cell.object = 1
+        assert cell.compare_data(self.cell)
+        cell.object = 2
+        assert not cell.compare_data(self.cell)
 
+    def test_freeze(self):
+        cell = HexCell((1, 1))
+        cell.object = 1
+        self.cell.object = 1
+        cell.freeze()
+        cell.object = 2
+        assert not cell.compare_data(self.cell)
+        cell.rollback()
+        assert cell.compare_data(self.cell)
 
 class TestGrid:
 
@@ -129,4 +143,11 @@ class TestGrid:
         assert rounded == (1, -1, 0)
 
     def test_freeze(self):
-        pass
+        grid = self.grid
+        grid[(1, 1)].object = 1
+        grid[(2, 2)].object = 2
+        grid.freeze()
+        grid[(1, 1)].object = 3
+        grid[(2, 2)].object = 4
+        grid.rollback()
+        assert grid[(1, 1)].object == 1 and grid[(2, 2)].object == 2
