@@ -1,11 +1,12 @@
 from .bind_widget import bind_widget
 from .replication_manager import MetaRegistry
+from .freezable import Freezable
 
 RESOURCES = MetaRegistry()['Resource']
 ResourceMeta = MetaRegistry().make_registered_metaclass("Resource")
 
 
-class Resource(metaclass=ResourceMeta):
+class Resource(Freezable, metaclass=ResourceMeta):
 
     hooks = ['change']
 
@@ -106,6 +107,7 @@ class FlagResource(Resource):
     def copy(self):
         return FlagResource(self.name_, self._current)
 
+
 RESOURCE_TABLE = {
     int: NumericResource,
     bool: FlagResource,
@@ -117,5 +119,6 @@ def resource_constructor(loader, node):
     name = r_s.pop("type")
     resource = RESOURCES[name](**r_s)
     return resource
+
 
 RESOURCE_TAG = "!res"
